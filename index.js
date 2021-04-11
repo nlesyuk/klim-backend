@@ -1,7 +1,7 @@
 const http = require('http');
 const fs = require('fs');
 const config = {
-    port: 8070,
+    port: 8090,
     domain: 'localhost',
     pathToTempDB: './db.json',
     allowRequestFromDomain: '*'
@@ -13,6 +13,7 @@ const server = http.createServer((req, res) => {
         'Access-Control-Allow-Methods': 'GET', // OPTIONS, POST, GET , ..
         'Access-Control-Max-Age': 2592000, // 30 days
     };
+    console.log('\x1b[33m%s\x1b[0m', 'Request URL: ', "\x1b[31m", req.url);
 
     switch (req.url) {
         case '/videos':
