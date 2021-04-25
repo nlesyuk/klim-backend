@@ -2,71 +2,42 @@
   "videos": [
     {
       "id": 1,
-      "title": "Могилев",
-      "description": "text1 text2</br> text3 text4",
+      "title": "Drezden - Ronin",
+      "description": "Dir Sergei Sarakhanov </br>Dop Stepan Klim",
+      "credits": "credits",
       "category": ["commerce"],
-      "preview_img": "https://nrdevux.com/klim/photos/video/default/default-1.jpg",
+      "preview_img": "https://nrdevux.com/klim/videos/Drezden-Ronin/2.jpg",
       "photos": [
         {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-1.jpg",
+          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/1.jpg",
           "isVideoPreview": true
         },
         {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-2.jpg"
+          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/2.jpg"
         },
         {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-3.jpg"
+          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/3.jpg"
         },
         {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-4.jpg"
+          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/4.jpg"
         },
         {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-5.jpg"
+          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/5.jpg"
         },
         {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-6.jpg"
+          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/6.jpg"
         },
         {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-7.jpg"
+          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/7.jpg"
         },
         {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-8.jpg"
+          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/8.jpg"
         },
         {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-9.jpg"
+          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/9.jpg"
         },
         {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-10.jpg"
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-11.jpg"
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-12.jpg"
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-13.jpg"
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-14.jpg"
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-15.jpg"
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-16.jpg"
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-17.jpg"
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-18.jpg"
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-19.jpg"
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-20.jpg"
+          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/10.jpg"
         }
       ],
       "videos": {
@@ -75,30 +46,211 @@
     },
     {
       "id": 2,
-      "title": "Title2",
-      "description": "text1 text2</br> text3 text4",
-      "category": [],
-      "preview_img": "https://nrdevux.com/klim/photos/video/default/default-2.jpg",
+      "title": "Natalia Mogilevskaya",
+      "description": "Dir German Nenov </br>Dop Stepan Klim",
+      "credits": "credits",
+      "category": ["commerce"],
+      "preview_img": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/2.jpg",
       "photos": [
         {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-1.jpg"
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-2.jpg",
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/1.jpg",
           "isVideoPreview": true
         },
         {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-3.jpg"
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/2.jpg"
         },
         {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-4.jpg"
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/3.jpg"
         },
         {
-          "src": "https://nrdevux.com/klim/photos/video/wide/wide-5.jpg"
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/4.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/5.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/6.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/7.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/8.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/9.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/10.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/11.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/12.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/13.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/14.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/15.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/16.jpg"
         }
       ],
       "videos": {
-        "vimeo_id": 532238429
+        "vimeo_id": 526812588
+      }
+    },
+    {
+      "id": 3,
+      "title": "Valeria Karaman",
+      "description": "Dir German Nenov </br>Dop Stepan Klim",
+      "credits": "credits",
+      "category": ["commerce"],
+      "preview_img": "https://nrdevux.com/klim/videos/Karaman/2.jpg",
+      "photos": [
+        {
+          "src": "https://nrdevux.com/klim/videos/Karaman/1.jpg",
+          "isVideoPreview": true
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/Karaman/2.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/Karaman/3.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/Karaman/4.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/Karaman/5.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/Karaman/6.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/Karaman/7.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/Karaman/8.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/Karaman/9.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/Karaman/10.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/Karaman/11.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/Karaman/12.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/Karaman/13.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/Karaman/14.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/Karaman/15.jpg"
+        }
+      ],
+      "videos": {
+        "vimeo_id": 526812588
+      }
+    },
+    {
+      "id": 4,
+      "title": "Saline",
+      "description": "Dir German Nenov </br>Dop Stepan Klim",
+      "credits": "credits",
+      "category": ["commerce"],
+      "preview_img": "https://nrdevux.com/klim/videos/Saline/2.jpg",
+      "photos": [
+        {
+          "src": "https://nrdevux.com/klim/videos/Saline/1.jpg",
+          "isVideoPreview": true
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/Saline/2.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/Saline/3.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/Saline/4.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/Saline/5.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/Saline/6.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/Saline/7.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/Saline/8.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/Saline/9.jpg"
+        }
+      ],
+      "videos": {
+        "vimeo_id": 526817489
+      }
+    },
+    {
+      "id": 4,
+      "title": "ZlataOgnevich",
+      "description": "Dir German Nenov </br>Dop Stepan Klim",
+      "credits": "credits",
+      "category": ["commerce"],
+      "preview_img": "https://nrdevux.com/klim/videos/ZlataOgnevich/2.jpg",
+      "photos": [
+        {
+          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/1.jpg",
+          "isVideoPreview": true
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/2.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/3.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/4.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/5.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/6.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/7.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/8.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/9.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/10.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/11.jpg"
+        }
+      ],
+      "videos": {
+        "vimeo_id": 526813685
       }
     }
   ],
