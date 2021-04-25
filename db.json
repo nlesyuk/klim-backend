@@ -105,13 +105,13 @@
   "photos": [
     {
       "id": 1,
-      "title": "title",
+      "title": "title 1 after 3",
       "category": ["commerce"],
       "photos": [
         {
           "src": "https://nrdevux.com/klim/photos/photo/photo-1.jpg",
           "category": ["commerce"],
-          "isPreview": true
+          "isPreview": false
         },
         {
           "src": "https://nrdevux.com/klim/photos/photo/photo-2.jpg",
@@ -121,7 +121,7 @@
         {
           "src": "https://nrdevux.com/klim/photos/photo/photo-3.jpg",
           "category": ["commerce"],
-          "isPreview": true
+          "isPreview": false
         },
         {
           "src": "https://nrdevux.com/klim/photos/photo/photo-4.jpg",
@@ -141,18 +141,18 @@
         {
           "src": "https://nrdevux.com/klim/photos/photo/photo-7.jpg",
           "category": [],
-          "isPreview": false
+          "isPreview": true
         },
         {
           "src": "https://nrdevux.com/klim/photos/photo/photo-8.jpg",
           "category": [],
-          "isPreview": false
+          "isPreview": true
         }
       ]
     },
     {
       "id": 2,
-      "title": "title",
+      "title": "title  2 after 3",
       "category": [],
       "photos": [
         {
@@ -169,6 +169,11 @@
           "src": "https://nrdevux.com/klim/photos/photo/photo-3.jpg",
           "category": ["commerce"],
           "isPreview": true
+        },
+        {
+          "src": "https://nrdevux.com/klim/photos/photo/photo-4.jpg",
+          "category": ["commerce"],
+          "isPreview": false
         },
         {
           "src": "https://nrdevux.com/klim/photos/photo/photo-4.jpg",
@@ -179,7 +184,7 @@
     },
     {
       "id": 3,
-      "title": "title",
+      "title": "title 3 after 3",
       "category": [],
       "photos": [
         {
@@ -201,97 +206,103 @@
           "src": "https://nrdevux.com/klim/photos/photo/photo-4.jpg",
           "category": ["commerce"],
           "isPreview": false
+        },
+        {
+          "src": "https://nrdevux.com/klim/photos/photo/photo-4.jpg",
+          "category": ["commerce"],
+          "isPreview": false
+        },
+        {
+          "src": "https://nrdevux.com/klim/photos/photo/photo-4.jpg",
+          "category": ["commerce"],
+          "isPreview": false
         }
       ]
     },
+
     {
       "id": 4,
-      "title": "title",
-      "category": [],
-      "photos": [
-        {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-1.jpg",
-          "category": ["commerce"],
-          "isPreview": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-2.jpg",
-          "category": ["commerce"],
-          "isPreview": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-3.jpg",
-          "category": ["commerce"],
-          "isPreview": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-4.jpg",
-          "category": ["commerce"],
-          "isPreview": false
-        }
-      ]
-    },
-    {
-      "id": 5,
-      "title": "title",
-      "category": [],
-      "photos": [
-        {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-1.jpg",
-          "category": ["commerce"],
-          "isPreview": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-2.jpg",
-          "category": ["commerce"],
-          "isPreview": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-3.jpg",
-          "category": ["commerce"],
-          "isPreview": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-4.jpg",
-          "category": ["commerce"],
-          "isPreview": false
-        }
-      ]
-    },
-    {
-      "id": 6,
-      "title": "vertical - 10 items",
+      "title": "vertical - 1 fater 3",
       "category": [],
       "photos": [
         {
           "src": "https://nrdevux.com/klim/photos/vertical/1-min.jpg",
-          "isPreview": true
+          "isPreview": true,
+          "isVertical": true
         },
         {
           "src": "https://nrdevux.com/klim/photos/vertical/2-min.jpg",
-          "isPreview": true
+          "isPreview": true,
+          "isVertical": true
         },
         {
           "src": "https://nrdevux.com/klim/photos/vertical/3-min.jpg",
-          "isPreview": true
+          "isPreview": true,
+          "isVertical": true
         },
         {
-          "src": "https://nrdevux.com/klim/photos/vertical/4-min.jpg"
+          "src": "https://nrdevux.com/klim/photos/vertical/4-min.jpg",
+          "isVertical": true
         },
         {
-          "src": "https://nrdevux.com/klim/photos/vertical/5-min.jpg"
+          "src": "https://nrdevux.com/klim/photos/vertical/5-min.jpg",
+          "isVertical": true
         },
         {
           "src": "https://nrdevux.com/klim/photos/vertical/6-min.jpg"
         },
         {
-          "src": "https://nrdevux.com/klim/photos/vertical/8-min.jpg"
+          "src": "https://nrdevux.com/klim/photos/vertical/8-min.jpg",
+          "isVertical": true
         },
         {
-          "src": "https://nrdevux.com/klim/photos/vertical/9-min.jpg"
+          "src": "https://nrdevux.com/klim/photos/vertical/9-min.jpg",
+          "isVertical": true
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "vertical - 2 fater 3",
+      "category": [],
+      "photos": [
+        {
+          "src": "https://nrdevux.com/klim/photos/vertical/1-min.jpg",
+          "isVertical": true
         },
         {
-          "src": "https://nrdevux.com/klim/photos/vertical/10-min.jpg"
+          "src": "https://nrdevux.com/klim/photos/vertical/2-min.jpg",
+          "isVertical": true
+        },
+        {
+          "src": "https://nrdevux.com/klim/photos/vertical/3-min.jpg",
+          "isVertical": true
+        },
+        {
+          "src": "https://nrdevux.com/klim/photos/vertical/4-min.jpg",
+          "isVertical": true
+        },
+        {
+          "src": "https://nrdevux.com/klim/photos/vertical/5-min.jpg",
+          "isVertical": true,
+          "isPreview": true
+        },
+        {
+          "src": "https://nrdevux.com/klim/photos/vertical/6-min.jpg"
+        },
+        {
+          "src": "https://nrdevux.com/klim/photos/vertical/8-min.jpg",
+          "isVertical": true,
+          "isPreview": true
+        },
+        {
+          "src": "https://nrdevux.com/klim/photos/vertical/9-min.jpg",
+          "isPreview": true,
+          "isVertical": true
+        },
+        {
+          "src": "https://nrdevux.com/klim/photos/vertical/10-min.jpg",
+          "isVertical": true
         }
       ]
     }
