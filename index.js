@@ -34,6 +34,16 @@ const server = http.createServer((req, res) => {
     }
 
     switch (reqUrl) {
+        case '/slides':
+            fs.readFile(config.pathToTempDB, (error, data) => {
+                if (error) throw error
+                res.writeHead(200, headers);
+
+                db = JSON.parse(data)
+                res.write(JSON.stringify(db.slides))
+                res.end()
+            })
+            break;
         case '/videos':
             fs.readFile(config.pathToTempDB, (error, data) => {
                 if (error) throw error
