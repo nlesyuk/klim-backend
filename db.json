@@ -1,10 +1,27 @@
 {
+  "slides": [
+    {
+      "type": "image",
+      "image": "https://nrdevux.com/klim/photos/photo/photo-1.jpg",
+      "text": "More",
+      "link": "/photo/1"
+    },
+    {
+      "type": "video",
+      "image": "https://nrdevux.com/klim/photos/photo/photo-1.jpg",
+      "text": "More",
+      "link": "/work/1",
+      "video": {
+        "vimeo_id": 526809109
+      }
+    }
+  ],
   "videos": [
     {
       "id": 1,
       "title": "Drezden - Ronin",
       "description": "Dir Sergei Sarakhanov </br>Dop Stepan Klim",
-      "credits": "credits",
+      "credits": "credits </br> credits",
       "category": ["commerce"],
       "preview_img": "https://nrdevux.com/klim/videos/Drezden-Ronin/1.jpg",
       "photos": [
