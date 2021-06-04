@@ -2,17 +2,17 @@
   "slides": [
     {
       "type": "image",
-      "image": "https://nrdevux.com/klim/photos/photo/photo-1.jpg",
+      "image": "https://nrdevux.com/klim/videos/Drezden-Ronin/1.jpg",
       "text": "More",
       "link": "/photo/1"
     },
     {
       "type": "video",
-      "image": "https://nrdevux.com/klim/photos/photo/photo-1.jpg",
+      "image": "https://nrdevux.com/klim/videos/Drezden-Ronin/2.jpg",
       "text": "More",
       "link": "/work/1",
       "video": {
-        "vimeo_id": 526809109
+        "vimeo_id": 558070340
       }
     }
   ],
