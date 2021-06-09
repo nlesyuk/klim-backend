@@ -2,10 +2,9 @@
   "slides": [
     {
       "type": "image",
-      "image1": "https://nrdevux.com/klim/slides/11.jpg",
       "image": "http://placekitten.com/1800/627",
       "text": "More",
-      "link": "/photo/1"
+      "id": "/photo/1"
     },
     {
       "type": "video",
@@ -328,204 +327,144 @@
   "photos": [
     {
       "id": 1,
-      "title": "title 1 after 3",
-      "category": ["commerce"],
+      "title": "Yrii Garmah",
+      "category": [],
       "photos": [
         {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-1.jpg",
-          "category": ["commerce"],
-          "isPreview": false
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-2.jpg",
-          "category": ["commerce"],
-          "isPreview": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-3.jpg",
-          "category": ["commerce"],
-          "isPreview": false
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-4.jpg",
-          "category": ["commerce"],
-          "isPreview": false
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-5.jpg",
-          "category": [],
-          "isPreview": false
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-6.jpg",
-          "category": [],
-          "isPreview": false
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-7.jpg",
+          "src": "https://nrdevux.com/klim/photos/1YriiGarmah/1.jpg",
           "category": [],
           "isPreview": true
         },
         {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-8.jpg",
+          "src": "https://nrdevux.com/klim/photos/1YriiGarmah/2.jpg",
           "category": [],
           "isPreview": true
+        },
+        {
+          "src": "https://nrdevux.com/klim/photos/1YriiGarmah/3.jpg",
+          "category": [],
+          "isPreview": true
+        },
+        {
+          "src": "https://nrdevux.com/klim/photos/1YriiGarmah/4.jpg",
+          "category": [],
+          "isPreview": false
+        },
+        {
+          "src": "https://nrdevux.com/klim/photos/1YriiGarmah/5.jpg",
+          "category": [],
+          "isPreview": false
+        },
+        {
+          "src": "https://nrdevux.com/klim/photos/1YriiGarmah/6.jpg",
+          "category": [],
+          "isPreview": false
+        },
+        {
+          "src": "https://nrdevux.com/klim/photos/1YriiGarmah/7.jpg",
+          "category": [],
+          "isPreview": false
+        },
+        {
+          "src": "https://nrdevux.com/klim/photos/1YriiGarmah/8.jpg",
+          "category": [],
+          "isPreview": false
+        },
+        {
+          "src": "https://nrdevux.com/klim/photos/1YriiGarmah/9.jpg",
+          "category": [],
+          "isPreview": false
         }
       ]
     },
     {
       "id": 2,
-      "title": "title  2 after 3",
+      "title": "Regina",
       "category": [],
       "photos": [
         {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-1.jpg",
+          "src": "https://nrdevux.com/klim/photos/2Regina/1.jpg",
           "category": ["commerce"],
-          "isPreview": true
+          "isPreview": true,
+          "isVertical": true
         },
         {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-2.jpg",
+          "src": "https://nrdevux.com/klim/photos/2Regina/2.jpg",
           "category": ["commerce"],
-          "isPreview": true
+          "isPreview": true,
+          "isVertical": true
         },
         {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-3.jpg",
+          "src": "https://nrdevux.com/klim/photos/2Regina/3.jpg",
           "category": ["commerce"],
-          "isPreview": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-4.jpg",
-          "category": ["commerce"],
-          "isPreview": false
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-4.jpg",
-          "category": ["commerce"],
-          "isPreview": false
+          "isPreview": true,
+          "isVertical": true
         }
       ]
     },
     {
       "id": 3,
-      "title": "title 3 after 3",
+      "title": "Yelow",
       "category": [],
       "photos": [
         {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-1.jpg",
-          "category": ["commerce"],
+          "src": "https://nrdevux.com/klim/photos/3Yelow/1.jpg",
+          "category": [],
           "isPreview": true
         },
         {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-2.jpg",
-          "category": ["commerce"],
+          "src": "https://nrdevux.com/klim/photos/3Yelow/2.jpg",
+          "category": [],
           "isPreview": true
         },
         {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-3.jpg",
-          "category": ["commerce"],
+          "src": "https://nrdevux.com/klim/photos/3Yelow/3.jpg",
+          "category": [],
           "isPreview": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-4.jpg",
-          "category": ["commerce"],
-          "isPreview": false
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-4.jpg",
-          "category": ["commerce"],
-          "isPreview": false
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/photo/photo-4.jpg",
-          "category": ["commerce"],
-          "isPreview": false
         }
       ]
     },
-
     {
       "id": 4,
-      "title": "vertical - 1 fater 3",
+      "title": "Liza",
       "category": [],
       "photos": [
         {
-          "src": "https://nrdevux.com/klim/photos/vertical/1-min.jpg",
-          "isPreview": true,
-          "isVertical": true
+          "src": "https://nrdevux.com/klim/photos/4Liza/1.jpg",
+          "category": [],
+          "isPreview": true
         },
         {
-          "src": "https://nrdevux.com/klim/photos/vertical/2-min.jpg",
-          "isPreview": true,
-          "isVertical": true
+          "src": "https://nrdevux.com/klim/photos/4Liza/2.jpg",
+          "category": [],
+          "isPreview": true
         },
         {
-          "src": "https://nrdevux.com/klim/photos/vertical/3-min.jpg",
-          "isPreview": true,
-          "isVertical": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/vertical/4-min.jpg",
-          "isVertical": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/vertical/5-min.jpg",
-          "isVertical": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/vertical/6-min.jpg"
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/vertical/8-min.jpg",
-          "isVertical": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/vertical/9-min.jpg",
-          "isVertical": true
+          "src": "https://nrdevux.com/klim/photos/4Liza/3.jpg",
+          "category": [],
+          "isPreview": true
         }
       ]
     },
     {
       "id": 5,
-      "title": "vertical - 2 fater 3",
+      "title": "Rija",
       "category": [],
       "photos": [
         {
-          "src": "https://nrdevux.com/klim/photos/vertical/1-min.jpg",
-          "isVertical": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/vertical/2-min.jpg",
-          "isVertical": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/vertical/3-min.jpg",
-          "isVertical": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/vertical/4-min.jpg",
-          "isVertical": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/vertical/5-min.jpg",
-          "isVertical": true,
+          "src": "https://nrdevux.com/klim/photos/5Rija/1.jpg",
+          "category": [],
           "isPreview": true
         },
         {
-          "src": "https://nrdevux.com/klim/photos/vertical/6-min.jpg"
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/vertical/8-min.jpg",
-          "isVertical": true,
+          "src": "https://nrdevux.com/klim/photos/5Rija/2.jpg",
+          "category": [],
           "isPreview": true
         },
         {
-          "src": "https://nrdevux.com/klim/photos/vertical/9-min.jpg",
-          "isPreview": true,
-          "isVertical": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/vertical/10-min.jpg",
-          "isVertical": true
+          "src": "https://nrdevux.com/klim/photos/5Rija/3.jpg",
+          "category": [],
+          "isPreview": true
         }
       ]
     }
