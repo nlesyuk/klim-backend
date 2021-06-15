@@ -2,29 +2,24 @@
   "slides": [
     {
       "type": "image",
-      "image": "http://placekitten.com/1800/627",
-      "text": "More",
-      "id": "/photo/1"
+      "image": "https://nrdevux.com/klim/slides/2.jpg",
+      "work_id": "4"
+    },
+    {
+      "type": "image",
+      "image": "https://nrdevux.com/klim/slides/1.jpg",
+      "photo_id": "4"
+    },
+    {
+      "type": "image",
+      "image": "https://nrdevux.com/klim/slides/3.jpg",
+      "work_id": "1"
     },
     {
       "type": "video",
-      "image1": "https://nrdevux.com/klim/slides/22.jpg",
-      "image": "http://placekitten.com/1800/627",
-      "text": "More",
-      "link": "/work/1",
+      "work_id": "7",
       "video": {
-        "vimeo_id": 561200941,
-        "vimeo_id2": 521769877
-      }
-    },
-    {
-      "type": "video",
-      "image": "http://placekitten.com/1800/627",
-      "text": "More",
-      "link": "/work/1",
-      "video": {
-        "vimeo_id": 561200941,
-        "vimeo_id2": 521769877
+        "vimeo_id": 561200941
       }
     }
   ],
@@ -321,6 +316,26 @@
       ],
       "videos": {
         "vimeo_id": 526813685
+      }
+    },
+    {
+      "id": 7,
+      "title": "Ril",
+      "description": "Dir German Nenov </br>Dop Stepan Klim",
+      "credits": "credits",
+      "category": ["commerce"],
+      "preview_img": "https://nrdevux.com/klim/videos/ZlataOgnevich/1.jpg",
+      "photos": [
+        {
+          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/1.jpg",
+          "isVideoPreview": true
+        },
+        {
+          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/2.jpg"
+        }
+      ],
+      "videos": {
+        "vimeo_id": 521769877
       }
     }
   ],
