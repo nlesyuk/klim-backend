@@ -1,8 +1,20 @@
 {
   "slides": [
     {
+      "type": "video",
+      "work_id": "7",
+      "video": {
+        "vimeo_id": 561200941
+      }
+    },
+    {
       "type": "image",
       "image": "https://nrdevux.com/klim/slides/2.jpg",
+      "work_id": "4"
+    },
+    {
+      "type": "image",
+      "image": "https://nrdevux.com/klim/slides/11.jpg",
       "work_id": "4"
     },
     {
@@ -12,15 +24,33 @@
     },
     {
       "type": "image",
+      "image": "https://nrdevux.com/klim/slides/12.jpg",
+      "work_id": "4"
+    },
+    {
+      "type": "image",
       "image": "https://nrdevux.com/klim/slides/3.jpg",
       "work_id": "1"
     },
     {
-      "type": "video",
-      "work_id": "7",
-      "video": {
-        "vimeo_id": 561200941
-      }
+      "type": "image",
+      "image": "https://nrdevux.com/klim/slides/13.jpg",
+      "work_id": "4"
+    },
+    {
+      "type": "image",
+      "image": "https://nrdevux.com/klim/slides/14.jpg",
+      "work_id": "4"
+    },
+    {
+      "type": "image",
+      "image": "https://nrdevux.com/klim/slides/15.jpg",
+      "work_id": "4"
+    },
+    {
+      "type": "image",
+      "image": "https://nrdevux.com/klim/slides/16.jpg",
+      "work_id": "4"
     }
   ],
   "videos": [
