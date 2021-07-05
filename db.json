@@ -511,49 +511,250 @@
   ],
   "shots": [
     {
-      "src": "https://nrdevux.com/klim/photos/video/wide/wide-1.jpg",
-      "category": ["portrait"]
-    },
-    {
-      "src": "https://nrdevux.com/klim/photos/video/wide/wide-2.jpg",
+      "src": "https://nrdevux.com/klim/shots/1.jpg",
       "category": ["landscape"]
     },
     {
-      "src": "https://nrdevux.com/klim/photos/video/wide/wide-3.jpg",
+      "src": "https://nrdevux.com/klim/shots/2.jpg",
       "category": ["portrait"]
     },
     {
-      "src": "https://nrdevux.com/klim/photos/video/wide/wide-4.jpg",
-      "category": ["mood"]
-    },
-    {
-      "src": "https://nrdevux.com/klim/photos/video/wide/wide-5.jpg",
-      "category": ["mood"]
-    },
-    {
-      "src": "https://nrdevux.com/klim/photos/video/wide/wide-6.jpg",
+      "src": "https://nrdevux.com/klim/shots/3.jpg",
       "category": ["landscape"]
     },
     {
-      "src": "https://nrdevux.com/klim/photos/video/wide/wide-7.jpg",
+      "src": "https://nrdevux.com/klim/shots/4.jpg",
+      "category": ["mood"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/5.jpg",
+      "category": ["mood"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/6.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/7.jpg",
       "category": ["mood", "landscape"]
     },
     {
-      "src": "https://nrdevux.com/klim/photos/video/wide/wide-8.jpg",
+      "src": "https://nrdevux.com/klim/shots/8.jpg",
       "category": ["landscape"]
     },
     {
-      "src": "https://nrdevux.com/klim/photos/video/wide/wide-9.png",
+      "src": "https://nrdevux.com/klim/shots/9.jpg",
       "category": ["landscape"]
     },
     {
-      "src": "https://nrdevux.com/klim/photos/video/wide/wide-10.png",
+      "src": "https://nrdevux.com/klim/shots/10.jpg",
       "category": ["landscape"]
     },
     {
-      "src": "https://nrdevux.com/klim/photos/video/wide/wide-11.png",
+      "src": "https://nrdevux.com/klim/shots/11.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/12.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/13.jpg",
+      "category": ["portrait"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/14.jpg",
+      "category": ["mood"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/15.jpg",
+      "category": ["mood"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/16.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/17.jpg",
+      "category": ["mood", "landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/18.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/19.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/20.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/21.jpg",
+      "category": ["portrait"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/22.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/23.jpg",
+      "category": ["portrait"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/24.jpg",
+      "category": ["mood"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/25.jpg",
+      "category": ["mood"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/26.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/27.jpg",
+      "category": ["mood", "landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/28.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/29.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/30.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/31.jpg",
+      "category": ["portrait"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/32.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/33.jpg",
+      "category": ["portrait"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/34.jpg",
+      "category": ["mood"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/35.jpg",
+      "category": ["mood"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/36.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/37.jpg",
+      "category": ["mood", "landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/38.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/39.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/40.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/41.jpg",
+      "category": ["portrait"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/42.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/43.jpg",
+      "category": ["portrait"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/44.jpg",
+      "category": ["mood"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/45.jpg",
+      "category": ["mood"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/46.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/47.jpg",
+      "category": ["mood", "landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/48.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/49.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/50.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/51.jpg",
+      "category": ["portrait"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/52.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/53.jpg",
+      "category": ["portrait"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/54.jpg",
+      "category": ["mood"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/55.jpg",
+      "category": ["mood"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/56.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/57.jpg",
+      "category": ["mood", "landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/58.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/59.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/60.jpg",
+      "category": ["landscape"]
+    },
+    {
+      "src": "https://nrdevux.com/klim/shots/61.jpg",
       "category": ["landscape"]
     }
+
   ],
   "contact": {
     "phone": "+3(099) 265 00 01",
