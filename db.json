@@ -558,457 +558,372 @@
       }
     ]
   },
-  "photos1": [
-    {
-      "id": 1,
-      "title": "Yrii Garmah",
-      "category": [],
-      "photos": [
-        {
-          "src": "https://nrdevux.com/klim/photos/1YriiGarmah/1.jpg",
-          "category": [],
-          "isPreview": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/1YriiGarmah/2.jpg",
-          "category": [],
-          "isPreview": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/1YriiGarmah/3.jpg",
-          "category": [],
-          "isPreview": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/1YriiGarmah/4.jpg",
-          "category": [],
-          "isPreview": false
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/1YriiGarmah/5.jpg",
-          "category": [],
-          "isPreview": false
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/1YriiGarmah/6.jpg",
-          "category": [],
-          "isPreview": false
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/1YriiGarmah/7.jpg",
-          "category": [],
-          "isPreview": false
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/1YriiGarmah/8.jpg",
-          "category": [],
-          "isPreview": false
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/1YriiGarmah/9.jpg",
-          "category": [],
-          "isPreview": false
-        }
-      ]
-    },
-    {
-      "id": 2,
-      "title": "Regina",
-      "category": ["commerce"],
-      "photos": [
-        {
-          "src": "https://nrdevux.com/klim/photos/2Regina/1.jpg",
-          "category": ["commerce"],
-          "isPreview": true,
-          "isVertical": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/2Regina/2.jpg",
-          "category": ["commerce"],
-          "isPreview": true,
-          "isVertical": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/2Regina/3.jpg",
-          "category": ["commerce"],
-          "isPreview": true,
-          "isVertical": true
-        }
-      ]
-    },
-    {
-      "id": 3,
-      "title": "Yelow",
-      "category": [],
-      "photos": [
-        {
-          "src": "https://nrdevux.com/klim/photos/3Yelow/1.jpg",
-          "category": [],
-          "isPreview": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/3Yelow/2.jpg",
-          "category": [],
-          "isPreview": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/3Yelow/3.jpg",
-          "category": [],
-          "isPreview": true
-        }
-      ]
-    },
-    {
-      "id": 4,
-      "title": "Liza",
-      "category": [],
-      "photos": [
-        {
-          "src": "https://nrdevux.com/klim/photos/4Liza/1.jpg",
-          "category": [],
-          "isPreview": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/4Liza/2.jpg",
-          "category": [],
-          "isPreview": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/4Liza/3.jpg",
-          "category": [],
-          "isPreview": true
-        }
-      ]
-    },
-    {
-      "id": 5,
-      "title": "Rija",
-      "category": [],
-      "photos": [
-        {
-          "src": "https://nrdevux.com/klim/photos/5Rija/1.jpg",
-          "category": [],
-          "isPreview": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/5Rija/2.jpg",
-          "category": [],
-          "isPreview": true
-        },
-        {
-          "src": "https://nrdevux.com/klim/photos/5Rija/3.jpg",
-          "category": [],
-          "isPreview": true
-        }
-      ]
-    }
-  ],
   "shots": [
     {
       "id": 1,
       "src": "https://nrdevux.com/klim/shots/1.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 2,
       "src": "https://nrdevux.com/klim/shots/2.jpg",
-      "category": ["portrait"]
+      "category": ["portrait"],
+      "workId": 1
     },
     {
       "id": 3,
       "src": "https://nrdevux.com/klim/shots/3.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 4,
       "src": "https://nrdevux.com/klim/shots/4.jpg",
-      "category": ["mood"]
+      "category": ["mood"],
+      "workId": 1
     },
     {
       "id": 5,
       "src": "https://nrdevux.com/klim/shots/5.jpg",
-      "category": ["mood"]
+      "category": ["mood"],
+      "workId": 1
     },
     {
       "id": 6,
       "src": "https://nrdevux.com/klim/shots/6.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 7,
       "src": "https://nrdevux.com/klim/shots/7.jpg",
-      "category": ["mood", "landscape"]
+      "category": ["mood", "landscape"],
+      "workId": 1
     },
     {
       "id": 8,
       "src": "https://nrdevux.com/klim/shots/8.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 9,
       "src": "https://nrdevux.com/klim/shots/9.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 10,
       "src": "https://nrdevux.com/klim/shots/10.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 11,
       "src": "https://nrdevux.com/klim/shots/11.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 12,
       "src": "https://nrdevux.com/klim/shots/12.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 13,
       "src": "https://nrdevux.com/klim/shots/13.jpg",
-      "category": ["portrait"]
+      "category": ["portrait"],
+      "workId": 1
     },
     {
       "id": 14,
       "src": "https://nrdevux.com/klim/shots/14.jpg",
-      "category": ["mood"]
+      "category": ["mood"],
+      "workId": 1
     },
     {
       "id": 15,
       "src": "https://nrdevux.com/klim/shots/15.jpg",
-      "category": ["mood"]
+      "category": ["mood"],
+      "workId": 1
     },
     {
       "id": 16,
       "src": "https://nrdevux.com/klim/shots/16.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 17,
       "src": "https://nrdevux.com/klim/shots/17.jpg",
-      "category": ["mood", "landscape"]
+      "category": ["mood", "landscape"],
+      "workId": 1
     },
     {
       "id": 18,
       "src": "https://nrdevux.com/klim/shots/18.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 19,
       "src": "https://nrdevux.com/klim/shots/19.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 20,
       "src": "https://nrdevux.com/klim/shots/20.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 21,
       "src": "https://nrdevux.com/klim/shots/21.jpg",
-      "category": ["portrait"]
+      "category": ["portrait"],
+      "workId": 1
     },
     {
       "id": 22,
       "src": "https://nrdevux.com/klim/shots/22.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 23,
       "src": "https://nrdevux.com/klim/shots/23.jpg",
-      "category": ["portrait"]
+      "category": ["portrait"],
+      "workId": 1
     },
     {
       "id": 24,
       "src": "https://nrdevux.com/klim/shots/24.jpg",
-      "category": ["mood"]
+      "category": ["mood"],
+      "workId": 1
     },
     {
       "id": 25,
       "src": "https://nrdevux.com/klim/shots/25.jpg",
-      "category": ["mood"]
+      "category": ["mood"],
+      "workId": 1
     },
     {
       "id": 26,
       "src": "https://nrdevux.com/klim/shots/26.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 27,
       "src": "https://nrdevux.com/klim/shots/27.jpg",
-      "category": ["mood", "landscape"]
+      "category": ["mood", "landscape"],
+      "workId": 1
     },
     {
       "id": 28,
       "src": "https://nrdevux.com/klim/shots/28.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 29,
       "src": "https://nrdevux.com/klim/shots/29.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 30,
       "src": "https://nrdevux.com/klim/shots/30.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 31,
       "src": "https://nrdevux.com/klim/shots/31.jpg",
-      "category": ["portrait"]
+      "category": ["portrait"],
+      "workId": 1
     },
     {
       "id": 32,
       "src": "https://nrdevux.com/klim/shots/32.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 33,
       "src": "https://nrdevux.com/klim/shots/33.jpg",
-      "category": ["portrait"]
+      "category": ["portrait"],
+      "workId": 1
     },
     {
       "id": 34,
       "src": "https://nrdevux.com/klim/shots/34.jpg",
-      "category": ["mood"]
+      "category": ["mood"],
+      "workId": 1
     },
     {
       "id": 35,
       "src": "https://nrdevux.com/klim/shots/35.jpg",
-      "category": ["mood"]
+      "category": ["mood"],
+      "workId": 1
     },
     {
       "id": 36,
       "src": "https://nrdevux.com/klim/shots/36.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 37,
       "src": "https://nrdevux.com/klim/shots/37.jpg",
-      "category": ["mood", "landscape"]
+      "category": ["mood", "landscape"],
+      "workId": 1
     },
     {
       "id": 38,
       "src": "https://nrdevux.com/klim/shots/38.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 39,
       "src": "https://nrdevux.com/klim/shots/39.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 40,
       "src": "https://nrdevux.com/klim/shots/40.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 41,
       "src": "https://nrdevux.com/klim/shots/41.jpg",
-      "category": ["portrait"]
+      "category": ["portrait"],
+      "workId": 1
     },
     {
       "id": 42,
       "src": "https://nrdevux.com/klim/shots/42.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 43,
       "src": "https://nrdevux.com/klim/shots/43.jpg",
-      "category": ["portrait"]
+      "category": ["portrait"],
+      "workId": 1
     },
     {
       "id": 44,
       "src": "https://nrdevux.com/klim/shots/44.jpg",
-      "category": ["mood"]
+      "category": ["mood"],
+      "workId": 1
     },
     {
       "id": 45,
       "src": "https://nrdevux.com/klim/shots/45.jpg",
-      "category": ["mood"]
+      "category": ["mood"],
+      "workId": 1
     },
     {
       "id": 46,
       "src": "https://nrdevux.com/klim/shots/46.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 47,
       "src": "https://nrdevux.com/klim/shots/47.jpg",
-      "category": ["mood", "landscape"]
+      "category": ["mood", "landscape"],
+      "workId": 1
     },
     {
       "id": 48,
       "src": "https://nrdevux.com/klim/shots/48.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 49,
       "src": "https://nrdevux.com/klim/shots/49.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 50,
       "src": "https://nrdevux.com/klim/shots/50.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 51,
       "src": "https://nrdevux.com/klim/shots/51.jpg",
-      "category": ["portrait"]
+      "category": ["portrait"],
+      "workId": 1
     },
     {
       "id": 52,
       "src": "https://nrdevux.com/klim/shots/52.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 53,
       "src": "https://nrdevux.com/klim/shots/53.jpg",
-      "category": ["portrait"]
+      "category": ["portrait"],
+      "workId": 1
     },
     {
       "id": 54,
       "src": "https://nrdevux.com/klim/shots/54.jpg",
-      "category": ["mood"]
+      "category": ["mood"],
+      "workId": 1
     },
     {
-      "id": 1,
       "id": 55,
       "src": "https://nrdevux.com/klim/shots/55.jpg",
-      "category": ["mood"]
+      "category": ["mood"],
+      "workId": 1
     },
     {
       "id": 56,
       "src": "https://nrdevux.com/klim/shots/56.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 57,
       "src": "https://nrdevux.com/klim/shots/57.jpg",
-      "category": ["mood", "landscape"]
+      "category": ["mood", "landscape"],
+      "workId": 1
     },
     {
       "id": 58,
       "src": "https://nrdevux.com/klim/shots/58.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 59,
       "src": "https://nrdevux.com/klim/shots/59.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 60,
       "src": "https://nrdevux.com/klim/shots/60.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     },
     {
       "id": 61,
       "src": "https://nrdevux.com/klim/shots/61.jpg",
-      "category": ["landscape"]
+      "category": ["landscape"],
+      "workId": 1
     }
   ],
   "contact": {
