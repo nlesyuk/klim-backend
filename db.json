@@ -4,7 +4,7 @@
       "type": "video",
       "work_id": "7",
       "video": {
-        "vimeo_id": 561200941
+        "vimeoId": 561200941
       }
     },
     {
@@ -51,7 +51,7 @@
       "type": "video",
       "work_id": "9",
       "video": {
-        "vimeo_id": 561200941
+        "vimeoId": 561200941
       }
     }
   ],
@@ -62,39 +62,47 @@
       "description": "Dir Sergei Sarakhanov </br>Dop Stepan Klim",
       "credits": "credits </br> credits",
       "category": ["commerce"],
-      "preview_img": "https://nrdevux.com/klim/videos/Drezden-Ronin/1.jpg",
       "photos": [
         {
           "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/1.jpg",
-          "isVideoPreview": true
+          "isPreview": true,
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/2.jpg"
+          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/2.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/3.jpg"
+          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/3.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/4.jpg"
+          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/4.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/6.jpg"
+          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/6.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/7.jpg"
+          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/7.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/8.jpg"
+          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/8.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/9.jpg"
+          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/9.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/10.jpg"
+          "src": "https://nrdevux.com/klim/videos/Drezden-Ronin/10.jpg",
+          "order": 1
         }
       ],
       "videos": {
-        "vimeo_id": 526809109
+        "vimeoId": 526809109
       }
     },
     {
@@ -107,56 +115,72 @@
       "photos": [
         {
           "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/1.jpg",
-          "isVideoPreview": true
+          "isPreview": true,
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/2.jpg"
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/2.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/3.jpg"
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/3.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/4.jpg"
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/4.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/5.jpg"
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/5.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/6.jpg"
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/6.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/7.jpg"
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/7.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/8.jpg"
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/8.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/9.jpg"
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/9.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/10.jpg"
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/10.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/11.jpg"
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/11.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/12.jpg"
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/12.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/13.jpg"
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/13.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/14.jpg"
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/14.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/15.jpg"
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/15.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/16.jpg"
+          "src": "https://nrdevux.com/klim/videos/NataliaMogilevskaya/16.jpg",
+          "order": 1
         }
       ],
       "videos": {
-        "vimeo_id": 526812588
+        "vimeoId": 526812588
       }
     },
     {
@@ -169,53 +193,68 @@
       "photos": [
         {
           "src": "https://nrdevux.com/klim/videos/Karaman/1.jpg",
-          "isVideoPreview": true
+          "isPreview": true,
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Karaman/2.jpg"
+          "src": "https://nrdevux.com/klim/videos/Karaman/2.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Karaman/3.jpg"
+          "src": "https://nrdevux.com/klim/videos/Karaman/3.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Karaman/4.jpg"
+          "src": "https://nrdevux.com/klim/videos/Karaman/4.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Karaman/5.jpg"
+          "src": "https://nrdevux.com/klim/videos/Karaman/5.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Karaman/6.jpg"
+          "src": "https://nrdevux.com/klim/videos/Karaman/6.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Karaman/7.jpg"
+          "src": "https://nrdevux.com/klim/videos/Karaman/7.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Karaman/8.jpg"
+          "src": "https://nrdevux.com/klim/videos/Karaman/8.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Karaman/9.jpg"
+          "src": "https://nrdevux.com/klim/videos/Karaman/9.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Karaman/10.jpg"
+          "src": "https://nrdevux.com/klim/videos/Karaman/10.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Karaman/11.jpg"
+          "src": "https://nrdevux.com/klim/videos/Karaman/11.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Karaman/12.jpg"
+          "src": "https://nrdevux.com/klim/videos/Karaman/12.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Karaman/13.jpg"
+          "src": "https://nrdevux.com/klim/videos/Karaman/13.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Karaman/14.jpg"
+          "src": "https://nrdevux.com/klim/videos/Karaman/14.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Karaman/15.jpg"
+          "src": "https://nrdevux.com/klim/videos/Karaman/15.jpg",
+          "order": 1
         }
       ],
       "videos": {
-        "vimeo_id": 526812588
+        "vimeoId": 526812588
       }
     },
     {
@@ -228,38 +267,48 @@
       "photos": [
         {
           "src": "https://nrdevux.com/klim/videos/NastiaKamenskikh/1.jpg",
-          "isVideoPreview": true
+          "isPreview": true,
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/NastiaKamenskikh/2.jpg"
+          "src": "https://nrdevux.com/klim/videos/NastiaKamenskikh/2.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/NastiaKamenskikh/3.jpg"
+          "src": "https://nrdevux.com/klim/videos/NastiaKamenskikh/3.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/NastiaKamenskikh/4.jpg"
+          "src": "https://nrdevux.com/klim/videos/NastiaKamenskikh/4.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/NastiaKamenskikh/5.jpg"
+          "src": "https://nrdevux.com/klim/videos/NastiaKamenskikh/5.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/NastiaKamenskikh/6.jpg"
+          "src": "https://nrdevux.com/klim/videos/NastiaKamenskikh/6.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/NastiaKamenskikh/7.jpg"
+          "src": "https://nrdevux.com/klim/videos/NastiaKamenskikh/7.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/NastiaKamenskikh/8.jpg"
+          "src": "https://nrdevux.com/klim/videos/NastiaKamenskikh/8.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/NastiaKamenskikh/9.jpg"
+          "src": "https://nrdevux.com/klim/videos/NastiaKamenskikh/9.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/NastiaKamenskikh/10.jpg"
+          "src": "https://nrdevux.com/klim/videos/NastiaKamenskikh/10.jpg",
+          "order": 1
         }
       ],
       "videos": {
-        "vimeo_id": 526817489
+        "vimeoId": 526817489
       }
     },
     {
@@ -272,35 +321,44 @@
       "photos": [
         {
           "src": "https://nrdevux.com/klim/videos/Saline/1.jpg",
-          "isVideoPreview": true
+          "isPreview": true,
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Saline/2.jpg"
+          "src": "https://nrdevux.com/klim/videos/Saline/2.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Saline/3.jpg"
+          "src": "https://nrdevux.com/klim/videos/Saline/3.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Saline/4.jpg"
+          "src": "https://nrdevux.com/klim/videos/Saline/4.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Saline/5.jpg"
+          "src": "https://nrdevux.com/klim/videos/Saline/5.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Saline/6.jpg"
+          "src": "https://nrdevux.com/klim/videos/Saline/6.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Saline/7.jpg"
+          "src": "https://nrdevux.com/klim/videos/Saline/7.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Saline/8.jpg"
+          "src": "https://nrdevux.com/klim/videos/Saline/8.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/Saline/9.jpg"
+          "src": "https://nrdevux.com/klim/videos/Saline/9.jpg",
+          "order": 1
         }
       ],
       "videos": {
-        "vimeo_id": 541085390
+        "vimeoId": 541085390
       }
     },
     {
@@ -313,41 +371,52 @@
       "photos": [
         {
           "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/1.jpg",
-          "isVideoPreview": true
+          "isPreview": true,
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/2.jpg"
+          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/2.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/3.jpg"
+          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/3.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/4.jpg"
+          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/4.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/5.jpg"
+          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/5.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/6.jpg"
+          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/6.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/7.jpg"
+          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/7.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/8.jpg"
+          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/8.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/9.jpg"
+          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/9.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/10.jpg"
+          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/10.jpg",
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/11.jpg"
+          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/11.jpg",
+          "order": 1
         }
       ],
       "videos": {
-        "vimeo_id": 526813685
+        "vimeoId": 526813685
       }
     },
     {
@@ -360,14 +429,16 @@
       "photos": [
         {
           "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/1.jpg",
-          "isVideoPreview": true
+          "isPreview": true,
+          "order": 1
         },
         {
-          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/2.jpg"
+          "src": "https://nrdevux.com/klim/videos/ZlataOgnevich/2.jpg",
+          "order": 2
         }
       ],
       "videos": {
-        "vimeo_id": 521769877
+        "vimeoId": 521769877
       }
     }
   ],
