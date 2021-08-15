@@ -1,5 +1,5 @@
-const Router = require('express')
-const router = new Router()
+const Express = require('express')
+const router = new Express()
 const ContactController = require('../controllers/contact.controller')
 
 router.post('/contact', ContactController.createContact)

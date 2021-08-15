@@ -9,31 +9,37 @@ create TABLE work(
   title VARCHAR(255),
   videos JSON,
   credits TEXT,
+  work_order INTEGER,
   description TEXT,
-  photos INTEGER[],
+  category TEXT[],
+  photos INTEGER[]
 );
 
 create TABLE shot(
   id SERIAL PRIMARY KEY,
   categories TEXT[],
-  photos INTEGER[],
+  photos INTEGER[]
 );
 
 create TABLE photo(
   id SERIAL PRIMARY KEY,
   title VARCHAR(255),
   category TEXT[],
-  photos INTEGER[],
+  photos INTEGER[]
 );
 
-cretae TABLE photos(
+create TABLE photos(
   id SERIAL PRIMARY KEY,
   work_id INTEGER,
   shot_id INTEGER,
   photo_id INTEGER,
+  work_order INTEGER,
+  shot_order INTEGER,
+  photo_order INTEGER,
   is_preview BOOLEAN,
   format VARCHAR(255),
-  categories TEXT[],
+  categories VARCHAR(255),
+  image VARCHAR(255)
 );
 
 
