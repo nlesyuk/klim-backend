@@ -5,9 +5,10 @@ class WorkController {
   // CRUD
   async createWork(req, res) {
     try {
-      const { title, description, credits, photosInfo } = req.body
+      const { title, description, credits, videos, photosInfo, work_order, category } = req.body
       const filesInfo = JSON.parse(photosInfo)
       const files = req.files
+      let category2 = category ? category : null
 
       console.log('TEXT', title, description, credits, filesInfo)
       console.log('FILES', files)
@@ -33,12 +34,17 @@ class WorkController {
       console.log('str', queryStr, queryArr)
       // 1 - set photos in table
       const photos = await db.query(`INSERT INTO photos(is_preview, work_order, format, image) values ${queryStr} RETURNING *;`)
-      // const photos = await db.none(`INSERT INTO photos (work_id, shot_id, photo_id, is_preview, format, categories, image) values ($1) RETURNING *`, Inserts('1, $2, $3, $4, $5, $6', rrr))
-      console.log('DB PHGOTOS', photos)
-      // 2 -
+      console.log('DB PHOTOS', photos.rows)
+      let photoIds = ''
+      if (photos?.rows?.length) {
+        photoIds = Array.from(photos.rows).map(v => v.id)
+      }
 
-      // const work = await db.query(`INSERT INTO work (title, videos, description, credits, category, photos) values ($1, $2, $3, $4, $5, $6) RETURNING *`, [title, videos, description, credits, category, photos])
+      // 2 - get id of photos and set in work record
+      const work = await db.query(`INSERT INTO work (title, videos, description, credits, work_order, category, photos) values ($1, $2, $3, $4, $5, $6, $7) RETURNING *`, [title, videos, description, credits, work_order, category2, photoIds])
+      console.log('DB WORK', work.rows)
 
+      res.json(work.rows?.[0])
     } catch (e) {
       console.error('ERROR', e)
       // remove uploaded files
