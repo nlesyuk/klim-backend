@@ -30,15 +30,21 @@ create TABLE photo(
 
 create TABLE photos(
   id SERIAL PRIMARY KEY,
+
   work_id INTEGER,
-  shot_id INTEGER,
-  photo_id INTEGER,
   work_order INTEGER,
-  shot_order INTEGER,
+  is_work_preview BOOLEAN,
+  work_categories VARCHAR(255),
+
+  photo_id INTEGER,
   photo_order INTEGER,
-  is_preview BOOLEAN,
+  is_photo_preview BOOLEAN,
+  photo_categories VARCHAR(255),
+
+  shot_id INTEGER,
+  shot_order INTEGER,
+
   format VARCHAR(255),
-  categories VARCHAR(255),
   image VARCHAR(255)
 );
 
