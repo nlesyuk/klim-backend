@@ -1,16 +1,18 @@
-const express = require('express')
+const express = require('express');
 const app = express();
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const multer = require("multer");
+require('dotenv').config({ path: __dirname + '/.env' })
 
-const PORT = process.env.PORT || 8090;
+const PORT = process.env.PORT || 8091;
 
 const { getCategory } = require('./global/helper')
 const constants = require('./global/constants')
 const workRoutes = require('./routes/work.route')
 const contactRoutes = require('./routes/contact.route')
+const imagesRoutes = require('./routes/images.route')
 
 const storageConfig = multer.diskStorage({
   destination: (req, file, callback) => {
@@ -57,6 +59,19 @@ app.use(express.json())
 // routes:
 app.use('/api', workRoutes)
 app.use('/api', contactRoutes)
-
-
+app.use('/public', imagesRoutes)
+// // route images
+// app.get('/public/uploads/:user/:category/:file', (req, res) => {
+//   console.log('params', req.params)
+//   const author = req.headers.author
+//   const user = req.params.user
+//   const category = req.params.category
+//   const file = req.params.file
+//   // res.type('image/jpeg')
+//   res.sendFile(`/public/uploads/${user}/${category}/${file}`)
+// })
+// routes error handler
+// app.use((req, res, next) => {
+//   res.status(404).send({ message: "Not Found" });
+// });
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`))
