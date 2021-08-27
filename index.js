@@ -60,18 +60,9 @@ app.use(express.json())
 app.use('/api', workRoutes)
 app.use('/api', contactRoutes)
 app.use('/public', imagesRoutes)
-// // route images
-// app.get('/public/uploads/:user/:category/:file', (req, res) => {
-//   console.log('params', req.params)
-//   const author = req.headers.author
-//   const user = req.params.user
-//   const category = req.params.category
-//   const file = req.params.file
-//   // res.type('image/jpeg')
-//   res.sendFile(`/public/uploads/${user}/${category}/${file}`)
-// })
 // routes error handler
-// app.use((req, res, next) => {
-//   res.status(404).send({ message: "Not Found" });
-// });
+app.use((req, res, next) => {
+  res.status(404).send({ message: "Not Found" });
+});
+
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`))

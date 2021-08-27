@@ -1,5 +1,6 @@
 const Router = require('express')
 const router = new Router()
+const path = require('path')
 
 // route images
 router.get('/uploads/:user/:category/:file', (req, res) => {
@@ -8,8 +9,7 @@ router.get('/uploads/:user/:category/:file', (req, res) => {
   const user = req.params.user
   const category = req.params.category
   const file = req.params.file
-  // res.type('image/jpeg')
-  res.sendFile(`/public/uploads/${user}/${category}/${file}`)
+  res.sendFile(path.join(__dirname, `../public/uploads/${user}/${category}/${file}`))
 })
 
 module.exports = router
