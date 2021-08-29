@@ -79,20 +79,23 @@ class WorkController {
       const { id } = req.params
 
       const workDirty = await db.query(`SELECT * FROM work WHERE id = $1`, [id])
-      console.log(workDirty.rows)
+      if (workDirty.rows.length === 0) {
+        res.status(404);
+        res.send({ message: 'Work do not exist' });
+      }
+
       const work = workDirty.rows[0]
       const photosDirty = await db.query(`SELECT * FROM photos WHERE work_id = $1`, [id])
-      console.log(photosDirty.rows)
 
       if (photosDirty?.rows?.length) {
         work.photos = photosDirty.rows.map(item => ({
-          // src: `${config.public_domain}:${config.port}/${item.image}`,
           src: `//${process.env.PUBLIC_DOMAIN}:${process.env.PORT}/${item.image}`,
           order: item.work_order,
           isPreview: item.is_work_preview,
         }))
       }
 
+      console.log('work', work)
       res.json(work)
     } catch (error) {
       console.error('getWork Error', error)
