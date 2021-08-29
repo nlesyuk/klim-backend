@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const multer = require("multer");
 require('dotenv').config({ path: __dirname + '/.env' })
+const { renameIncomeImagePattern } = require('./global/helper')
 
 const PORT = process.env.PORT || 8091;
 
@@ -16,7 +17,6 @@ const imagesRoutes = require('./routes/images.route')
 
 const storageConfig = multer.diskStorage({
   destination: (req, file, callback) => {
-    console.log('--')
     const author = req.headers.author
 
     if (author) {
@@ -43,7 +43,12 @@ const storageConfig = multer.diskStorage({
     // https://stackoverflow.com/questions/46975942/how-to-send-image-name-in-database-using-multer-and-express/47560629
   },
   filename: (req, file, callback) => {
-    callback(null, `${Date.now()}_${req.headers.author}_${file.originalname}`);
+    console.log('FILE', file)
+    let filename = `${file.originalname}`.replace(renameIncomeImagePattern, '') // remove special character from str
+    if (!filename.length) {
+      filename = `image_${Date.now()}`;
+    }
+    callback(null, `${Date.now()}_${req.headers.author}_${filename}`);
   }
 });
 

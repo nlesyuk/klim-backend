@@ -1,11 +1,14 @@
 const db = require('../db/')
 const fs = require('fs');
-const config = require('../config.js');
+const { addAbortSignal } = require('stream');
+const { getRightPathForImage } = require('../global/helper')
 
 class WorkController {
   // CRUD
   async createWork(req, res) {
+    const storage = {}
     try {
+      storage.r = 22
       const { title, description, credits, videos, photosInfo, work_order, category } = req.body
       const filesInfo = JSON.parse(photosInfo)
       const files = req.files
@@ -15,12 +18,20 @@ class WorkController {
       console.log('FILES', files)
 
       // prepare photos to db
-      const mappedFiles = Array.from(files).map(v => ({ path: v.path, originalname: v.originalname })) // get path of photo in current project backedn/public/uploads/s/category
+      const mappedFiles = Array.from(files).map(v => {
+        let destination = `${v.destination}`.slice(2)
+        return {
+          path: `${destination}/${v.filename}`,
+          filename: v.filename
+        }
+      }) // get path of photo in current project backend/public/uploads/s/category
       console.log('FILES-INFO', mappedFiles)
 
       // new
       // 1 - create work record
       const work = await db.query(`INSERT INTO work (title, videos, description, credits, work_order, category) values ($1, $2, $3, $4, $5, $6) RETURNING *`, [title, videos, description, credits, work_order, workCategory])
+      storage.workId = work.rows[0].id
+
       console.log('DB WORK', work.rows)
       let workId = ''
       if (work.rows?.[0]?.id) {
@@ -31,18 +42,18 @@ class WorkController {
 
       // 2 - create photos record
       const queryArr = []
-      Array.from(filesInfo).forEach((photo, i) => {
-        const matchFileWithPhotoInfo = mappedFiles.find(file => file.originalname === photo.fileName)
+      console.log('DB WORK-filesInfo', filesInfo)
+      console.log('DB WORK-mappedFiles', mappedFiles)
 
-        if (matchFileWithPhotoInfo) {
-          const isWorkPreview = photo.isPreview ?? false
-          const work_order = photo.order ?? null
-          const format = photo.format ?? null
-          const image = matchFileWithPhotoInfo.path ?? null
-          queryArr.push(`(${workId}, ${isWorkPreview}, ${work_order}, ${format}, '${image}')`)
-        }
+      Array.from(filesInfo).forEach((photo, i) => {
+        const isWorkPreview = photo.isPreview ?? false
+        const work_order = photo.order ?? null
+        const format = photo.format ?? null
+        const image = mappedFiles[i].path ?? null
+        queryArr.push(`(${workId}, ${isWorkPreview}, ${work_order}, '${format}', '${image}')`)
       });
       const queryStr = queryArr.join(',')
+      console.log('QueryArr', queryStr, queryArr)
 
       // 1 - set photos in table
       const photos = await db.query(`INSERT INTO photos(work_id, is_work_preview, work_order, format, image) values ${queryStr} RETURNING *;`)
@@ -53,6 +64,7 @@ class WorkController {
       } else {
         throw new Error('photos are not setted')
       }
+
       // 3 - set photos id in work record
       const updatedWork = await db.query(`UPDATE work SET photos = $1 WHERE  id = $2 RETURNING *`, [photoIds, workId])
       console.log('updatedWork', updatedWork.rows)
@@ -71,6 +83,10 @@ class WorkController {
           console.log('File deleted!');
         });
       })
+
+      const resq = await db.query(`DELETE FROM work WHERE id=$1`, [storage.workId])
+      console.log('storage', storage, resq.rows)
+      res.status(500)
     }
   }
 
@@ -89,7 +105,7 @@ class WorkController {
 
       if (photosDirty?.rows?.length) {
         work.photos = photosDirty.rows.map(item => ({
-          src: `//${process.env.PUBLIC_DOMAIN}:${process.env.PORT}/${item.image}`,
+          src: getRightPathForImage(item.image),
           order: item.work_order,
           isPreview: item.is_work_preview,
         }))
@@ -102,9 +118,57 @@ class WorkController {
     }
   }
 
-  async getWorks(req, res) { }
+  async getWorks(req, res) {
+    try {
+      const dirtyWorks = await db.query(`SELECT * FROM work`)
+      const dirtyWorkPhotos = await db.query(`SELECT * FROM photos WHERE work_id IS NOT NULL`)
 
-  async updateWork(req, res) { }
+      // prepare photos for front-end
+      const photos = dirtyWorkPhotos.rows.map(photo => ({
+        id: photo.id,
+        work_id: photo.work_id,
+        src: getRightPathForImage(photo.image),
+        isPreview: photo.is_work_preview,
+        order: photo.work_order,
+      }))
+
+      const works = dirtyWorks.rows.map((work) => {
+        work.photos = photos.filter(photo => {
+          if (photo.work_id && photo.work_id === work.id) {
+            delete photo.work_id
+            return true
+          }
+          return false
+        })
+        return work
+      })
+
+      const d = Date.now()
+      console.log('------------------------------------getWorks-START', d)
+      console.log(works)
+      console.log('------------------------------------getWorks-END', d)
+
+      res.json(works)
+    } catch (error) {
+      console.error('getWorks Error', error)
+    }
+  }
+
+  async updateWork(req, res) {
+    try {
+
+      const { id, credits, description, title, videos, photos } = req.body
+
+      const d = Date.now()
+      console.log('------------------------------------updateWork-START', d)
+      console.log(id, req.body)
+      console.log('------------------------------------updateWork-END', d)
+
+      res.json('ok')
+    } catch (error) {
+      console.error('updateWork ERROR:', error)
+    }
+  }
 
   async deleteWork(req, res) { }
 }

@@ -22,8 +22,8 @@ exports.Inserts = function (template, data) {
   };
 }
 
-// module.exports = {
-//   getHost,
-//   getCategory,
-//   Inserts
-// }
+exports.getRightPathForImage = function (image) {
+  return `//${process.env.PUBLIC_DOMAIN}:${process.env.PORT}/${image}`
+}
+
+exports.renameIncomeImagePattern = /[^a-zA-Z0-9.]/gi;
