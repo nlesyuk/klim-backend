@@ -9,7 +9,7 @@ class WorkController {
     const storage = {}
     try {
       storage.r = 22
-      const { title, description, credits, videos, photosInfo, work_order, category } = req.body
+      const { title, description, credits, videos, photosInfo, workOrder, category } = req.body
       const filesInfo = JSON.parse(photosInfo)
       const files = req.files
       let workCategory = category ? category : null
@@ -29,7 +29,7 @@ class WorkController {
 
       // new
       // 1 - create work record
-      const work = await db.query(`INSERT INTO work (title, videos, description, credits, work_order, category) values ($1, $2, $3, $4, $5, $6) RETURNING *`, [title, videos, description, credits, work_order, workCategory])
+      const work = await db.query(`INSERT INTO work (title, videos, description, credits, work_order, category) values ($1, $2, $3, $4, $5, $6) RETURNING *`, [title, videos, description, credits, workOrder, workCategory])
       storage.workId = work.rows[0].id
 
       console.log('DB WORK', work.rows)
@@ -115,6 +115,7 @@ class WorkController {
       res.json(work)
     } catch (error) {
       console.error('getWork Error', error)
+      res.status(500)
     }
   }
 
@@ -130,6 +131,7 @@ class WorkController {
         src: getRightPathForImage(photo.image),
         isPreview: photo.is_work_preview,
         order: photo.work_order,
+        format: photo.format ?? null,
       }))
 
       const works = dirtyWorks.rows.map((work) => {
@@ -156,21 +158,142 @@ class WorkController {
 
   async updateWork(req, res) {
     try {
-
-      const { id, credits, description, title, videos, photos } = req.body
+      const { id, title, credits, description, videos, photos } = req.body
 
       const d = Date.now()
       console.log('------------------------------------updateWork-START', d)
       console.log(id, req.body)
+
+      // prepare photos
+      const existing = photos.existing
+      const newPhotos = photos.new
+      const workId = id
+
+      /*
+      {
+        id: 15,
+        src: '//localhost:8090/public/uploads/s/work/1630249866918_s_7R-8R-Night.jpg',
+        isPreview: false,
+        order: 0
+        format: 'str'
+      }
+      */
+
+      // create new photos
+      if (newPhotos?.length) {
+        console.log('NEW:')
+        const queryArr = []
+        Array.from(newPhotos).forEach(v => {
+          console.log(v)
+        })
+        // prepare data
+        // Array.from(newPhotos).forEach((photo, i) => {
+        //   const isWorkPreview = photo.isPreview ?? false
+        //   const work_order = photo.order ?? null
+        //   const format = photo.format ?? null
+        //   const image = mappedFiles[i].path ?? null
+        //   queryArr.push(`(${workId}, ${isWorkPreview}, ${work_order}, '${format}', '${image}')`)
+        // });
+        // // req to db
+        // const photos = await db.query(`INSERT INTO photos(work_id, is_work_preview, work_order, format, image) values ${queryStr} RETURNING *;`)
+      }
+      // update photo info
+      if (existing?.length) {
+        console.log('EXISTING:')
+        Array.from(existing).forEach(v => {
+          console.log(v)
+        })
+
+        const queryArr = []
+        // prepare data
+        Array.from(existing).forEach(photo => {
+          const id = photo.id ?? null
+          const image = photo.src ?? null
+          const format = photo?.format ?? null
+          const work_order = photo.order ?? null
+          const isWorkPreview = photo.isPreview ?? false
+          queryArr.push(`(${id}, ${workId}, ${isWorkPreview}, ${work_order}, '${format}', '${image}')`)
+        });
+        /*
+          update test as t set
+          column_a = c.column_a,
+            column_c = c.column_c
+          from(values
+            ('123', 1, '---'),
+            ('345', 2, '+++')
+          ) as c(column_b, column_a, column_c)
+          where c.column_b = t.column_b;
+
+          select * from test;
+        */
+
+        console.log("RES-q", queryArr)
+        // req to db
+        const photos = await db.query(`
+          UPDATE photos AS p
+          SET
+            image = row.image
+            format = row.format
+            work_id = row.work_id
+            work_order = row.work_order
+            is_work_preview = row.is_work_preview
+          FROM (VALUES ${queryArr.join(',')})
+            AS row(id, work_id, is_work_preview, work_order, format, image)
+          WHERE row.id = p.id;
+        `)
+
+
+        console.log("RES", photos.rows)
+      }
+
+      // update work info
+      // const updateWorkDraft = await db.query(`UPDATE work SET title = $1, credits = $2, description = $3, videos = $4, photos = $5 WHERE id = $6 RETURNING *`, [title, credits, description, videos, photos, id])
+
+
       console.log('------------------------------------updateWork-END', d)
 
       res.json('ok')
     } catch (error) {
       console.error('updateWork ERROR:', error)
+      res.json('error')
     }
   }
 
-  async deleteWork(req, res) { }
+  async deleteWork(req, res) {
+    try {
+      const { id } = req.params
+      const status = {
+        id,
+      }
+
+      const removedWork = await db.query(`DELETE FROM work WHERE id = $1 RETURNING *`, [id])
+      const removedPhotos = await db.query(`DELETE FROM photos WHERE work_id = $1 AND photo_id IS NULL AND shot_id IS NULL RETURNING *`, [id])
+
+      // remove uploaded files
+      if (removedPhotos?.rows?.length) {
+        let count = 0
+        Array.from(removedPhotos.rows).forEach(file => {
+          fs.unlink(file.image, function (err) { // remove file
+            if (err) {
+              console.error("unlink can't delete file - ", file.image)
+              throw err;
+            }
+            console.log('File deleted!');
+            count++
+          });
+          status.message = `Removed ${count} photos`
+        })
+      } else {
+        await db.query(`UPDATE photos SET work_id = null WHERE work_id = $1`, [id])
+        status.message = "Photos was not removed - saved for other categories or dosn't exist"
+      }
+
+      res.json(status)
+    } catch (error) {
+      console.error('deleteWork Error', error)
+      res.status(500)
+    }
+  }
 }
 
 module.exports = new WorkController()
