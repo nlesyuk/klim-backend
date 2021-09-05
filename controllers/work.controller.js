@@ -1,14 +1,13 @@
 const db = require('../db/')
 const fs = require('fs');
 const { addAbortSignal } = require('stream');
-const { getRightPathForImage } = require('../global/helper')
+const { getRightPathForImage, removeDomainFromImagePath } = require('../global/helper')
 
 class WorkController {
   // CRUD
   async createWork(req, res) {
     const storage = {}
     try {
-      storage.r = 22
       const { title, description, credits, videos, photosInfo, workOrder, category } = req.body
       const filesInfo = JSON.parse(photosInfo)
       const files = req.files
@@ -101,17 +100,23 @@ class WorkController {
       }
 
       const work = workDirty.rows[0]
+      work.workOrder = work?.work_order ?? 0
+      delete work.work_order
+
       const photosDirty = await db.query(`SELECT * FROM photos WHERE work_id = $1`, [id])
 
+      // prepare photos for front-end
       if (photosDirty?.rows?.length) {
         work.photos = photosDirty.rows.map(item => ({
+          id: item.id,
+          work_id: item.work_id,
           src: getRightPathForImage(item.image),
-          order: item.work_order,
           isPreview: item.is_work_preview,
+          order: item.work_order,
+          format: item.format ?? null,
         }))
       }
 
-      console.log('work', work)
       res.json(work)
     } catch (error) {
       console.error('getWork Error', error)
@@ -135,6 +140,8 @@ class WorkController {
       }))
 
       const works = dirtyWorks.rows.map((work) => {
+        work.workOrder = work?.work_order ?? 0
+        delete work.work_order
         work.photos = photos.filter(photo => {
           if (photo.work_id && photo.work_id === work.id) {
             delete photo.work_id
@@ -158,103 +165,156 @@ class WorkController {
 
   async updateWork(req, res) {
     try {
-      const { id, title, credits, description, videos, photos } = req.body
+      const { id, title, credits, description, videos, photosInfo, workOrder, removedPhotos } = req.body
+      const RESPONSE = {
+        photos: []
+      }
 
       const d = Date.now()
       console.log('------------------------------------updateWork-START', d)
-      console.log(id, req.body)
+      console.log(id)
 
-      // prepare photos
-      const existing = photos.existing
-      const newPhotos = photos.new
+      // prepare PHOTOS
+      const parsedPhotosInfo = JSON.parse(photosInfo)
+      const existingPhotos = parsedPhotosInfo.existing
+      const newPhotos = parsedPhotosInfo.new
+      const parsedRemovedPhotos = JSON.parse(removedPhotos)
       const workId = id
+      // console.log('parsedPhotos', parsedPhotosInfo)
 
-      /*
-      {
+
+      // CREATE NEW PHOTOS
+      /*{
+        fileName: '168.jpg',
+        isPreview: false,
+        order: 0
+        format: 'vertical',
+      }*/
+      if (newPhotos?.length) {
+        // console.log('NEW:')
+        const queryArr = []
+        const files = req.files
+
+        // prepare photos to db
+        const mappedFiles = Array.from(files).map(v => {
+          // v.destination './public/uploads/s/work/1630852886366_s_168.jpg'
+          let destination = `${v.destination}`.slice(2)
+          return {
+            path: `${destination}/${v.filename}`, // 'public/uploads/s/work/1630852886366_s_168.jpg'
+            filename: v.filename // '1630852886366_s_168.jpg'
+          }
+        })
+        // prepare data
+        Array.from(newPhotos).forEach((photo, i) => {
+          const isWorkPreview = photo.isPreview ?? false
+          const workOrder = photo.order ?? null
+          const format = photo.format ?? null
+          const image = mappedFiles[i].path ?? null
+          queryArr.push(`(${workId}, ${isWorkPreview}, ${workOrder}, '${format}', '${image}')`)
+        });
+
+        // console.log("NEW-RES-q", queryArr)
+        const photosDirty = await db.query(`
+          INSERT INTO photos(work_id, is_work_preview, work_order, format, image)
+          VALUES ${queryArr.join(',')}
+          RETURNING *;
+        `)
+
+
+        // console.log("NEW-RES", photosDirty.rows)
+        const arrNewPhotos = Array.from(photosDirty.rows).map(v => ({
+          id: v.id,
+          src: getRightPathForImage(v.image),
+          isPreview: v.is_work_preview,
+          order: v.work_order,
+          format: v.format
+        }))
+
+        RESPONSE.photos = RESPONSE.photos.concat(arrNewPhotos)
+      }
+
+      // UPDATE PHOTOS INFO
+      /*{
         id: 15,
         src: '//localhost:8090/public/uploads/s/work/1630249866918_s_7R-8R-Night.jpg',
         isPreview: false,
         order: 0
         format: 'str'
-      }
-      */
-
-      // create new photos
-      if (newPhotos?.length) {
-        console.log('NEW:')
-        const queryArr = []
-        Array.from(newPhotos).forEach(v => {
-          console.log(v)
-        })
-        // prepare data
-        // Array.from(newPhotos).forEach((photo, i) => {
-        //   const isWorkPreview = photo.isPreview ?? false
-        //   const work_order = photo.order ?? null
-        //   const format = photo.format ?? null
-        //   const image = mappedFiles[i].path ?? null
-        //   queryArr.push(`(${workId}, ${isWorkPreview}, ${work_order}, '${format}', '${image}')`)
-        // });
-        // // req to db
-        // const photos = await db.query(`INSERT INTO photos(work_id, is_work_preview, work_order, format, image) values ${queryStr} RETURNING *;`)
-      }
-      // update photo info
-      if (existing?.length) {
+      }*/
+      if (existingPhotos?.length) {
         console.log('EXISTING:')
-        Array.from(existing).forEach(v => {
-          console.log(v)
-        })
-
         const queryArr = []
+
         // prepare data
-        Array.from(existing).forEach(photo => {
+        Array.from(existingPhotos).forEach(photo => {
+          let image = removeDomainFromImagePath(photo.src) ?? null
           const id = photo.id ?? null
-          const image = photo.src ?? null
           const format = photo?.format ?? null
           const work_order = photo.order ?? null
           const isWorkPreview = photo.isPreview ?? false
           queryArr.push(`(${id}, ${workId}, ${isWorkPreview}, ${work_order}, '${format}', '${image}')`)
         });
-        /*
-          update test as t set
-          column_a = c.column_a,
-            column_c = c.column_c
-          from(values
-            ('123', 1, '---'),
-            ('345', 2, '+++')
-          ) as c(column_b, column_a, column_c)
-          where c.column_b = t.column_b;
 
-          select * from test;
-        */
-
-        console.log("RES-q", queryArr)
-        // req to db
+        // console.log("EXISTING-RES-q", queryArr)
+        // req to db - https://stackoverflow.com/questions/18797608/update-multiple-rows-in-same-query-using-postgresql
         const photos = await db.query(`
           UPDATE photos AS p
           SET
-            image = row.image
-            format = row.format
-            work_id = row.work_id
-            work_order = row.work_order
+            image = row.image,
+            format = row.format,
+            work_id = row.work_id,
+            work_order = row.work_order,
             is_work_preview = row.is_work_preview
           FROM (VALUES ${queryArr.join(',')})
             AS row(id, work_id, is_work_preview, work_order, format, image)
-          WHERE row.id = p.id;
+          WHERE row.id = p.id
+          RETURNING *;
         `)
 
 
-        console.log("RES", photos.rows)
+        // console.log("EXISTING-RES", photos.rows)
+
+        const arrExistingPhotos = Array.from(photos.rows).map(v => ({
+          id: v.id,
+          src: getRightPathForImage(v.image),
+          isPreview: v.is_work_preview,
+          order: v.work_order,
+          format: v.format
+        }))
+
+        RESPONSE.photos = RESPONSE.photos.concat(arrExistingPhotos)
       }
 
-      // update work info
-      // const updateWorkDraft = await db.query(`UPDATE work SET title = $1, credits = $2, description = $3, videos = $4, photos = $5 WHERE id = $6 RETURNING *`, [title, credits, description, videos, photos, id])
+      // DELETE PHOTOS
+      if (parsedRemovedPhotos.length) {
+        const deletedPhotos = await db.query(`DELETE FROM photos WHERE id IN (${parsedRemovedPhotos.join(',')}) RETURNING *`)
+        console.log('deletedPhotos', deletedPhotos.rows)
+      }
 
+      // UPDATE WORK INFO
+      const photos = Array.from(RESPONSE.photos).map(v => v.id)
+      const updateWorkDraft = await db.query(`UPDATE work SET title = $1, credits = $2, description = $3, videos = $4, photos = $5, work_order = $6 WHERE id = $7 RETURNING *`, [title, credits, description, videos, photos, workOrder, id])
 
+      // console.log('update work', updateWorkDraft.rows)
+      const updateWork = updateWorkDraft.rows[0]
+      for (let key in updateWork) {
+        if (key === 'photos') {
+          RESPONSE.photos = [...RESPONSE.photos]
+          continue
+        }
+        if (key === 'work_order') {
+          RESPONSE['workOrder'] = updateWork[key]
+          continue
+        }
+        RESPONSE[key] = updateWork[key]
+      }
+
+      console.log('RESPONSE:', RESPONSE)
       console.log('------------------------------------updateWork-END', d)
-
-      res.json('ok')
+      res.json(RESPONSE)
     } catch (error) {
       console.error('updateWork ERROR:', error)
+      res.status(500)
       res.json('error')
     }
   }

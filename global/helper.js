@@ -26,4 +26,19 @@ exports.getRightPathForImage = function (image) {
   return `//${process.env.PUBLIC_DOMAIN}:${process.env.PORT}/${image}`
 }
 
+exports.removeDomainFromImagePath = function (sourceImage) {
+  let image = `${sourceImage}`
+  const domain = `//${process.env.PUBLIC_DOMAIN}:${process.env.PORT}/`
+  const idx = image.indexOf()
+  if (idx != -1) {
+    image = image.slice(idx + domain.length)
+  } else {
+    const idx2 = image.indexOf(`public`)
+    if (idx2 != -1) {
+      image = image.slice(idx2)
+    }
+  }
+  return image
+}
+
 exports.renameIncomeImagePattern = /[^a-zA-Z0-9.]/gi;
