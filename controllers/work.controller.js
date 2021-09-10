@@ -1,6 +1,5 @@
 const db = require('../db/')
 const fs = require('fs');
-const { addAbortSignal } = require('stream');
 const { getRightPathForImage, removeDomainFromImagePath } = require('../global/helper')
 
 class WorkController {
