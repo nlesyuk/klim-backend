@@ -1,5 +1,5 @@
-const db = require('../db/')
 const fs = require('fs');
+const db = require('../db/')
 const { getRightPathForImage, removeDomainFromImagePath } = require('../global/helper')
 
 class WorkController {
@@ -62,6 +62,7 @@ class WorkController {
       } else {
         throw new Error('photos are not setted')
       }
+      console.log('photoIds', photoIds)
 
       // 3 - set photos id in work record
       const updatedWork = await db.query(`UPDATE work SET photos = $1 WHERE  id = $2 RETURNING *`, [photoIds, workId])
@@ -321,9 +322,7 @@ class WorkController {
   async deleteWork(req, res) {
     try {
       const { id } = req.params
-      const status = {
-        id,
-      }
+      const status = { id, }
 
       const removedWork = await db.query(`DELETE FROM work WHERE id = $1 RETURNING *`, [id])
       const removedPhotos = await db.query(`DELETE FROM photos WHERE work_id = $1 AND photo_id IS NULL AND shot_id IS NULL RETURNING *`, [id])
@@ -340,12 +339,13 @@ class WorkController {
             console.log('File deleted!');
             count++
           });
-          status.message = `Removed ${count} photos`
         })
+        status.message = `Removed ${count} photos`
       } else {
         await db.query(`UPDATE photos SET work_id = null WHERE work_id = $1`, [id])
         status.message = "Photos was not removed - saved for other categories or dosn't exist"
       }
+      status.status = 'success'
 
       res.json(status)
     } catch (error) {

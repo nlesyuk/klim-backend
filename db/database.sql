@@ -18,7 +18,7 @@ create TABLE work(
 create TABLE shot(
   id SERIAL PRIMARY KEY,
   categories TEXT[],
-  photos INTEGER[]
+  work_id INTEGER
 );
 
 create TABLE photo(

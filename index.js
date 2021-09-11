@@ -13,7 +13,8 @@ const { getCategory } = require('./global/helper')
 const constants = require('./global/constants')
 const workRoutes = require('./routes/work.route')
 const contactRoutes = require('./routes/contact.route')
-const imagesRoutes = require('./routes/images.route')
+const shotsRoutes = require('./routes/shots.route')
+const publicRoutes = require('./routes/public.route')
 
 const storageConfig = multer.diskStorage({
   destination: (req, file, callback) => {
@@ -22,9 +23,11 @@ const storageConfig = multer.diskStorage({
     if (author) {
       const category = getCategory(req.originalUrl, constants.categories)
 
+      console.log("CATEGORY", category)
       if (category) {
         // const dest = path.resolve(`./public/uploads/${author}/${category}`)
         const dest = `./public/uploads/${author}/${category}`
+        console.log("DEST", dest)
         fs.access(dest, function (error) {
           if (error) {
             console.error("Directory does not exist.");
@@ -48,7 +51,8 @@ const storageConfig = multer.diskStorage({
     if (!filename.length) {
       filename = `image_${Date.now()}`;
     }
-    callback(null, `${Date.now()}_${req.headers.author}_${filename}`);
+    filename = `${Date.now()}_${req.headers.author}_${filename}`
+    callback(null, filename);
   }
 });
 
@@ -64,7 +68,9 @@ app.use(express.json())
 // routes:
 app.use('/api', workRoutes)
 app.use('/api', contactRoutes)
-app.use('/public', imagesRoutes)
+app.use('/api', shotsRoutes)
+
+app.use('/public', publicRoutes)
 // routes error handler
 app.use((req, res, next) => {
   res.status(404).send({ message: "Not Found" });

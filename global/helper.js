@@ -1,5 +1,6 @@
 exports.getCategory = function (rawUrl, categories) {
   // /api/work
+  console.log('GetCategory', rawUrl)
   const str = `${rawUrl}`
   const arr = str.split('/')
   const res = arr.filter(v => categories.indexOf(v) != -1)
