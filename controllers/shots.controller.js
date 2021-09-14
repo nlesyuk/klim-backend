@@ -152,17 +152,18 @@ class ShotsController {
     try {
       const d = Date.now()
       console.log('------------------------------------createShot-START', d)
-      /*
-       id: Number
-      */
-      console.log()
       /*[{
         id: Number
+        src: String
         workId: Number
         categories: Array
         format: String | null
-        src: String
       }]*/
+      const { id, src, workId, categories, format } = req.body
+
+      console.log('DATA', { id, src, workId, categories, format })
+
+      res.json({ ok: 1 })
       console.log('------------------------------------createShot-END', d)
     } catch (error) {
       console.error(error)
