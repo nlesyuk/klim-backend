@@ -43,3 +43,19 @@ exports.removeDomainFromImagePath = function (sourceImage) {
 }
 
 exports.renameIncomeImagePattern = /[^a-zA-Z0-9.]/gi;
+
+exports.removeUploadedFiles = function (files) {
+  if (!files) {
+    return false
+  }
+
+  Array.from(files).map(v => ({ path: v.path })).forEach(file => {
+    fs.unlink(file.path, function (err) { // remove file
+      if (err) {
+        console.error("unlink can't delete file - ", file.path)
+        throw err;
+      }
+      console.log('File deleted!');
+    });
+  })
+}

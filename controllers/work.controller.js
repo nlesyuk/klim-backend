@@ -1,6 +1,6 @@
 const fs = require('fs');
 const db = require('../db/')
-const { getRightPathForImage, removeDomainFromImagePath } = require('../global/helper')
+const { getRightPathForImage, removeDomainFromImagePath, removeUploadedFiles } = require('../global/helper')
 
 class WorkController {
   // CRUD
@@ -73,17 +73,11 @@ class WorkController {
       console.error('ERROR', e)
       // remove uploaded files
       const files = req.files
-      Array.from(files).map(v => ({ path: v.path })).forEach(file => {
-        fs.unlink(file.path, function (err) { // remove file
-          if (err) {
-            console.error("unlink can't delete file - ", filePath)
-            throw err;
-          }
-          console.log('File deleted!');
-        });
-      })
+      removeUploadedFiles(files)
 
+      // remove record from db
       const resq = await db.query(`DELETE FROM work WHERE id=$1`, [storage.workId])
+
       console.log('storage', storage, resq.rows)
       res.status(500)
     }

@@ -1,6 +1,6 @@
 const fs = require('fs');
 const db = require('../db/index');
-const { getRightPathForImage, removeDomainFromImagePath } = require('../global/helper')
+const { getRightPathForImage, removeUploadedFiles } = require('../global/helper')
 
 const dbKey = 'shots';
 
@@ -13,9 +13,10 @@ class ShotsController {
       const shotsDirty = JSON.parse(shots)
       /*
         [{
-          photoOriginalName: '009.jpg',
-          workId: 24,
-          categories: [ 'all', 'mood', 'landscape', 'portrait' ]
+          workId: Number,
+          format: String,
+          categories: Array,
+          photoOriginalName: String,
         }]
       */
       const files = req.files
@@ -52,11 +53,15 @@ class ShotsController {
       // 11 - for single file
       const shortsData = Array.from(shotsDirty).map(shot => {
         const workId = shot.workId
+        const format = shot.format
         const categories = shot.categories ?? ['all']
-        return { categories, workId }
+        return { categories, workId, format }
       });
       const shotsCreated = await db.query(`INSERT INTO shot(categories, work_id) VALUES ($1, $2) RETURNING *`, [shortsData[0].categories, shortsData[0].workId])
-      let RESPONSE = shotsCreated?.rows
+      let RESPONSE = Array.from(shotsCreated?.rows).map((v, i) => ({
+        format: shortsData[i].format,
+        ...v
+      }))
 
       // 2 create photos
       /*
@@ -82,11 +87,12 @@ class ShotsController {
         RESPONSE[i].path = file.path
         return { shot_id, image, format }
       });
-      const photoCreated = await db.query(`INSERT INTO photos(shot_id, image) values ($1, $2) RETURNING *`, [photosData[0].shot_id, photosData[0].image])
+      const photoCreated = await db.query(`INSERT INTO photos(shot_id, image, format) values ($1, $2, $3) RETURNING *`, [photosData[0].shot_id, photosData[0].image, photosData[0].format])
 
       // 3 prepare for frontEnd
       RESPONSE = Array.from(RESPONSE).map(v => ({
         id: v.id,
+        format: v.format,
         workId: v.work_id,
         categories: v.categories,
         src: getRightPathForImage(v.path),
@@ -96,7 +102,14 @@ class ShotsController {
       res.json(RESPONSE)
       console.log('------------------------------------createShot-END', d)
     } catch (error) {
-      console.error('ERROR', error)
+      // remove uploaded files
+      const files = req.files
+      removeUploadedFiles(files)
+
+      // remove record from db
+      const resq = await db.query(`DELETE FROM shot WHERE id=$1`, [RESPONSE[0].id])
+
+      console.error('ERROR', error, resq.rows)
       res.status(500)
       res.json({ error: 'error' })
     }
