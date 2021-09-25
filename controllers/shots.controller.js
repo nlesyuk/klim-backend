@@ -5,7 +5,7 @@ const { getRightPathForImage, removeUploadedFiles } = require('../global/helper'
 const dbKey = 'shots';
 
 class ShotsController {
-  async createShot(req, res) {
+  async create(req, res) {
     try {
       const d = Date.now()
       console.log('------------------------------------createShot-START', d)
@@ -115,7 +115,7 @@ class ShotsController {
     }
   }
 
-  async getShots(req, res) {
+  async get(req, res) {
     try {
       const d = Date.now()
       console.log('------------------------------------createShot-START', d)
@@ -148,30 +148,114 @@ class ShotsController {
 
   }
 
-  async updateShot(req, res) {
+  async update(req, res) {
+    const d = Date.now()
+    console.log('------------------------------------createShot-START', d)
+    /*[{
+      id: Number
+      src: String
+      workId: Number
+      categories: Array
+      format: String | null
+    }]*/
+    const files = req.files
+    const newImagePath = files?.[0]?.path
+    const { id, src, workId, categories, format } = req.body
+    const shotId = +id
+    const shotWorkId = +workId
+    const shotCategories = JSON.parse(categories)
+
+    console.log('DATA', { id, src, workId, categories, format }, files)
+    const RESPONSE = {
+      id,
+      src,
+      workId: "",
+      categories: "",
+      format: "",
+    }
+    const TEMP = {}
+
+    // update categories, workid
     try {
-      const d = Date.now()
-      console.log('------------------------------------createShot-START', d)
-      /*[{
-        id: Number
-        src: String
-        workId: Number
-        categories: Array
-        format: String | null
-      }]*/
-      const { id, src, workId, categories, format } = req.body
-
-      console.log('DATA', { id, src, workId, categories, format })
-
-      res.json({ ok: 1 })
-      console.log('------------------------------------createShot-END', d)
+      const updatedDataRaw = await db.query(`UPDATE shot SET categories = $1, work_id = $2 WHERE id = $3 RETURNING *`, [shotCategories, shotWorkId, shotId]);
+      console.log('>>', updatedDataRaw.rows)
+      const updatedData = updatedDataRaw?.rows[0]
+      if (updatedData) {
+        const { categories, work_id, id } = updatedData
+        RESPONSE.id = id
+        RESPONSE.workId = work_id
+        RESPONSE.categories = categories
+      }
     } catch (error) {
+      catchError(error, req, res)
+    }
+
+    // get path of existing img from server
+    try {
+      if (!src && newImagePath) {
+        const existingImg = await db.query(`SELECT * FROM photos WHERE shot_id = $1`, [shotId])
+        const targetImagePath = existingImg?.rows[0]?.image
+        console.log('targetImagePath', targetImagePath)
+
+        if (targetImagePath) {
+          TEMP.imagePath = targetImagePath
+        } else {
+          throw new Error("DB: Can't get image path")
+        }
+      }
+    } catch (error) {
+      catchError(error, req, res)
+    }
+
+    // upload new img on a server
+    // update path of image in record
+    // delete prev existing image
+    try {
+      if (newImagePath) {
+        // update path of image in record
+        const updatedImageRaw = await db.query(`UPDATE photos SET image = $1, format = $2 WHERE shot_id = $3 RETURNING *`, [newImagePath, format, shotId]);
+        const updatedImage = updatedImageRaw?.rows[0]
+        if (updatedImage) {
+          console.log('updatedImage', updatedImage.image)
+          const { image, format } = updatedImage
+          RESPONSE.src = image
+          RESPONSE.format = format
+
+          // delete prev existing image
+          if (TEMP.imagePath) {
+            console.log('delete prev existing image:', TEMP.imagePath)
+            removeUploadedFiles([{ path: TEMP.imagePath }])
+          }
+        }
+      } else if (format) {
+        const updatedImageRaw = await db.query(`UPDATE photos SET format = $1 WHERE shot_id = $2 RETURNING *`, [format, shotId]);
+        const updatedImage = updatedImageRaw?.rows[0]
+        if (updatedImage) {
+          RESPONSE.format = updatedImage.format
+        }
+      } else {
+        console.log("Don't need uploading image")
+      }
+    } catch (error) {
+      catchError(error, req, res, false)
+    }
+
+    console.log('RESPONSE', RESPONSE)
+    res.json(RESPONSE)
+    console.log('------------------------------------createShot-END', d)
+
+    function catchError(error, req, res, isRemoveUploadedFileFromServer = true) {
+      const files = req.files
+      if (files && isRemoveUploadedFileFromServer) {
+        removeUploadedFiles(files)
+      }
       console.error(error)
       res.status(500)
+      res.json('catchError fn:', error)
     }
   }
 
-  async deleteShot(req, res) {
+  async delete(req, res) {
     try {
       const d = Date.now()
       console.log('------------------------------------deleteShot-START', d)

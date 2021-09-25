@@ -1,12 +1,12 @@
 const Express = require('express')
 const router = new Express()
-const ShotsController = require('../controllers/shots.controller')
+const controller = require('../controllers/shots.controller')
 
 const routeKey = `shot`;
 
-router.post(`/${routeKey}`, ShotsController.createShot)
-router.get(`/${routeKey}`, ShotsController.getShots)
-router.put(`/${routeKey}`, ShotsController.updateShot)
-router.delete(`/${routeKey}/:id`, ShotsController.deleteShot)
+router.post(`/${routeKey}`, controller.create)
+router.get(`/${routeKey}`, controller.get)
+router.put(`/${routeKey}`, controller.update)
+router.delete(`/${routeKey}/:id`, controller.delete)
 
 module.exports = router
