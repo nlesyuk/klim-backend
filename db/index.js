@@ -16,5 +16,5 @@ const pool = new Pool({
   port: credentials.port,
   database: credentials.database
 })
-console.log(process.env)
+
 module.exports = pool

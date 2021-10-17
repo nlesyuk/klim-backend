@@ -1,9 +1,11 @@
+-- ok
 create TABLE general(
   id SERIAL PRIMARY KEY,
   name VARCHAR(255),
   data VARCHAR(255)
 );
 
+-- ok
 create TABLE work(
   id SERIAL PRIMARY KEY,
   title VARCHAR(255),
@@ -15,19 +17,21 @@ create TABLE work(
   photos INTEGER[]
 );
 
+-- ok
 create TABLE shot(
   id SERIAL PRIMARY KEY,
   categories TEXT[],
   work_id INTEGER
 );
 
+-- in progress
 create TABLE photo(
   id SERIAL PRIMARY KEY,
   title VARCHAR(255),
-  category TEXT[],
-  photos INTEGER[]
+  categories TEXT[]
 );
 
+-- ok
 create TABLE photos(
   id SERIAL PRIMARY KEY,
 

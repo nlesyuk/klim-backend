@@ -14,6 +14,7 @@ const constants = require('./global/constants')
 const workRoutes = require('./routes/work.route')
 const contactRoutes = require('./routes/contact.route')
 const shotsRoutes = require('./routes/shots.route')
+const photosRoutes = require('./routes/photos.route')
 const publicRoutes = require('./routes/public.route')
 
 const storageConfig = multer.diskStorage({
@@ -69,6 +70,7 @@ app.use(express.json())
 app.use('/api', workRoutes)
 app.use('/api', contactRoutes)
 app.use('/api', shotsRoutes)
+app.use('/api', photosRoutes)
 
 app.use('/public', publicRoutes)
 // routes error handler
