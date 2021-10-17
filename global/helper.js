@@ -25,13 +25,21 @@ exports.Inserts = function (template, data) {
   };
 }
 
-exports.getRightPathForImage = function (image) {
-  return `//${process.env.PUBLIC_DOMAIN}:${process.env.PORT}/${image}`
+function getDomain() {
+  return parseInt(process.env.IS_PROD)
+    ? `//${process.env.PUBLIC_DOMAIN_PROD}`
+    : `//${process.env.PUBLIC_DOMAIN_LOCAL}:${process.env.PORT}`
 }
+exports.getDomain
+
+function getRightPathForImage(image) {
+  return `${getDomain()}/${image}`
+}
+exports.getRightPathForImage = getRightPathForImage
 
 exports.removeDomainFromImagePath = function (sourceImage) {
   let image = `${sourceImage}`
-  const domain = `//${process.env.PUBLIC_DOMAIN}:${process.env.PORT}/`
+  const domain = `//${getDomain()}/`
   const idx = image.indexOf()
   if (idx != -1) {
     image = image.slice(idx + domain.length)
