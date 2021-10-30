@@ -5,6 +5,8 @@ const { getRightPathForImage, removeDomainFromImagePath, removeUploadedFiles } =
 class WorkController {
   // CRUD
   async createWork(req, res) {
+    const d = Date.now()
+    console.log('------------------------------------createWork-START', d)
     const storage = {}
     try {
       const { title, description, credits, videos, photosInfo, workOrder, category } = req.body
@@ -81,9 +83,12 @@ class WorkController {
       console.log('storage', storage, resq.rows)
       res.status(500)
     }
+    console.log('------------------------------------createWork-END', d)
   }
 
   async getWork(req, res) {
+    const d = Date.now()
+    console.log('------------------------------------getWork-START', d)
     try {
       const { id } = req.params
 
@@ -116,9 +121,12 @@ class WorkController {
       console.error('getWork Error', error)
       res.status(500)
     }
+    console.log('------------------------------------getWork-END', d)
   }
 
   async getWorks(req, res) {
+    const d = Date.now()
+    console.log('------------------------------------getWorks-START', d)
     try {
       const dirtyWorks = await db.query(`SELECT * FROM work`)
       const dirtyWorkPhotos = await db.query(`SELECT * FROM photos WHERE work_id IS NOT NULL`)
@@ -155,9 +163,12 @@ class WorkController {
     } catch (error) {
       console.error('getWorks Error', error)
     }
+    console.log('------------------------------------getWorks-END', d)
   }
 
   async updateWork(req, res) {
+    const d = Date.now()
+    console.log('------------------------------------updateWork-START', d)
     try {
       const { id, title, credits, description, videos, photosInfo, workOrder, removedPhotos } = req.body
       const RESPONSE = {
@@ -311,9 +322,12 @@ class WorkController {
       res.status(500)
       res.json('error')
     }
+    console.log('------------------------------------updateWork-END', d)
   }
 
   async deleteWork(req, res) {
+    const d = Date.now()
+    console.log('------------------------------------deleteWork-START', d)
     try {
       const { id } = req.params
       const status = { id, }
@@ -346,6 +360,7 @@ class WorkController {
       console.error('deleteWork Error', error)
       res.status(500)
     }
+    console.log('------------------------------------deleteWork-END', d)
   }
 }
 
