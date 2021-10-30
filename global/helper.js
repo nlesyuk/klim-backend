@@ -37,6 +37,21 @@ function getRightPathForImage(image) {
 }
 exports.getRightPathForImage = getRightPathForImage
 
+function prepareImagePathForDB(file) {
+  const destination = file?.destination
+  const filename = file?.filename
+  if (destination && filename) {
+    const arr = destination.split("/");
+    const idx = arr.indexOf("public");
+    const path = arr.slice(idx).join("/");
+    return `${path}/${filename}`;
+  }
+  return null;
+}
+
+exports.prepareImagePathForDB = prepareImagePathForDB
+
+
 exports.removeDomainFromImagePath = function (sourceImage) {
   let image = `${sourceImage}`
   const domain = `//${getDomain()}/`

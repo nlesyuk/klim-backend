@@ -1,6 +1,6 @@
 const fs = require('fs');
 const db = require('../db/')
-const { getRightPathForImage, removeDomainFromImagePath, removeUploadedFiles } = require('../global/helper')
+const { getRightPathForImage, prepareImagePathForDB, removeDomainFromImagePath, removeUploadedFiles } = require('../global/helper')
 
 class WorkController {
   // CRUD
@@ -17,12 +17,16 @@ class WorkController {
       console.log('TEXT', title, description, credits, filesInfo)
       console.log('FILES', files)
 
+      // 0 check
+      if (!files?.length) {
+        throw new Error('No files')
+      }
+
       // prepare photos to db
-      const mappedFiles = Array.from(files).map(v => {
-        let destination = `${v.destination}`.slice(2)
+      const mappedFiles = Array.from(files).map(file => {
         return {
-          path: `${destination}/${v.filename}`,
-          filename: v.filename
+          path: prepareImagePathForDB(file),
+          filename: file.filename
         }
       }) // get path of photo in current project backend/public/uploads/s/category
       console.log('FILES-INFO', mappedFiles)
@@ -58,6 +62,7 @@ class WorkController {
       // 1 - set photos in table
       const photos = await db.query(`INSERT INTO photos(work_id, is_work_preview, work_order, format, image) values ${queryStr} RETURNING *;`)
       console.log('DB PHOTOS', photos.rows)
+
       let photoIds = ''
       if (photos?.rows?.length) {
         photoIds = Array.from(photos.rows).map(v => v.id)
@@ -72,16 +77,22 @@ class WorkController {
       res.json(updatedWork.rows?.[0])
 
     } catch (e) {
-      console.error('ERROR', e)
-      // remove uploaded files
-      const files = req.files
-      removeUploadedFiles(files)
+      if (e.message === 'No files') {
+        res.status(400)
+        res.send({ message: 'No files' })
+      } else {
+        console.error('createWork Error', e)
+        // remove uploaded files
+        const files = req.files
+        removeUploadedFiles(files)
 
-      // remove record from db
-      const resq = await db.query(`DELETE FROM work WHERE id=$1`, [storage.workId])
+        // remove record from db
+        const resq = await db.query(`DELETE FROM work WHERE id=$1`, [storage.workId])
+        console.log('storage', storage, resq.rows)
 
-      console.log('storage', storage, resq.rows)
-      res.status(500)
+        res.status(500)
+        res.send({ message: 'Server error' })
+      }
     }
     console.log('------------------------------------createWork-END', d)
   }
