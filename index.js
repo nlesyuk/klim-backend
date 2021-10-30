@@ -26,8 +26,8 @@ const storageConfig = multer.diskStorage({
 
       console.log("CATEGORY", category)
       if (category) {
-        // const dest = path.resolve(`./public/uploads/${author}/${category}`)
-        const dest = `./public/uploads/${author}/${category}`
+        const dest = path.resolve(`${__dirname}/public/uploads/${author}/${category}`)
+        // const dest = `./public/uploads/${author}/${category}`
         console.log("DEST", dest)
         fs.access(dest, function (error) {
           if (error) {
