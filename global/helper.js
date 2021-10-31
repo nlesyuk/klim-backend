@@ -1,6 +1,8 @@
 const fs = require('fs');
+const path = require('path');
 
-exports.getCategory = function (rawUrl, categories) {
+
+function getCategory(rawUrl, categories) {
   // /api/work
   console.log('GetCategory', rawUrl)
   const str = `${rawUrl}`
@@ -8,34 +10,27 @@ exports.getCategory = function (rawUrl, categories) {
   const res = arr.filter(v => categories.indexOf(v) != -1)
   return res.length ? res[0] : null
 }
-exports.getHost = function (rawUrl) {
+
+
+function getHost(rawUrl) {
   // localhost:8080
   const str = `${rawUrl}`
   const idx = str.indexOf(':')
   return str.slice(0, idx)
 }
 
-exports.Inserts = function (template, data) {
-  if (!(this instanceof Inserts)) {
-    return new Inserts(template, data);
-  }
-  this._rawDBType = true;
-  this.formatDBType = function () {
-    return data.map(d => '(' + pgp.as.format(template, d) + ')').join(',');
-  };
-}
 
 function getDomain() {
   return parseInt(process.env.IS_PROD)
     ? `//${process.env.PUBLIC_DOMAIN_PROD}`
     : `//${process.env.PUBLIC_DOMAIN_LOCAL}:${process.env.PORT}`
 }
-exports.getDomain
+
 
 function getRightPathForImage(image) {
   return `${getDomain()}/${image}`
 }
-exports.getRightPathForImage = getRightPathForImage
+
 
 function prepareImagePathForDB(file) {
   const destination = file?.destination
@@ -49,10 +44,8 @@ function prepareImagePathForDB(file) {
   return null;
 }
 
-exports.prepareImagePathForDB = prepareImagePathForDB
 
-
-exports.removeDomainFromImagePath = function (sourceImage) {
+function removeDomainFromImagePath(sourceImage) {
   let image = `${sourceImage}`
   const domain = `//${getDomain()}/`
   const idx = image.indexOf()
@@ -67,24 +60,72 @@ exports.removeDomainFromImagePath = function (sourceImage) {
   return image
 }
 
-exports.renameIncomeImagePattern = /[^a-zA-Z0-9.]/gi;
 
-exports.removeUploadedFiles = function (files) {
+const renameIncomeImagePattern = /[^a-zA-Z0-9.]/gi;
+
+
+function removeUploadedFiles(files) {
   if (!files) {
     return false
   }
 
   try {
-    Array.from(files).map(v => ({ path: v.path })).forEach(file => {
-      fs.unlink(file.path, function (err) { // remove file
-        if (err) {
-          console.error("unlink can't delete file - ", file.path)
-          throw err;
-        }
-        console.log('File deleted!');
-      });
-    })
+    Array
+      .from(files)
+      .map(v => ({ path: v.path }))
+      .forEach(file => {
+        fs.unlink(file.path, (err) => {
+          if (err) {
+            console.error("unlink can't delete file - ", file.path)
+            throw err;
+          }
+          console.log('File deleted!');
+        });
+      })
   } catch (e) {
     console.log('Error while deleting file', e)
   }
+}
+
+
+function removePhotoFromServer(files, keyContainPath = 'image') {
+  // image - is default name of column in photos table whit contain path to image
+  if (!files) {
+    return false
+  }
+
+  try {
+    let count = 0
+    Array
+      .from(removedPhotos.rows)
+      .forEach(file => {
+        // /home/ubuntu/www/klim-backend/global/public...
+        // /home/ubuntu/www/klim-backend/public...
+        const fullFilePath = path.resolve(`../${file[keyContainPath]}`)
+        fs.unlink(fullFilePath, (err) => { // remove file
+          if (err) {
+            console.error("unlink can't delete file - ", file.image)
+            throw err;
+          }
+          console.log('File deleted!');
+          count++
+        });
+      })
+    console.log(`Removed ${count} photos`)
+  } catch (e) {
+    console.log('Error while deleting file', e)
+  }
+}
+
+
+module.exports = {
+  removeDomainFromImagePath,
+  renameIncomeImagePattern,
+  removePhotoFromServer,
+  prepareImagePathForDB,
+  getRightPathForImage,
+  removeUploadedFiles,
+  getCategory,
+  getDomain,
+  getHost,
 }
