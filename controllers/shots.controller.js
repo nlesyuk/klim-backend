@@ -1,6 +1,6 @@
 const fs = require('fs');
 const db = require('../db/index');
-const { getRightPathForImage, removeUploadedFiles } = require('../global/helper')
+const { getRightPathForImage, prepareImagePathForDB, removeUploadedFiles } = require('../global/helper')
 
 const dbKey = 'shots';
 
@@ -81,10 +81,10 @@ class ShotsController {
         throw "files don't exist"
       }
       const photosData = Array.from(files).map((file, i) => {
-        const image = file.path
+        const image = prepareImagePathForDB(file)
         const shot_id = RESPONSE[i].id
         const format = RESPONSE[i].format
-        RESPONSE[i].path = file.path
+        RESPONSE[i].path = image
         return { shot_id, image, format }
       });
       const photoCreated = await db.query(`INSERT INTO photos(shot_id, image, format) values ($1, $2, $3) RETURNING *`, [photosData[0].shot_id, photosData[0].image, photosData[0].format])
