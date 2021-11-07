@@ -1,11 +1,17 @@
 const fs = require('fs');
 const db = require('../db/')
-const { getRightPathForImage, prepareImagePathForDB, removeDomainFromImagePath, removeUploadedFiles } = require('../global/helper')
+const {
+  getRightPathForImage,
+  prepareImagePathForDB,
+  removeDomainFromImagePath,
+  removeUploadedFiles,
+  getCurrentDateTime,
+} = require('../global/helper')
 
 class WorkController {
   // CRUD
   async createWork(req, res) {
-    const d = Date.now()
+    const d = getCurrentDateTime()
     console.log('------------------------------------createWork-START', d)
     const storage = {}
     try {
@@ -98,7 +104,7 @@ class WorkController {
   }
 
   async getWork(req, res) {
-    const d = Date.now()
+    const d = getCurrentDateTime()
     console.log('------------------------------------getWork-START', d)
     try {
       const { id } = req.params
@@ -136,7 +142,7 @@ class WorkController {
   }
 
   async getWorks(req, res) {
-    const d = Date.now()
+    const d = getCurrentDateTime()
     console.log('------------------------------------getWorks-START', d)
     try {
       const dirtyWorks = await db.query(`SELECT * FROM work`)
@@ -165,11 +171,7 @@ class WorkController {
         return work
       })
 
-      const d = Date.now()
-      console.log('------------------------------------getWorks-START', d)
       console.log(works)
-      console.log('------------------------------------getWorks-END', d)
-
       res.json(works)
     } catch (error) {
       console.error('getWorks Error', error)
@@ -178,7 +180,7 @@ class WorkController {
   }
 
   async updateWork(req, res) {
-    const d = Date.now()
+    const d = getCurrentDateTime()
     console.log('------------------------------------updateWork-START', d)
     try {
       const { id, title, credits, description, videos, photosInfo, workOrder, removedPhotos } = req.body
@@ -186,8 +188,6 @@ class WorkController {
         photos: []
       }
 
-      const d = Date.now()
-      console.log('------------------------------------updateWork-START', d)
       console.log(id)
 
       // prepare PHOTOS
@@ -326,7 +326,6 @@ class WorkController {
       }
 
       console.log('RESPONSE:', RESPONSE)
-      console.log('------------------------------------updateWork-END', d)
       res.json(RESPONSE)
     } catch (error) {
       console.error('updateWork ERROR:', error)
@@ -337,7 +336,7 @@ class WorkController {
   }
 
   async deleteWork(req, res) {
-    const d = Date.now()
+    const d = getCurrentDateTime()
     console.log('------------------------------------deleteWork-START', d)
     try {
       const { id } = req.params

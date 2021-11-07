@@ -118,6 +118,24 @@ function removePhotoFromServer(files, keyContainPath = 'image') {
 }
 
 
+function getCurrentDateTime() {
+  const date = new Date()
+  const ms = date.getMilliseconds()
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat
+  const dateFormated = new Intl.DateTimeFormat('en-US', {
+    year: 'numeric', month: 'numeric', day: 'numeric',
+    hour: 'numeric', minute: 'numeric', second: 'numeric',
+    hour12: false,
+    timeZone: 'Europe/Kiev',
+    dateStyle: 'short',
+    timeStyle: 'short'
+  }).format(date)
+
+  // const dateFormated2 = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
+
+  return `${dateFormated}:${ms}`
+}
+
 module.exports = {
   removeDomainFromImagePath,
   renameIncomeImagePattern,
@@ -128,4 +146,5 @@ module.exports = {
   getCategory,
   getDomain,
   getHost,
+  getCurrentDateTime,
 }

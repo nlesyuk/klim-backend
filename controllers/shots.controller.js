@@ -1,14 +1,14 @@
 const fs = require('fs');
 const db = require('../db/index');
-const { getRightPathForImage, prepareImagePathForDB, removeUploadedFiles } = require('../global/helper')
+const { getRightPathForImage, prepareImagePathForDB, removeUploadedFiles, getCurrentDateTime } = require('../global/helper')
 
 const dbKey = 'shots';
 
 class ShotsController {
   async create(req, res) {
+    const d = getCurrentDateTime()
+    console.log('------------------------------------createShot-START', d)
     try {
-      const d = Date.now()
-      console.log('------------------------------------createShot-START', d)
       const { shots } = req.body
       const shotsDirty = JSON.parse(shots)
       /*
@@ -100,7 +100,6 @@ class ShotsController {
 
       console.log("RESPONSE", RESPONSE)
       res.json(RESPONSE)
-      console.log('------------------------------------createShot-END', d)
     } catch (error) {
       // remove uploaded files
       const files = req.files
@@ -113,12 +112,13 @@ class ShotsController {
       res.status(500)
       res.json({ error: 'error' })
     }
+    console.log('------------------------------------createShot-END', d)
   }
 
   async get(req, res) {
+    const d = getCurrentDateTime()
+    console.log('------------------------------------createShot-START', d)
     try {
-      const d = Date.now()
-      console.log('------------------------------------createShot-START', d)
 
       const dirtyShots = await db.query(`SELECT * FROM shot `);
       if (!dirtyShots.rows) {
@@ -140,16 +140,16 @@ class ShotsController {
 
       console.log(photos)
       res.json(photos)
-      console.log('------------------------------------createShot-END', d)
     } catch (error) {
       console.error(error)
       res.status(500)
     }
+    console.log('------------------------------------createShot-END', d)
 
   }
 
   async update(req, res) {
-    const d = Date.now()
+    const d = getCurrentDateTime()
     console.log('------------------------------------createShot-START', d)
     /*[{
       id: Number
@@ -256,9 +256,9 @@ class ShotsController {
   }
 
   async delete(req, res) {
+    const d = getCurrentDateTime()
+    console.log('------------------------------------deleteShot-START', d)
     try {
-      const d = Date.now()
-      console.log('------------------------------------deleteShot-START', d)
       /*
         id: Number
       */
@@ -303,12 +303,12 @@ class ShotsController {
         format: String | null
         src: String "//localhost:8090/public/uploads/s/shot/1631380679046_s_0813.jpg"
       }]*/
-      console.log('------------------------------------deleteShot-END', d)
     } catch (error) {
       console.error(error)
       res.status(500)
       res.json({ status: 'failed' })
     }
+    console.log('------------------------------------deleteShot-END', d)
   }
 }
 
