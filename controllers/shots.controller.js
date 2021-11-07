@@ -9,6 +9,8 @@ class ShotsController {
     const d = getCurrentDateTime()
     console.log('------------------------------------createShot-START', d)
     try {
+      const d = getCurrentDateTime()
+      console.log('------------------------------------createShot-START', d)
       const { shots } = req.body
       const shotsDirty = JSON.parse(shots)
       /*
@@ -119,6 +121,8 @@ class ShotsController {
     const d = getCurrentDateTime()
     console.log('------------------------------------createShot-START', d)
     try {
+      const d = getCurrentDateTime()
+      console.log('------------------------------------createShot-START', d)
 
       const dirtyShots = await db.query(`SELECT * FROM shot `);
       if (!dirtyShots.rows) {
@@ -259,6 +263,8 @@ class ShotsController {
     const d = getCurrentDateTime()
     console.log('------------------------------------deleteShot-START', d)
     try {
+      const d = getCurrentDateTime()
+      console.log('------------------------------------deleteShot-START', d)
       /*
         id: Number
       */
