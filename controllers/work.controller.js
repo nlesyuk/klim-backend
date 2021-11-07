@@ -9,25 +9,35 @@ const {
 } = require('../global/helper')
 
 class WorkController {
-  // CRUD
+  /**
+    {
+      title: String,
+      description: String,
+      credits: String,
+      videos: String of JSON,
+      photosInfo: String,
+      workOrder: Number,
+      photos: binary[]
+    }
+  */
   async createWork(req, res) {
     const d = getCurrentDateTime()
     console.log('------------------------------------createWork-START', d)
     const storage = {}
     try {
-      const { title, description, credits, videos, photosInfo, workOrder, category } = req.body
+      const { title, description, credits, videos, photosInfo, workOrder } = req.body
       const filesInfo = JSON.parse(photosInfo)
       const files = req.files
-      let workCategory = category ? category : null
 
-      console.log('TEXT', title, description, credits, filesInfo)
+      console.log('FIELDS', title, description, credits, filesInfo)
       console.log('FILES', files)
 
-      // 0 check
+      // 0 - check
       if (!files?.length) {
         throw new Error('No files')
       }
 
+      // 1 - create work record
       // prepare photos to db
       const mappedFiles = Array.from(files).map(file => {
         return {
@@ -37,23 +47,19 @@ class WorkController {
       }) // get path of photo in current project backend/public/uploads/s/category
       console.log('FILES-INFO', mappedFiles)
 
-      // new
-      // 1 - create work record
-      const work = await db.query(`INSERT INTO work (title, videos, description, credits, work_order, category) values ($1, $2, $3, $4, $5, $6) RETURNING *`, [title, videos, description, credits, workOrder, workCategory])
-      storage.workId = work.rows[0].id
+      const work = await db.query(`INSERT INTO work (title, videos, description, credits, work_order) values ($1, $2, $3, $4, $5) RETURNING *`, [title, videos, description, credits, workOrder])
 
       console.log('DB WORK', work.rows)
       let workId = ''
       if (work.rows?.[0]?.id) {
         workId = work.rows[0].id
+        storage.workId = work.rows[0].id
       } else {
         throw new Error('work id is not setted')
       }
 
       // 2 - create photos record
       const queryArr = []
-      console.log('DB WORK-filesInfo', filesInfo)
-      console.log('DB WORK-mappedFiles', mappedFiles)
 
       Array.from(filesInfo).forEach((photo, i) => {
         const isWorkPreview = photo.isPreview ?? false
@@ -84,25 +90,29 @@ class WorkController {
 
     } catch (e) {
       if (e.message === 'No files') {
-        res.status(400)
-        res.send({ message: 'No files' })
-      } else {
-        console.error('createWork Error', e)
-        // remove uploaded files
-        const files = req.files
-        removeUploadedFiles(files)
-
-        // remove record from db
-        const resq = await db.query(`DELETE FROM work WHERE id=$1`, [storage.workId])
-        console.log('storage', storage, resq.rows)
-
-        res.status(500)
-        res.send({ message: 'Server error' })
+        console.error('createWork Error', e.message)
+        res.status(400).send({ message: 'No files' })
       }
+
+      // remove uploaded files
+      const files = req.files
+      removeUploadedFiles(files)
+
+      // remove record from db
+      const resq = await db.query(`DELETE FROM work WHERE id=$1`, [storage.workId])
+      console.log('storage', storage, resq.rows)
+
+      // response
+      const anotherMessage = e?.message ? e.message : 'Unknow server error at createWork controller'
+      res.status(500).send({ message: anotherMessage })
+      console.error('createWork Error', anotherMessage)
     }
     console.log('------------------------------------createWork-END', d)
   }
 
+  /*
+    id: Number
+  */
   async getWork(req, res) {
     const d = getCurrentDateTime()
     console.log('------------------------------------getWork-START', d)
@@ -141,6 +151,16 @@ class WorkController {
     console.log('------------------------------------getWork-END', d)
   }
 
+  /**
+    {
+      title: String,
+      description: String,
+      credits: String,
+      videos: String of JSON,
+      photosInfo: String,
+      workOrder: Number,
+    }
+  */
   async getWorks(req, res) {
     const d = getCurrentDateTime()
     console.log('------------------------------------getWorks-START', d)
@@ -335,6 +355,9 @@ class WorkController {
     console.log('------------------------------------updateWork-END', d)
   }
 
+  /*
+    id: Number
+  */
   async deleteWork(req, res) {
     const d = getCurrentDateTime()
     console.log('------------------------------------deleteWork-START', d)
