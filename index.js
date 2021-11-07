@@ -24,12 +24,12 @@ const storageConfig = multer.diskStorage({
     if (author) {
       const category = getCategory(req.originalUrl, constants.categories)
 
-      console.log("CATEGORY", category)
+      console.log("CATEGORY", category, `${__dirname}/public/uploads/${author}/${category}`)
       if (category) {
         const dest = path.resolve(`${__dirname}/public/uploads/${author}/${category}`)
         // const dest = `./public/uploads/${author}/${category}`
         console.log("DEST", dest)
-        fs.access(dest, function (error) {
+        fs.access(dest, (error) => {
           if (error) {
             console.error("Directory does not exist.");
             return fs.mkdir(dest, (error) => callback(error, dest));
