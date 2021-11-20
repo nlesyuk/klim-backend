@@ -3,7 +3,6 @@ const db = require('../db/')
 const {
   getRightPathForImage,
   prepareImagePathForDB,
-  removeDomainFromImagePath,
   removeUploadedFiles,
   getCurrentDateTime,
 } = require('../global/helper')
@@ -20,7 +19,7 @@ class WorkController {
       photos: binary[]
     }
   */
-  async createWork(req, res) {
+  async create(req, res) {
     const d = getCurrentDateTime()
     console.log('------------------------------------createWork-START', d)
     const storage = {}
@@ -199,66 +198,94 @@ class WorkController {
     console.log('------------------------------------getWorks-END', d)
   }
 
-  async updateWork(req, res) {
+  /**
+    {
+      id: Number,
+      title: String,
+      videos: String of JSON,
+      credits: String,
+      workOrder: Number,
+      description: String,
+      photosInfo: String of JSON {
+        new: [{
+          isPreview: false
+          fileName: "13.jpg"
+          format: "vertical"
+          order: 0
+        }],
+        existing: [{}],
+        deleted: [id],
+        updated: [{
+          id: 15,
+          src: '//localhost:8090/public/uploads/s/work/1630249866918_s_7R-8R-Night.jpg',
+          isPreview: false,
+          order: 0
+          format: 'vertical'
+        }]
+      },
+      photos[]: Binary
+    }
+  */
+  async update(req, res) {
     const d = getCurrentDateTime()
     console.log('------------------------------------updateWork-START', d)
     try {
-      const { id, title, credits, description, videos, photosInfo, workOrder, removedPhotos } = req.body
+      const { id, title, credits, description, videos, photosInfo, workOrder } = req.body
       const RESPONSE = {
         photos: []
       }
 
+      if (!id || !title || !credits || !description || !videos || !photosInfo || !workOrder) {
+        throw new Error('id or ... is required')
+      }
       console.log(id)
 
       // prepare PHOTOS
       const parsedPhotosInfo = JSON.parse(photosInfo)
-      const existingPhotos = parsedPhotosInfo.existing
+      // const existingPhotos = parsedPhotosInfo.existing
+      const deletedPhotos = parsedPhotosInfo.deleted
+      const updatedPhotos = parsedPhotosInfo.updated
       const newPhotos = parsedPhotosInfo.new
-      const parsedRemovedPhotos = JSON.parse(removedPhotos)
       const workId = id
       // console.log('parsedPhotos', parsedPhotosInfo)
 
 
-      // CREATE NEW PHOTOS
-      /*{
-        fileName: '168.jpg',
-        isPreview: false,
-        order: 0
-        format: 'vertical',
-      }*/
+      // ===CREATE NEW PHOTOS
       if (newPhotos?.length) {
-        // console.log('NEW:')
         const queryArr = []
         const files = req.files
 
         // prepare photos to db
-        const mappedFiles = Array.from(files).map(v => {
-          // v.destination './public/uploads/s/work/1630852886366_s_168.jpg'
-          let destination = `${v.destination}`.slice(2)
+        const mappedFiles = Array.from(files).map(file => {
           return {
-            path: `${destination}/${v.filename}`, // 'public/uploads/s/work/1630852886366_s_168.jpg'
-            filename: v.filename // '1630852886366_s_168.jpg'
+            path: prepareImagePathForDB(file),
+            filename: file.filename
           }
-        })
+        }) // get path of photo in current project backend/public/uploads/s/category
+
+
         // prepare data
         Array.from(newPhotos).forEach((photo, i) => {
           const isWorkPreview = photo.isPreview ?? false
           const workOrder = photo.order ?? null
           const format = photo.format ?? null
           const image = mappedFiles[i].path ?? null
-          queryArr.push(`(${workId}, ${isWorkPreview}, ${workOrder}, '${format}', '${image}')`)
+          const str = `(${workId}, ${isWorkPreview}, ${workOrder}, '${format}', '${image}')`
+          queryArr.push(str)
         });
 
-        // console.log("NEW-RES-q", queryArr)
-        const photosDirty = await db.query(`
+        console.log("NEW-P mappedFiles", mappedFiles)
+        console.log("NEW-P newPhotos", newPhotos)
+        console.log("NEW-P queryStr", queryArr.join(','))
+        const photosFromDB = await db.query(`
           INSERT INTO photos(work_id, is_work_preview, work_order, format, image)
           VALUES ${queryArr.join(',')}
           RETURNING *;
         `)
 
-
-        // console.log("NEW-RES", photosDirty.rows)
-        const arrNewPhotos = Array.from(photosDirty.rows).map(v => ({
+        console.log("NEW-P photosFromDB", photosFromDB.rows)
+        // interface IPhoto
+        const mappedNewPhotosFromDB = Array.from(photosFromDB.rows).map(v => ({
           id: v.id,
           src: getRightPathForImage(v.image),
           isPreview: v.is_work_preview,
@@ -266,24 +293,17 @@ class WorkController {
           format: v.format
         }))
 
-        RESPONSE.photos = RESPONSE.photos.concat(arrNewPhotos)
+        console.log("NEW-P mappedNewPhotosFromDB", mappedNewPhotosFromDB)
+        // RESPONSE.photos = RESPONSE.photos.concat(arrNewPhotos)
       }
 
-      // UPDATE PHOTOS INFO
-      /*{
-        id: 15,
-        src: '//localhost:8090/public/uploads/s/work/1630249866918_s_7R-8R-Night.jpg',
-        isPreview: false,
-        order: 0
-        format: 'str'
-      }*/
-      if (existingPhotos?.length) {
-        console.log('EXISTING:')
+      // ===UPDATE PHOTOS
+      if (updatedPhotos?.length) {
         const queryArr = []
 
         // prepare data
-        Array.from(existingPhotos).forEach(photo => {
-          let image = removeDomainFromImagePath(photo.src) ?? null
+        Array.from(updatedPhotos).forEach(photo => {
+          // let image = removeDomainFromImagePath(photo.src) ?? null
           const id = photo.id ?? null
           const format = photo?.format ?? null
           const work_order = photo.order ?? null
@@ -291,26 +311,25 @@ class WorkController {
           queryArr.push(`(${id}, ${workId}, ${isWorkPreview}, ${work_order}, '${format}', '${image}')`)
         });
 
-        // console.log("EXISTING-RES-q", queryArr)
+        console.log("UP-P queryStr", queryArr.join(','))
         // req to db - https://stackoverflow.com/questions/18797608/update-multiple-rows-in-same-query-using-postgresql
-        const photos = await db.query(`
+        const updatedPhotosFromDB = await db.query(`
           UPDATE photos AS p
           SET
-            image = row.image,
             format = row.format,
             work_id = row.work_id,
             work_order = row.work_order,
             is_work_preview = row.is_work_preview
           FROM (VALUES ${queryArr.join(',')})
-            AS row(id, work_id, is_work_preview, work_order, format, image)
+            AS row(id, work_id, is_work_preview, work_order, format)
           WHERE row.id = p.id
           RETURNING *;
         `)
 
 
-        // console.log("EXISTING-RES", photos.rows)
-
-        const arrExistingPhotos = Array.from(photos.rows).map(v => ({
+        console.log("UP-P updatedPhotosFromDB", updatedPhotosFromDB.rows)
+        // interface IPhoto
+        const arrUpdatedPhotosFromDB = Array.from(updatedPhotosFromDB.rows).map(v => ({
           id: v.id,
           src: getRightPathForImage(v.image),
           isPreview: v.is_work_preview,
@@ -318,39 +337,64 @@ class WorkController {
           format: v.format
         }))
 
-        RESPONSE.photos = RESPONSE.photos.concat(arrExistingPhotos)
+        console.log("UP-P arrUpdatedPhotosFromDB", arrUpdatedPhotosFromDB)
+        // RESPONSE.photos = RESPONSE.photos.concat(arrUpdatedPhotosFromDB)
       }
 
-      // DELETE PHOTOS
-      if (parsedRemovedPhotos.length) {
-        const deletedPhotos = await db.query(`DELETE FROM photos WHERE id IN (${parsedRemovedPhotos.join(',')}) RETURNING *`)
-        console.log('deletedPhotos', deletedPhotos.rows)
+      // ===DELETE PHOTOS
+      if (deletedPhotos.length) {
+        const deletedPhotos = await db.query(`DELETE FROM photos WHERE id IN (${deletedPhotos.join(',')}) RETURNING *`)
+        console.log('DEL-P deletedPhotos', deletedPhotos.rows)
       }
 
-      // UPDATE WORK INFO
+      // ===UPDATE WORK INFO
       const photos = Array.from(RESPONSE.photos).map(v => v.id)
-      const updateWorkDraft = await db.query(`UPDATE work SET title = $1, credits = $2, description = $3, videos = $4, photos = $5, work_order = $6 WHERE id = $7 RETURNING *`, [title, credits, description, videos, photos, workOrder, id])
+      const updatedWorkFromDB = await db.query(`
+        UPDATE work SET
+          title = $1,
+          credits = $2,
+          description = $3,
+          videos = $4,
+          photos = $5,
+          work_order = $6
+        WHERE id = $7
+        RETURNING *`,
+        [title, credits, description, videos, photos, workOrder, id]
+      )
 
-      // console.log('update work', updateWorkDraft.rows)
-      const updateWork = updateWorkDraft.rows[0]
-      for (let key in updateWork) {
-        if (key === 'photos') {
-          RESPONSE.photos = [...RESPONSE.photos]
-          continue
-        }
-        if (key === 'work_order') {
-          RESPONSE['workOrder'] = updateWork[key]
-          continue
-        }
-        RESPONSE[key] = updateWork[key]
-      }
+      console.log('UP-WORK updatedWorkFromDB', deletedPhotos.rows)
+      const updateWork = updatedWorkFromDB.rows[0]
 
-      console.log('RESPONSE:', RESPONSE)
-      res.json(RESPONSE)
+      // for (let key in updateWork) {
+      //   if (key === 'photos') {
+      //     RESPONSE.photos = [...RESPONSE.photos]
+      //     continue
+      //   }
+      //   if (key === 'work_order') {
+      //     RESPONSE['workOrder'] = updateWork[key]
+      //     continue
+      //   }
+      //   RESPONSE[key] = updateWork[key]
+      // }
+
+      // console.log('RESPONSE:', RESPONSE)
+      // res.json(RESPONSE)
+
+
+      // req.params = { id: id }
+      // const updatedWork = await this.getWork(req, res)
+      // console.log('UP-WORK', updatedWork.rows[0])
+      // res.json(updatedWork.rows[0])
+
+      res.status(200)
+      res.json({ message: 'Done' })
     } catch (error) {
-      console.error('updateWork ERROR:', error)
+      // remove uploaded files
+      removeUploadedFiles(req.files)
+
       res.status(500)
-      res.json('error')
+      res.json({ message: error.message })
+      console.error('updateWork ERROR:', error)
     }
     console.log('------------------------------------updateWork-END', d)
   }
@@ -358,7 +402,7 @@ class WorkController {
   /*
     id: Number
   */
-  async deleteWork(req, res) {
+  async delete(req, res) {
     const d = getCurrentDateTime()
     console.log('------------------------------------deleteWork-START', d)
     try {
