@@ -66,6 +66,8 @@ const corsConfig = {
 app.use(cors(corsConfig))
 app.use(multer({ storage: storageConfig }).any());
 app.use(express.json())
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', type: 'multipart/form-data' }));
 // routes:
 app.use('/api', workRoutes)
 app.use('/api', contactRoutes)
