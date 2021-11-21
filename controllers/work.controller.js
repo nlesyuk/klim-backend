@@ -1,8 +1,9 @@
 const fs = require('fs');
 const db = require('../db/')
 const {
-  getRightPathForImage,
+  removeDomainFromImagePath,
   prepareImagePathForDB,
+  getRightPathForImage,
   removeUploadedFiles,
   getCurrentDateTime,
 } = require('../global/helper')
@@ -231,12 +232,28 @@ class WorkController {
     console.log('------------------------------------updateWork-START', d)
     try {
       const { id, title, credits, description, videos, photosInfo, workOrder } = req.body
-      const RESPONSE = {
-        photos: []
+      let updatedPhotoStore = []
+      // check
+      if (!id) {
+        throw new Error('id is required')
       }
-
-      if (!id || !title || !credits || !description || !videos || !photosInfo || !workOrder) {
-        throw new Error('id or ... is required')
+      if (!title) {
+        throw new Error('title is required')
+      }
+      if (!credits) {
+        throw new Error('credits are required')
+      }
+      if (!description) {
+        throw new Error('description is required')
+      }
+      if (!videos) {
+        throw new Error('videos are required')
+      }
+      if (!photosInfo) {
+        throw new Error('photosInfo is required')
+      }
+      if (!workOrder) {
+        throw new Error('workOrder is required')
       }
       console.log(id)
 
@@ -294,7 +311,7 @@ class WorkController {
         }))
 
         console.log("NEW-P mappedNewPhotosFromDB", mappedNewPhotosFromDB)
-        // RESPONSE.photos = RESPONSE.photos.concat(arrNewPhotos)
+        updatedPhotoStore = updatedPhotoStore.concat(arrNewPhotos)
       }
 
       // ===UPDATE PHOTOS
@@ -303,7 +320,7 @@ class WorkController {
 
         // prepare data
         Array.from(updatedPhotos).forEach(photo => {
-          // let image = removeDomainFromImagePath(photo.src) ?? null
+          let image = removeDomainFromImagePath(photo.src) ?? null
           const id = photo.id ?? null
           const format = photo?.format ?? null
           const work_order = photo.order ?? null
@@ -316,16 +333,16 @@ class WorkController {
         const updatedPhotosFromDB = await db.query(`
           UPDATE photos AS p
           SET
+            image = row.image,
             format = row.format,
             work_id = row.work_id,
             work_order = row.work_order,
             is_work_preview = row.is_work_preview
           FROM (VALUES ${queryArr.join(',')})
-            AS row(id, work_id, is_work_preview, work_order, format)
+            AS row(id, work_id, is_work_preview, work_order, format, image)
           WHERE row.id = p.id
           RETURNING *;
         `)
-
 
         console.log("UP-P updatedPhotosFromDB", updatedPhotosFromDB.rows)
         // interface IPhoto
@@ -338,17 +355,17 @@ class WorkController {
         }))
 
         console.log("UP-P arrUpdatedPhotosFromDB", arrUpdatedPhotosFromDB)
-        // RESPONSE.photos = RESPONSE.photos.concat(arrUpdatedPhotosFromDB)
+        updatedPhotoStore = updatedPhotoStore.concat(arrUpdatedPhotosFromDB)
       }
 
       // ===DELETE PHOTOS
-      if (deletedPhotos.length) {
+      if (deletedPhotos?.length) {
         const deletedPhotos = await db.query(`DELETE FROM photos WHERE id IN (${deletedPhotos.join(',')}) RETURNING *`)
         console.log('DEL-P deletedPhotos', deletedPhotos.rows)
       }
 
       // ===UPDATE WORK INFO
-      const photos = Array.from(RESPONSE.photos).map(v => v.id)
+      const photos = Array.from(updatedPhotoStore).map(v => v.id)
       const updatedWorkFromDB = await db.query(`
         UPDATE work SET
           title = $1,
@@ -361,33 +378,10 @@ class WorkController {
         RETURNING *`,
         [title, credits, description, videos, photos, workOrder, id]
       )
-
-      console.log('UP-WORK updatedWorkFromDB', deletedPhotos.rows)
-      const updateWork = updatedWorkFromDB.rows[0]
-
-      // for (let key in updateWork) {
-      //   if (key === 'photos') {
-      //     RESPONSE.photos = [...RESPONSE.photos]
-      //     continue
-      //   }
-      //   if (key === 'work_order') {
-      //     RESPONSE['workOrder'] = updateWork[key]
-      //     continue
-      //   }
-      //   RESPONSE[key] = updateWork[key]
-      // }
-
-      // console.log('RESPONSE:', RESPONSE)
-      // res.json(RESPONSE)
-
-
-      // req.params = { id: id }
-      // const updatedWork = await this.getWork(req, res)
-      // console.log('UP-WORK', updatedWork.rows[0])
-      // res.json(updatedWork.rows[0])
+      console.log('UP-WORK updatedWorkFromDB', updatedWorkFromDB.rows)
 
       res.status(200)
-      res.json({ message: 'Done' })
+      res.json({ message: 'Work is updated' })
     } catch (error) {
       // remove uploaded files
       removeUploadedFiles(req.files)
