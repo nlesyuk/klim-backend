@@ -311,7 +311,7 @@ class WorkController {
         }))
 
         console.log("NEW-P mappedNewPhotosFromDB", mappedNewPhotosFromDB)
-        updatedPhotoStore = updatedPhotoStore.concat(arrNewPhotos)
+        updatedPhotoStore = updatedPhotoStore.concat(mappedNewPhotosFromDB)
       }
 
       // ===UPDATE PHOTOS
