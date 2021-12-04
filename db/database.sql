@@ -54,6 +54,14 @@ create TABLE photos(
 
 
 
+-- in progress
+create TABLE slider(
+  id SERIAL PRIMARY KEY,
+  order INTEGER,
+  title VARCHAR(255),
+  work_id INTEGER,
+  photo_id INTEGER,
+);
 
 
 
