@@ -168,10 +168,10 @@ class SliderController {
     console.log('------------------------------------getSliderById-START', d)
 
     try {
-      if (!req.params.id) {
-        throw new Error('id is required')
+      const id = req.params?.id ? +req.params?.id : null
+      if (!id || !Number.isInteger(id)) {
+        throw new Error('id is required or id is incorrect')
       }
-      const id = +req.params.id
 
       const slides = await db.query(`SELECT * FROM slides WHERE id = $1`, [id])
 
@@ -198,9 +198,9 @@ class SliderController {
       // response
       const anotherMessage = error?.message
         ? error.message
-        : 'Unknow server error at getSlider controller'
+        : 'Unknow server error at getSliderById controller'
       res.status(500).send({ message: anotherMessage })
-      console.error('getSlider Error', anotherMessage)
+      console.error('getSliderById Error', anotherMessage)
     }
 
     res.status(200).json({ message: 'get' })
@@ -216,9 +216,30 @@ class SliderController {
 
   async delete(req, res) {
     const d = getCurrentDateTime()
-    console.log('------------------------------------updateSlider-START', d)
-    res.status(200).json({ message: 'delete' })
-    console.log('------------------------------------updateSlider-END', d)
+    console.log('------------------------------------deleteSlider-START', d)
+    try {
+      const id = req.params?.id ? +req.params?.id : null
+      if (!id || !Number.isInteger(id)) {
+        throw new Error('id is required or id is incorrect')
+      }
+
+      const slideDeletedRaw = await db.query(`DELETE FROM slides WHERE id = $1 RETURNING *`, [id])
+      const slideDeleted = slideDeletedRaw?.rows?.[0]
+      console.log('slideDeleted', slideDeleted)
+      if (slideDeleted) {
+        res.status(200).json({ message: 'slide deleted', id: slideDeleted.id })
+      } else {
+        throw new Error('Something wrong with delete slide')
+      }
+    } catch (error) {
+      // response
+      const anotherMessage = error?.message
+        ? error.message
+        : 'Unknow server error at deleteSlider controller'
+      res.status(500).send({ message: anotherMessage })
+      console.error('deleteSlider Error', anotherMessage)
+    }
+    console.log('------------------------------------deleteSlider-END', d)
   }
 }
 
