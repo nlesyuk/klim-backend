@@ -10,14 +10,14 @@ const dbKey = 'slides';
 class SliderController {
   async create(req, res) {
     /*
-      type: image
-      title: test
-      order: 0
-      video: {"vimeoId": 561200941}
-      workId: 84
-      photoId: null
+      type: String
+      title: String
+      order: Number
+      video: String
+      workId: Number
+      photoId: Number
       photos[]: (binary)
-      photosInfo: [{"fileName":"8.jpg","format":"horizontal"}]
+      photosInfo: String
     */
     const d = getCurrentDateTime()
     console.log('------------------------------------createSlider-START', d)
@@ -90,9 +90,9 @@ class SliderController {
           id,
           type,
           title,
-          image: getRightPathForImage(image),
+          image: image ? getRightPathForImage(image) : null,
           order: slide_order,
-          videos,
+          videos: videos ? videos : null,
           workId: work_id,
           photoId: photo_id,
         }
@@ -125,26 +125,39 @@ class SliderController {
   async get(req, res) {
     const d = getCurrentDateTime()
     console.log('------------------------------------getSlider-START', d)
-    const slides = [
-      {
-        id: 1,
-        title: 'test1',
-        type: "video",
-        order: 0,
-        workId: 7,
-        video: {
-          vimeoId: 561200941
-        }
-      },
-      {
-        id: 2,
-        title: 'test2',
-        type: "image",
-        order: 0,
-        image: "https://nrdevux.com/klim/slides/2.jpg",
-        workId: 4
-      },
-    ]
+
+    try {
+      const slides = await db.query(`SELECT * FROM slides`)
+
+      const slidesRaw = slides?.rows
+      if (slidesRaw?.length) {
+        const slides = Array.from(slidesRaw).map(slide => {
+          const { id, type, title, image, slide_order, videos, work_id, photo_id } = slide
+          return {
+            id,
+            type,
+            title,
+            image: image ? getRightPathForImage(image) : null,
+            order: slide_order,
+            videos: videos ? videos : null,
+            workId: work_id,
+            photoId: photo_id,
+          }
+        })
+
+        res.status(200).json(slides)
+      } else {
+        res.status(200).send({ message: 'Do not have any slides' })
+      }
+
+    } catch (error) {
+      // response
+      const anotherMessage = error?.message
+        ? error.message
+        : 'Unknow server error at getSlider controller'
+      res.status(500).send({ message: anotherMessage })
+      console.error('getSlider Error', anotherMessage)
+    }
 
     res.status(200).json(slides)
     console.log('------------------------------------getSlider-END', d)
@@ -154,6 +167,41 @@ class SliderController {
     const d = getCurrentDateTime()
     console.log('------------------------------------getSliderById-START', d)
 
+    try {
+      if (!req.params.id) {
+        throw new Error('id is required')
+      }
+      const id = +req.params.id
+
+      const slides = await db.query(`SELECT * FROM slides WHERE id = $1`, [id])
+
+      const slideRaw = slides?.rows?.[0]
+      if (slideRaw) {
+        const { id, type, title, image, slide_order, videos, work_id, photo_id } = slideRaw
+        const slideClear = {
+          id,
+          type,
+          title,
+          image: image ? getRightPathForImage(image) : null,
+          order: slide_order,
+          videos: videos ? videos : null,
+          workId: work_id,
+          photoId: photo_id,
+        }
+
+        res.status(200).json(slideClear)
+      } else {
+        res.status(200).send({ message: 'Do not find slide' })
+      }
+
+    } catch (error) {
+      // response
+      const anotherMessage = error?.message
+        ? error.message
+        : 'Unknow server error at getSlider controller'
+      res.status(500).send({ message: anotherMessage })
+      console.error('getSlider Error', anotherMessage)
+    }
 
     res.status(200).json({ message: 'get' })
     console.log('------------------------------------getSliderById-END', d)
