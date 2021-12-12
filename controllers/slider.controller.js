@@ -1,3 +1,4 @@
+const fs = require('fs');
 const db = require('../db/index')
 const {
   getCurrentDateTime,
@@ -139,7 +140,7 @@ class SliderController {
             title,
             image: image ? getRightPathForImage(image) : null,
             order: slide_order,
-            videos: videos ? videos : null,
+            videos: videos ? JSON.parse(videos) : null,
             workId: work_id,
             photoId: photo_id,
           }
@@ -184,7 +185,7 @@ class SliderController {
           title,
           image: image ? getRightPathForImage(image) : null,
           order: slide_order,
-          videos: videos ? videos : null,
+          videos: videos ? JSON.parse(videos) : null,
           workId: work_id,
           photoId: photo_id,
         }
@@ -226,7 +227,14 @@ class SliderController {
       const slideDeletedRaw = await db.query(`DELETE FROM slides WHERE id = $1 RETURNING *`, [id])
       const slideDeleted = slideDeletedRaw?.rows?.[0]
       console.log('slideDeleted', slideDeleted)
-      if (slideDeleted) {
+      if (slideDeleted?.type === 'image') {
+        fs.unlink(slideDeleted.image, (err) => {
+          if (err) {
+            console.error("unlink can't delete file - ", slideDeleted.image)
+            throw err;
+          }
+          console.log('File deleted!');
+        });
         res.status(200).json({ message: 'slide deleted', id: slideDeleted.id })
       } else {
         throw new Error('Something wrong with delete slide')
