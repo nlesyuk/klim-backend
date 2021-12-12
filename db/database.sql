@@ -52,16 +52,16 @@ create TABLE photos(
   image VARCHAR(255)
 );
 
-
-
 -- in progress
-create TABLE slider(
+create TABLE slides(
   id SERIAL PRIMARY KEY,
+  type VARCHAR(255),
   title VARCHAR(255),
-  image VARCHAR(255),
-  order INTEGER,
-  work_id INTEGER,
-  photo_id INTEGER,
+  slide_order INTEGER,
+  image VARCHAR(255) DEFAULT NULL,
+  videos VARCHAR(255) DEFAULT NULL,
+  work_id INTEGER DEFAULT NULL,
+  photo_id INTEGER DEFAULT NULL
 );
 
 
