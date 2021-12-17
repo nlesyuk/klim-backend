@@ -37,9 +37,6 @@ class SliderController {
       if (type === 'video' && !videos) {
         throw new Error('video is required')
       }
-      if (type === 'image' && !photosInfo) {
-        throw new Error('photosInfo is required')
-      }
       if (!Number.isInteger(+order)) {
         throw new Error('order is required')
       }
