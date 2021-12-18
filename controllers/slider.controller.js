@@ -156,8 +156,6 @@ class SliderController {
       res.status(500).send({ message: anotherMessage })
       console.error('getSlider Error', anotherMessage)
     }
-
-    res.status(200).json(slides)
     console.log('------------------------------------getSlider-END', d)
   }
 
