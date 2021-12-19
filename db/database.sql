@@ -25,7 +25,7 @@ create TABLE shot(
 );
 
 -- in progress
-create TABLE photo(
+create TABLE photoCollections(
   id SERIAL PRIMARY KEY,
   title VARCHAR(255),
   categories TEXT[]
@@ -52,7 +52,7 @@ create TABLE photos(
   image VARCHAR(255)
 );
 
--- in progress
+-- ok
 create TABLE slides(
   id SERIAL PRIMARY KEY,
   type VARCHAR(255),
