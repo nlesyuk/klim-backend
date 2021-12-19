@@ -82,11 +82,32 @@ function removeUploadedFiles(files) {
           console.log('File deleted!');
         });
       })
+    return true
   } catch (e) {
-    console.log('Error while deleting file', e)
+    console.error('Error while deleting file', e)
+    return false
   }
 }
 
+function removeFileByPath(path) {
+  if (!path) {
+    return false
+  }
+
+  try {
+    fs.unlink(path, (err) => {
+      if (err) {
+        console.error("unlink can't delete file - ", file.path)
+        throw err;
+      }
+      console.log('File deleted!');
+    });
+    return true
+  } catch (e) {
+    console.error('Error while deleting file', e)
+    return false
+  }
+}
 
 function removePhotoFromServer(files, keyContainPath = 'image') {
   // image - is default name of column in photos table whit contain path to image
@@ -117,7 +138,6 @@ function removePhotoFromServer(files, keyContainPath = 'image') {
   }
 }
 
-
 function getCurrentDateTime() {
   const date = new Date()
   const ms = date.getMilliseconds()
@@ -136,13 +156,35 @@ function getCurrentDateTime() {
   return `${dateFormated}:${ms}`
 }
 
+function prepareSlideDataForClient(slideDataRaw) {
+  if (slideDataRaw?.rows?.[0]) {
+    const { id, type, title, image, slide_order, videos, work_id, photo_id } = slideDataRaw.rows[0]
+    const createdSlide = {
+      id,
+      type,
+      title,
+      image: image ? getRightPathForImage(image) : null,
+      order: slide_order,
+      videos: videos ? videos : null,
+      workId: work_id,
+      photoId: photo_id,
+    }
+    return createdSlide
+  } else {
+    return false
+  }
+}
+
+
 module.exports = {
   removeDomainFromImagePath,
   renameIncomeImagePattern,
   removePhotoFromServer,
   prepareImagePathForDB,
   getRightPathForImage,
+  prepareSlideDataForClient,
   removeUploadedFiles,
+  removeFileByPath,
   getCategory,
   getDomain,
   getHost,

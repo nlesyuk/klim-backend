@@ -5,6 +5,8 @@ const {
   removeUploadedFiles,
   prepareImagePathForDB,
   getRightPathForImage,
+  prepareSlideDataForClient,
+  removeFileByPath,
 } = require('../global/helper')
 const dbKey = 'slides';
 
@@ -18,7 +20,6 @@ class SliderController {
       workId: Number
       photoId: Number
       photos[]: (binary)
-      photosInfo: String
     */
     const d = getCurrentDateTime()
     console.log('------------------------------------createSlider-START', d)
@@ -94,9 +95,11 @@ class SliderController {
           workId: work_id,
           photoId: photo_id,
         }
-        res.status(200).json(createdSlide)
+        res.status(200)
+        res.json(createdSlide)
       } else {
-        res.status(500).send({ message: 'record does"t created in DB' })
+        res.status(500)
+        res.send({ message: 'record does"t created in DB' })
       }
 
     } catch (error) {
@@ -114,7 +117,8 @@ class SliderController {
       const anotherMessage = error?.message
         ? error.message
         : 'Unknow server error at createSlider controller'
-      res.status(500).send({ message: anotherMessage })
+      res.status(500)
+      res.send({ message: anotherMessage })
       console.error('createSlider Error', anotherMessage)
     }
     console.log('------------------------------------createSlider-END', d)
@@ -206,7 +210,183 @@ class SliderController {
   async update(req, res) {
     const d = getCurrentDateTime()
     console.log('------------------------------------updateSlider-START', d)
-    res.status(200).json({ message: 'update' })
+    /*
+      type: String
+      title: String
+      order: Number
+        video: String
+        workId: Number
+        photoId: Number
+        photos[]: (binary)
+    */
+    const temp = {}
+    try {
+      const { id, title, type, order, videos, workId, photoId } = req.body
+      console.log('START', id, title, type, order, videos, workId, photoId)
+
+      // check
+      if (!id) {
+        throw new Error('id is required')
+      }
+      if (!title) {
+        throw new Error('title is required')
+      }
+      if (!['video', 'image'].includes(type)) {
+        throw new Error('type is required')
+      }
+      if (type === 'video' && !videos) {
+        throw new Error('video is required')
+      }
+      if (!Number.isInteger(+order)) {
+        throw new Error('order is required')
+      }
+      if (photoId && !Number.isInteger(+photoId) || workId && !Number.isInteger(+workId)) {
+        throw new Error('photoId or workId is required')
+      }
+
+      // base data
+      const slide = {
+        id,
+        type,
+        title,
+        slide_order: order ? +order : null,
+        workId: workId ? +workId : null,
+        photoId: photoId ? +photoId : null,
+        image: null,
+        videos: videos ? videos : null,
+      }
+
+      if (type === 'image') {
+        const files = req.files
+        let slideClear
+
+        // 1 upload new image
+        if (files?.length) {
+          // prepare photos to db
+          const mappedFiles = Array.from(files).map(file => {
+            return {
+              path: prepareImagePathForDB(file),
+            }
+          })
+
+          // get old image path
+          const oldImage = await db.query(`SELECT * FROM slides WHERE id = $1`, [id])
+          const oldImagePath = oldImage?.rows?.[0]?.image ?? null
+          // remove old image
+          const isRemoved = removeFileByPath(oldImagePath)
+          // set new image path to db
+          if (isRemoved) {
+            slide.image = mappedFiles?.[0]?.path ?? null
+            const slideRaw = await db.query(`
+              UPDATE slides
+              SET
+                type = $2,
+                title = $3,
+                slide_order = $4,
+                work_id = $5,
+                photo_id = $6,
+                image = $7
+              WHERE id = $1
+              RETURNING *`,
+              [
+                slide.id,
+                slide.type,
+                slide.title,
+                slide.slide_order,
+                slide.workId,
+                slide.photoId,
+                slide.image,
+              ]
+            );
+            // result
+            slideClear = prepareSlideDataForClient(slideRaw)
+          } else {
+            res.status(500)
+            res.send({ message: 'Can not remove old image' })
+          }
+        } else {
+          // 2 update data without image
+          const slideRaw = await db.query(`
+            UPDATE slides
+            SET
+              type = $2,
+              title = $3,
+              slide_order = $4,
+              work_id = $5,
+              photo_id = $6
+            WHERE id = $1
+            RETURNING *`,
+            [
+              slide.id,
+              slide.type,
+              slide.title,
+              slide.slide_order,
+              slide.workId,
+              slide.photoId,
+            ]
+          );
+          // result
+          slideClear = prepareSlideDataForClient(slideRaw)
+        }
+
+        // response
+        if (slideClear) {
+          console.log('IMG+ response', slideClear)
+          res.status(200)
+          res.json(slideClear)
+        } else {
+          throw new Error('slide mapped is incorrect while update image')
+        }
+      } else if (type === 'video') {
+        // 1 update video
+        const slideRaw = await db.query(`
+          UPDATE slides
+          SET
+            type = $2,
+            title = $3,
+            slide_order = $4,
+            work_id = $5,
+            photo_id = $6,
+            videos = $7
+          WHERE id = $1
+          RETURNING *`,
+          [
+            slide.id,
+            slide.type,
+            slide.title,
+            slide.slide_order,
+            slide.workId,
+            slide.photoId,
+            slide.videos,
+          ]
+        );
+        // result
+        const slideClear = prepareSlideDataForClient(slideRaw)
+
+        // response
+        if (slideClear) {
+          console.log('VIDEO+ response', slideClear)
+          res.status(200)
+          res.json(slideClear)
+        } else {
+          throw new Error('slide mapped is incorrect while update video')
+        }
+      } else {
+        throw new Error('type is incorrect')
+      }
+
+    } catch (error) {
+      // remove uploaded files
+      removeUploadedFiles(req.files)
+
+      // response
+      const anotherMessage = error?.message
+        ? error.message
+        : 'Unknow server error at updateSlider controller'
+      res.status(500)
+      res.send({ message: anotherMessage })
+      console.error('updateSlider Error', anotherMessage)
+    }
     console.log('------------------------------------updateSlider-END', d)
   }
 
