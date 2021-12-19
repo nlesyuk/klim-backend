@@ -145,7 +145,7 @@ class SliderController {
 
         res.status(200).json(slides)
       } else {
-        res.status(200).send({ message: 'Do not have any slides' })
+        res.status(200).send([])
       }
 
     } catch (error) {
@@ -230,10 +230,9 @@ class SliderController {
           }
           console.log('File deleted!');
         });
-        res.status(200).json({ message: 'slide deleted', id: slideDeleted.id })
-      } else {
-        throw new Error('Something wrong with delete slide')
       }
+
+      res.status(200).json({ message: 'slide deleted', id: slideDeleted.id })
     } catch (error) {
       // response
       const anotherMessage = error?.message
