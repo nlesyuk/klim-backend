@@ -1,4 +1,4 @@
-const categories = ['work', 'shot', 'photo', 'slider']
+const categories = ['work', 'shot', 'photo', 'slider', 'photos']
 
 module.exports = {
   categories,

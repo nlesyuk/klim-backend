@@ -12,53 +12,53 @@ const {
 class PhotoCollectionsController {
   async create(req, res) {
     const d = getCurrentDateTime()
-    console.log('------------------------------------createWork-START', d)
+    console.log('------------------------------------createPhotoCollection-START', d)
     try {
-
+      res.json({ message: 'ok' })
     } catch (error) {
 
     }
-    console.log('------------------------------------createWork-END', d)
+    console.log('------------------------------------createPhotoCollection-END', d)
   }
   async get(req, res) {
     const d = getCurrentDateTime()
-    console.log('------------------------------------createWork-START', d)
+    console.log('------------------------------------getPhotoCollection-START', d)
     try {
-
+      res.json([])
     } catch (error) {
 
     }
-    console.log('------------------------------------createWork-END', d)
+    console.log('------------------------------------getPhotoCollection-END', d)
   }
   async getById(req, res) {
     const d = getCurrentDateTime()
-    console.log('------------------------------------createWork-START', d)
+    console.log('------------------------------------getByIDPhotoCollection-START', d)
     try {
 
     } catch (error) {
 
     }
-    console.log('------------------------------------createWork-END', d)
+    console.log('------------------------------------getByIDPhotoCollection-END', d)
   }
   async update(req, res) {
     const d = getCurrentDateTime()
-    console.log('------------------------------------createWork-START', d)
+    console.log('------------------------------------updatePhotoCollection-START', d)
     try {
 
     } catch (error) {
 
     }
-    console.log('------------------------------------createWork-END', d)
+    console.log('------------------------------------updatePhotoCollection-END', d)
   }
   async delete(req, res) {
     const d = getCurrentDateTime()
-    console.log('------------------------------------createWork-START', d)
+    console.log('------------------------------------deletePhotoCollection-START', d)
     try {
 
     } catch (error) {
 
     }
-    console.log('------------------------------------createWork-END', d)
+    console.log('------------------------------------deletePhotoCollection-END', d)
   }
 }
 
