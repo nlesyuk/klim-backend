@@ -138,14 +138,124 @@ const mock = [
     ]
   },
 ]
+
 class PhotoCollectionsController {
+  /**
+    {
+      order: Number
+      title: String,
+      credits: String,
+      photosInfo: String,
+      description: String,
+      photos: binary[]
+    }
+  */
   async create(req, res) {
     const d = getCurrentDateTime()
     console.log('------------------------------------createPhotoCollection-START', d)
+    const storage = {}
     try {
-      res.json({ message: 'ok' })
-    } catch (error) {
+      // res.json({ message: 'ok' })
+      const { title, description, credits, photosInfo, order } = req.body
+      const filesInfo = JSON.parse(photosInfo)
+      const files = req.files
 
+      console.log('FIELDS', title, description, credits, filesInfo, order)
+      console.log('FILES', files)
+
+      // 0 - check
+      if (!files?.length) {
+        throw new Error('No files')
+      }
+
+      // 1 - create record
+      // prepare photos to db
+      const mappedFiles = Array.from(files).map(file => {
+        return {
+          path: prepareImagePathForDB(file),
+          filename: file.filename
+        }
+      }) // get path of photo in current project backend/public/uploads/s/category
+      console.log('FILES-INFO', mappedFiles)
+
+      const record = await db.query(`
+        INSERT INTO photo
+          (title, descriptions, credits, photo_order)
+        VALUES
+          ($1, $2, $3, $4)
+        RETURNING *`,
+        [title, description, credits, order]
+      )
+      console.log('DB RECORD', record.rows)
+      if (record.rows?.[0]?.id) {
+        storage.id = record.rows[0].id
+      } else {
+        throw new Error('record id is not setted')
+      }
+
+      // 2 - create photos record
+      const queryArr = []
+
+      Array.from(filesInfo).forEach((photo, i) => {
+        const isWorkPreview = photo.isPreview ?? false
+        const photoOrder = photo.order ?? null
+        const format = photo.format ?? null
+        const image = mappedFiles[i].path ?? null
+        queryArr.push(`(${storage.id}, ${isWorkPreview}, ${photoOrder}, '${format}', '${image}')`)
+      });
+      const queryStr = queryArr.join(',')
+      console.log('QueryArr', queryStr, queryArr)
+
+      // 1 - set photos in table
+      const photos = await db.query(`
+        INSERT INTO photos
+          (photo_id, is_photo_preview, photo_order, format, image)
+        VALUES
+          ${queryStr}
+        RETURNING *;`
+      )
+      console.log('DB PHOTOS', photos.rows)
+
+
+      const mappedDataForFrontend = {
+        title: record.rows[0].title,
+        order: record.rows[0].photo_order,
+        credits: record.rows[0].credits,
+        description: record.rows[0].descriptions,
+        photos: photos.rows.map(v => {
+          return {
+            id: v.id,
+            order: v.photo_order,
+            format: v.format,
+            isPreview: v.is_photo_preview,
+            src: getRightPathForImage(v.image)
+          }
+        })
+      }
+
+      res.status(200)
+      res.json(mappedDataForFrontend)
+
+    } catch (e) {
+      if (e.message === 'No files') {
+        console.error('createPhotoCollection Error', e.message)
+        res.status(400)
+        res.send({ message: 'No files' })
+      }
+
+      // remove uploaded files
+      const files = req.files
+      removeUploadedFiles(files)
+
+      // remove record from db
+      const resq = await db.query(`DELETE FROM photo WHERE id = $1`, [storage.recordId])
+      console.log('storage', storage, resq.rows)
+
+      // response
+      const anotherMessage = e?.message ? e.message : 'Unknow server error at createWork controller'
+      res.status(500)
+      res.send({ message: anotherMessage })
+      console.error('createPhotoCollection Error', anotherMessage)
     }
     console.log('------------------------------------createPhotoCollection-END', d)
   }

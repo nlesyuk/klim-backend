@@ -28,6 +28,9 @@ create TABLE shot(
 create TABLE photoCollections(
   id SERIAL PRIMARY KEY,
   title VARCHAR(255),
+  descriptions VARCHAR,
+  credits VARCHAR,
+  photo_order INTEGER,
   categories TEXT[]
 );
 
