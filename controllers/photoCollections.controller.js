@@ -296,8 +296,53 @@ class PhotoCollectionsController {
     console.log('------------------------------------deletePhotoCollection-START', d)
     try {
       const { id } = req.params
-    } catch (error) {
+      const status = { id, }
 
+      const removedPhotoRecord = await db.query(`
+        DELETE FROM
+          photo
+        WHERE
+          id = $1
+        RETURNING *`,
+        [id]
+      )
+      const removedPhotos = await db.query(`
+        DELETE FROM
+          photos
+        WHERE
+          photo_id = $1
+        AND
+          work_id IS NULL
+        AND
+          shot_id IS NULL
+        RETURNING *`
+        , [id]
+      )
+
+      // remove uploaded files
+      if (removedPhotos?.rows?.length) {
+        let count = 0
+        Array.from(removedPhotos.rows).forEach(file => {
+          fs.unlink(file.image, (err) => { // remove file
+            if (err) {
+              console.error("unlink can't delete file - ", file.image)
+              throw err;
+            }
+            console.log('File deleted!');
+            count++
+          });
+        })
+        status.message = `Removed ${count} photos`
+      } else {
+        await db.query(`UPDATE photos SET photo_id = null WHERE photo_id = $1`, [id])
+        status.message = "Photos was not removed - saved for other categories or dosn't exist"
+      }
+      status.status = 'success'
+
+      res.json(status)
+    } catch (error) {
+      console.error('deleteWork Error', error)
+      res.status(500)
     }
     console.log('------------------------------------deletePhotoCollection-END', d)
   }
