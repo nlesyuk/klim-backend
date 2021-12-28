@@ -269,13 +269,12 @@ class PhotoCollectionsController {
       // prepare photos for front-end
       const photos = dirtyWorkPhotos.rows.map(photo => ({
         id: photo.id,
-        photo_id: photo.photo_id,
+        // photo_id: photo.photo_id,
         src: getRightPathForImage(photo.image),
         isPreview: photo.is_photo_preview,
         order: photo.photo_order,
         format: photo.format ?? null,
       }))
-      console.log("_______GET", photos)
 
       const works = photoRecords.rows.map((item) => {
         item.order = item?.photo_order ?? 0
@@ -302,9 +301,35 @@ class PhotoCollectionsController {
     console.log('------------------------------------getByIDPhotoCollection-START', d)
     try {
       const { id } = req.params
-      res.json(mock.filter(v => v.id == id))
-    } catch (error) {
 
+      const record = await db.query(`SELECT * FROM photo WHERE id = $1`, [id])
+      if (record.rows.length === 0) {
+        res.status(404);
+        res.send({ message: "Photo collection doesn't exist" });
+      }
+
+      const photo = record.rows[0]
+      photo.order = photo?.photo_order ?? 0
+      delete photo.photo_order
+
+      const photosDirty = await db.query(`SELECT * FROM photos WHERE photo_id = $1`, [id])
+
+      // prepare photos for front-end
+      if (photosDirty?.rows?.length) {
+        photo.photos = photosDirty.rows.map(photo => ({
+          id: photo.id,
+          // photo_id: photo.photo_id,
+          src: getRightPathForImage(photo.image),
+          isPreview: photo.is_photo_preview,
+          order: photo.photo_order,
+          format: photo.format ?? null,
+        }))
+      }
+
+      res.json(photo)
+    } catch (error) {
+      console.error('getWork Error', error)
+      res.status(500)
     }
     console.log('------------------------------------getByIDPhotoCollection-END', d)
   }
