@@ -263,10 +263,37 @@ class PhotoCollectionsController {
     const d = getCurrentDateTime()
     console.log('------------------------------------getPhotoCollection-START', d)
     try {
-      //3.126.125.66/public/uploads/s/work/1637577029639_s_811.jpeg
-      res.json(mock)
-    } catch (error) {
+      const photoRecords = await db.query(`SELECT * FROM photo`)
+      const dirtyWorkPhotos = await db.query(`SELECT * FROM photos WHERE photo_id IS NOT NULL`)
 
+      // prepare photos for front-end
+      const photos = dirtyWorkPhotos.rows.map(photo => ({
+        id: photo.id,
+        photo_id: photo.photo_id,
+        src: getRightPathForImage(photo.image),
+        isPreview: photo.is_photo_preview,
+        order: photo.photo_order,
+        format: photo.format ?? null,
+      }))
+      console.log("_______GET", photos)
+
+      const works = photoRecords.rows.map((item) => {
+        item.order = item?.photo_order ?? 0
+        delete item.work_order
+        item.photos = photos.filter(photo => {
+          if (photo.photo_id && photo.photo_id === item.id) {
+            delete photo.photo_id
+            return true
+          }
+          return false
+        })
+        return item
+      })
+
+      console.log(works)
+      res.json(works)
+    } catch (error) {
+      console.error('getWorks Error', error)
     }
     console.log('------------------------------------getPhotoCollection-END', d)
   }
@@ -323,14 +350,18 @@ class PhotoCollectionsController {
       if (removedPhotos?.rows?.length) {
         let count = 0
         Array.from(removedPhotos.rows).forEach(file => {
-          fs.unlink(file.image, (err) => { // remove file
-            if (err) {
-              console.error("unlink can't delete file - ", file.image)
-              throw err;
-            }
-            console.log('File deleted!');
+          try {
+            fs.unlink(file.image, (err) => { // remove file
+              if (err) {
+                console.error("unlink can't delete file - ", file.image)
+                throw err;
+              }
+              console.log('File deleted! - ', file.image);
+            });
             count++
-          });
+          } catch (e) {
+            console.error('deleteWork Error at fs.unlink', e)
+          }
         })
         status.message = `Removed ${count} photos`
       } else {
