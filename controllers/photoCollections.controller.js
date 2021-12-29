@@ -264,12 +264,12 @@ class PhotoCollectionsController {
     console.log('------------------------------------getPhotoCollection-START', d)
     try {
       const photoRecords = await db.query(`SELECT * FROM photo`)
-      const dirtyWorkPhotos = await db.query(`SELECT * FROM photos WHERE photo_id IS NOT NULL`)
+      const dirtyPhotos = await db.query(`SELECT * FROM photos WHERE photo_id IS NOT NULL`)
 
       // prepare photos for front-end
-      const photos = dirtyWorkPhotos.rows.map(photo => ({
+      const photos = dirtyPhotos.rows.map(photo => ({
         id: photo.id,
-        // photo_id: photo.photo_id,
+        photo_id: photo.photo_id,
         src: getRightPathForImage(photo.image),
         isPreview: photo.is_photo_preview,
         order: photo.photo_order,
@@ -277,22 +277,24 @@ class PhotoCollectionsController {
       }))
 
       const works = photoRecords.rows.map((item) => {
-        item.order = item?.photo_order ?? 0
-        delete item.work_order
-        item.photos = photos.filter(photo => {
-          if (photo.photo_id && photo.photo_id === item.id) {
-            delete photo.photo_id
-            return true
-          }
-          return false
-        })
-        return item
+        const order = item.photo_order ?? 0
+        delete item.photo_order
+        return {
+          ...item,
+          order,
+          photos: photos.filter(photo => {
+            if (photo?.photo_id === item.id) {
+              delete photo.photo_id
+              return true
+            }
+            return false
+          })
+        }
       })
 
-      console.log(works)
       res.json(works)
     } catch (error) {
-      console.error('getWorks Error', error)
+      console.error('Error', error)
     }
     console.log('------------------------------------getPhotoCollection-END', d)
   }
@@ -328,7 +330,7 @@ class PhotoCollectionsController {
 
       res.json(photo)
     } catch (error) {
-      console.error('getWork Error', error)
+      console.error('Error', error)
       res.status(500)
     }
     console.log('------------------------------------getByIDPhotoCollection-END', d)
