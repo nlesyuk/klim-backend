@@ -278,10 +278,13 @@ class PhotoCollectionsController {
 
       const works = photoRecords.rows.map((item) => {
         const order = item.photo_order ?? 0
+        const description = item.descriptions ?? ''
         delete item.photo_order
+        delete item.descriptions
         return {
           ...item,
           order,
+          description,
           photos: photos.filter(photo => {
             if (photo?.photo_id === item.id) {
               delete photo.photo_id
