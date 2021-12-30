@@ -16,7 +16,7 @@ class WorkController {
       credits: String,
       videos: String of JSON,
       photosInfo: String,
-      workOrder: Number,
+      order: Number,
       photos: binary[]
     }
   */
@@ -25,7 +25,7 @@ class WorkController {
     console.log('------------------------------------createWork-START', d)
     const storage = {}
     try {
-      const { title, description, credits, videos, photosInfo, workOrder } = req.body
+      const { title, description, credits, videos, photosInfo, order } = req.body
       const filesInfo = JSON.parse(photosInfo)
       const files = req.files
 
@@ -47,7 +47,15 @@ class WorkController {
       }) // get path of photo in current project backend/public/uploads/s/category
       console.log('FILES-INFO', mappedFiles)
 
-      const work = await db.query(`INSERT INTO work (title, videos, description, credits, work_order) values ($1, $2, $3, $4, $5) RETURNING *`, [title, videos, description, credits, workOrder])
+      const work = await db.query(`
+        INSERT INTO
+          work
+          (title, videos, description, credits, work_order)
+          values
+          ($1, $2, $3, $4, $5)
+        RETURNING *`,
+        [title, videos, description, credits, order]
+      )
 
       console.log('DB WORK', work.rows)
       let workId = ''
@@ -72,7 +80,14 @@ class WorkController {
       console.log('QueryArr', queryStr, queryArr)
 
       // 1 - set photos in table
-      const photos = await db.query(`INSERT INTO photos(work_id, is_work_preview, work_order, format, image) values ${queryStr} RETURNING *;`)
+      const photos = await db.query(`
+        INSERT INTO
+          photos
+          (work_id, is_work_preview, work_order, format, image)
+          values
+          ${queryStr}
+        RETURNING *;`
+      )
       console.log('DB PHOTOS', photos.rows)
 
       let photoIds = ''
@@ -84,9 +99,25 @@ class WorkController {
       console.log('photoIds', photoIds)
 
       // 3 - set photos id in work record
-      const updatedWork = await db.query(`UPDATE work SET photos = $1 WHERE  id = $2 RETURNING *`, [photoIds, workId])
+      const updatedWork = await db.query(`
+        UPDATE
+          work
+        SET
+          photos = $1
+        WHERE
+          id = $2
+        RETURNING *`,
+        [photoIds, workId]
+      )
       console.log('updatedWork', updatedWork.rows)
-      res.json(updatedWork.rows?.[0])
+      const workPraperedForFrontEnd = updatedWork.rows?.map(v => {
+        v.order = v.work_order ?? 0;
+        delete v.work_order
+        return {
+          ...v
+        }
+      })
+      res.json(workPraperedForFrontEnd[0])
 
     } catch (e) {
       if (e.message === 'No files') {
@@ -126,7 +157,7 @@ class WorkController {
       }
 
       const work = workDirty.rows[0]
-      work.workOrder = work?.work_order ?? 0
+      work.order = work?.work_order ?? 0
       delete work.work_order
 
       const photosDirty = await db.query(`SELECT * FROM photos WHERE work_id = $1`, [id])
@@ -158,7 +189,7 @@ class WorkController {
       credits: String,
       videos: String of JSON,
       photosInfo: String,
-      workOrder: Number,
+      order: Number,
     }
   */
   async getWorks(req, res) {
@@ -179,7 +210,7 @@ class WorkController {
       }))
 
       const works = dirtyWorks.rows.map((work) => {
-        work.workOrder = work?.work_order ?? 0
+        work.order = work?.work_order ?? 0
         delete work.work_order
         work.photos = photos.filter(photo => {
           if (photo.work_id && photo.work_id === work.id) {
@@ -205,7 +236,7 @@ class WorkController {
       title: String,
       videos: String of JSON,
       credits: String,
-      workOrder: Number,
+      order: Number,
       description: String,
       photosInfo: String of JSON {
         new: [{
@@ -231,7 +262,7 @@ class WorkController {
     const d = getCurrentDateTime()
     console.log('------------------------------------updateWork-START', d)
     try {
-      const { id, title, credits, description, videos, photosInfo, workOrder } = req.body
+      const { id, title, credits, description, videos, photosInfo, order } = req.body
       let updatedPhotoStore = []
       // check
       if (!id) {
@@ -252,8 +283,8 @@ class WorkController {
       if (!photosInfo) {
         throw new Error('photosInfo is required')
       }
-      if (!workOrder) {
-        throw new Error('workOrder is required')
+      if (!order) {
+        throw new Error('order is required')
       }
       console.log(id)
 
@@ -284,10 +315,10 @@ class WorkController {
         // prepare data
         Array.from(newPhotos).forEach((photo, i) => {
           const isWorkPreview = photo.isPreview ?? false
-          const workOrder = photo.order ?? null
+          const order = photo.order ?? null
           const format = photo.format ?? null
           const image = mappedFiles[i].path ?? null
-          const str = `(${workId}, ${isWorkPreview}, ${workOrder}, '${format}', '${image}')`
+          const str = `(${workId}, ${isWorkPreview}, ${order}, '${format}', '${image}')`
           queryArr.push(str)
         });
 
@@ -376,18 +407,17 @@ class WorkController {
           work_order = $6
         WHERE id = $7
         RETURNING *`,
-        [title, credits, description, videos, photos, workOrder, id]
+        [title, credits, description, videos, photos, order, id]
       )
       console.log('UP-WORK updatedWorkFromDB', updatedWorkFromDB.rows)
 
-      res.status(200)
-      res.json({ message: 'Work is updated' })
+      res.status(200).json({ message: 'Work is updated' })
+      return;
     } catch (error) {
       // remove uploaded files
       removeUploadedFiles(req.files)
 
-      res.status(500)
-      res.json({ message: error.message })
+      res.status(500).json({ message: error.message })
       console.error('updateWork ERROR:', error)
     }
     console.log('------------------------------------updateWork-END', d)
@@ -429,9 +459,10 @@ class WorkController {
       res.json(status)
     } catch (error) {
       console.error('deleteWork Error', error)
-      res.status(500)
+      res.status(500).json({ message: error.message })
     }
     console.log('------------------------------------deleteWork-END', d)
+    return;
   }
 }
 
