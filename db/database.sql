@@ -25,10 +25,10 @@ create TABLE shot(
 );
 
 -- in progress
-create TABLE photoCollections(
+create TABLE photo(
   id SERIAL PRIMARY KEY,
   title VARCHAR(255),
-  descriptions VARCHAR,
+  description VARCHAR,
   credits VARCHAR,
   photo_order INTEGER,
   categories TEXT[]
