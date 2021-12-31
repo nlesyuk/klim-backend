@@ -180,7 +180,7 @@ class PhotoCollectionsController {
 
       const record = await db.query(`
         INSERT INTO photo
-          (title, descriptions, credits, photo_order)
+          (title, description, credits, photo_order)
         VALUES
           ($1, $2, $3, $4)
         RETURNING *`,
@@ -221,7 +221,7 @@ class PhotoCollectionsController {
         title: record.rows[0].title,
         order: record.rows[0].photo_order,
         credits: record.rows[0].credits,
-        description: record.rows[0].descriptions,
+        description: record.rows[0].description,
         photos: photos.rows.map(v => {
           return {
             id: v.id,
@@ -278,9 +278,9 @@ class PhotoCollectionsController {
 
       const works = photoRecords.rows.map((item) => {
         const order = item.photo_order ?? 0
-        const description = item.descriptions ?? ''
+        const description = item.description ?? ''
         delete item.photo_order
-        delete item.descriptions
+        delete item.description
         return {
           ...item,
           order,
@@ -342,9 +342,174 @@ class PhotoCollectionsController {
     const d = getCurrentDateTime()
     console.log('------------------------------------updatePhotoCollection-START', d)
     try {
+      const { id, title, credits, description, photosInfo, order } = req.body
+      let updatedPhotoStore = []
 
+      console.log('UPDATE data', id, title, credits, description, JSON.parse(photosInfo), order)
+
+      // check
+      if (!id) {
+        throw new Error('id is required')
+      }
+      if (!title) {
+        throw new Error('title is required')
+      }
+      if (!credits) {
+        throw new Error('credits are required')
+      }
+      if (!description) {
+        throw new Error('description is required')
+      }
+      if (!photosInfo) {
+        throw new Error('photosInfo is required')
+      }
+      if (!order) {
+        throw new Error('order is required')
+      }
+
+
+      // prepare PHOTOS
+      const parsedPhotosInfo = JSON.parse(photosInfo)
+      const existingPhotos = parsedPhotosInfo.existing
+      const deletedPhotos = parsedPhotosInfo.deleted
+      const updatedPhotos = parsedPhotosInfo.updated
+      const newPhotos = parsedPhotosInfo.new
+      const recordId = id
+      console.log('parsedPhotos', parsedPhotosInfo)
+
+
+      // ===CREATE NEW PHOTOS
+      if (newPhotos?.length) {
+        const queryArr = []
+        const files = req.files
+
+        // prepare photos to db
+        const mappedFiles = Array.from(files).map(file => {
+          return {
+            path: prepareImagePathForDB(file),
+            filename: file.filename
+          }
+        }) // get path of photo in current project backend/public/uploads/s/category
+
+
+        // prepare data
+        Array.from(newPhotos).forEach((photo, i) => {
+          const isPreview = photo.isPreview ?? false
+          const order = photo.order ?? null
+          const format = photo.format ?? null
+          const image = mappedFiles[i].path ?? null
+          const str = `(${recordId}, ${isPreview}, ${order}, '${format}', '${image}')`
+          queryArr.push(str)
+        });
+
+        console.log("NEW-P mappedFiles", mappedFiles)
+        console.log("NEW-P newPhotos", newPhotos)
+        console.log("NEW-P queryStr", queryArr.join(','))
+        const photosFromDB = await db.query(`
+          INSERT INTO
+            photos
+            (photo_id, is_photo_preview, photo_order, format, image)
+          VALUES
+            ${queryArr.join(',')}
+          RETURNING *;
+        `)
+
+        console.log("NEW-P photosFromDB", photosFromDB.rows)
+        // interface IPhoto
+        const mappedNewPhotosFromDB = Array.from(photosFromDB.rows).map(v => ({
+          id: v.id,
+          src: getRightPathForImage(v.image),
+          isPreview: v.is_photo_preview,
+          order: v.photo_order,
+          format: v.format
+        }))
+
+        console.log("NEW-P mappedNewPhotosFromDB", mappedNewPhotosFromDB)
+        updatedPhotoStore = updatedPhotoStore.concat(mappedNewPhotosFromDB)
+      }
+
+      // ===UPDATE PHOTOS
+      if (updatedPhotos?.length) {
+        const queryArr = []
+
+        // prepare data
+        Array.from(updatedPhotos).forEach(photo => {
+          let image = removeDomainFromImagePath(photo.src) ?? null
+          const id = photo.id ?? null
+          const format = photo?.format ?? null
+          const order = photo.order ?? null
+          const isPreview = photo.isPreview ?? false
+          queryArr.push(`(${id}, ${recordId}, ${isPreview}, ${order}, '${format}', '${image}')`)
+        });
+
+        console.log("UP-P queryStr", queryArr.join(','))
+        // req to db - https://stackoverflow.com/questions/18797608/update-multiple-rows-in-same-query-using-postgresql
+        const updatedPhotosFromDB = await db.query(`
+          UPDATE photos AS p
+          SET
+            image = row.image,
+            format = row.format,
+            photo_id = row.photo_id,
+            photo_order = row.photo_order,
+            is_photo_preview = row.is_photo_preview
+          FROM (VALUES ${queryArr.join(',')})
+            AS row(id, photo_id, is_photo_preview, photo_order, format, image)
+          WHERE row.id = p.id
+          RETURNING *;
+        `)
+
+        console.log("UP-P updatedPhotosFromDB", updatedPhotosFromDB.rows)
+        // interface IPhoto
+        const arrUpdatedPhotosFromDB = Array.from(updatedPhotosFromDB.rows).map(v => ({
+          id: v.id,
+          src: getRightPathForImage(v.image),
+          isPreview: v.is_work_preview,
+          order: v.work_order,
+          format: v.format
+        }))
+
+        console.log("UP-P arrUpdatedPhotosFromDB", arrUpdatedPhotosFromDB)
+        updatedPhotoStore = updatedPhotoStore.concat(arrUpdatedPhotosFromDB)
+      }
+
+      // ===DELETE PHOTOS
+      if (deletedPhotos?.length) {
+        const deletedPhotosRaw = await db.query(`
+          DELETE FROM
+            photos
+          WHERE
+            id
+          IN
+            (${deletedPhotos.join(',')})
+          RETURNING *`
+        )
+        console.log('DEL-P deletedPhotos', deletedPhotosRaw.rows)
+      }
+
+      // ===UPDATE WORK INFO
+      const updatedWorkFromDB = await db.query(`
+        UPDATE
+          photo
+        SET
+          title = $1,
+          credits = $2,
+          description = $3,
+          photo_order = $4
+        WHERE
+          id = $5
+        RETURNING *`,
+        [title, credits, description, order, id]
+      )
+      console.log('UP-WORK updatedWorkFromDB', updatedWorkFromDB.rows)
+
+      res.status(200).json({ message: 'Photo record is updated' })
+      return;
     } catch (error) {
+      // remove uploaded files
+      removeUploadedFiles(req.files)
 
+      res.status(500).json({ message: error.message })
+      console.error('updatePhotoCollection ERROR:', error)
     }
     console.log('------------------------------------updatePhotoCollection-END', d)
   }
