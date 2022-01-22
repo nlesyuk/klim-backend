@@ -1,8 +1,9 @@
 -- ok
 create TABLE general(
   id SERIAL PRIMARY KEY,
+  author VARCHAR(255),
   name VARCHAR(255),
-  data VARCHAR(255)
+  data TEXT,
 );
 
 -- ok

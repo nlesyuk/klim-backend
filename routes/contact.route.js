@@ -1,9 +1,10 @@
 const Express = require('express')
 const router = new Express()
 const ContactController = require('../controllers/contact.controller')
+const key = 'contact';
 
-router.post('/contact', ContactController.createContact)
-router.get('/contact', ContactController.getContact)
-router.put('/contact', ContactController.updateContact)
+router.post(`/${key}`, ContactController.createContact)
+router.get(`/${key}`, ContactController.getContact)
+router.put(`/${key}`, ContactController.updateContact)
 
 module.exports = router
