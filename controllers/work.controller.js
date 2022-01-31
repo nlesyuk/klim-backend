@@ -271,12 +271,12 @@ class WorkController {
       if (!title) {
         throw new Error('title is required')
       }
-      if (!credits) {
-        throw new Error('credits are required')
-      }
-      if (!description) {
-        throw new Error('description is required')
-      }
+      // if (!credits) {
+      //   throw new Error('credits are required')
+      // }
+      // if (!description) {
+      //   throw new Error('description is required')
+      // }
       if (!videos) {
         throw new Error('videos are required')
       }
@@ -391,8 +391,9 @@ class WorkController {
 
       // ===DELETE PHOTOS
       if (deletedPhotos?.length) {
-        const deletedPhotos = await db.query(`DELETE FROM photos WHERE id IN (${deletedPhotos.join(',')}) RETURNING *`)
-        console.log('DEL-P deletedPhotos', deletedPhotos.rows)
+        const values = deletedPhotos.join(',')
+        const deletedPhotosRaw = await db.query(`DELETE FROM photos WHERE id IN (${values}) RETURNING *`)
+        console.log('DEL-P deletedPhotos', deletedPhotosRaw.rows)
       }
 
       // ===UPDATE WORK INFO

@@ -354,12 +354,12 @@ class PhotoCollectionsController {
       if (!title) {
         throw new Error('title is required')
       }
-      if (!credits) {
-        throw new Error('credits are required')
-      }
-      if (!description) {
-        throw new Error('description is required')
-      }
+      // if (!credits) {
+      //   throw new Error('credits are required')
+      // }
+      // if (!description) {
+      //   throw new Error('description is required')
+      // }
       if (!photosInfo) {
         throw new Error('photosInfo is required')
       }
