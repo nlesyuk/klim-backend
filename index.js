@@ -4,6 +4,7 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const multer = require("multer");
+const passport = require('passport')
 require('dotenv').config({ path: __dirname + '/.env' })
 const { renameIncomeImagePattern } = require('./global/helper')
 
@@ -65,7 +66,15 @@ const corsConfig = {
   // optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
+
+/* TODO:
+ - multer upload file wile user is unauthorized
+ - set paaport check for routes
+*/
+
 // plugins:
+app.use(passport.initialize())
+require('./middleware/passport')(passport)
 app.use(cors(corsConfig))
 app.use(multer({ storage: storageConfig }).any());
 app.use(express.json({ limit: '1mb' }));

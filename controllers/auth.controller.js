@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const User = require('../models/user.model');
+const User = require('../classes/user');
 
 class Auth {
   async login(req, res) {
@@ -14,11 +14,11 @@ class Auth {
         // generate token
         const token = jwt.sign({
           username: candidate.username,
-          userId: candidate._id,
+          userId: candidate.id, // need to send id becase we get user from DB by id in passport.js
         }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         res.status(200).json({
-          token,
+          token: `Bearer ${token}`,
         })
       } else {
         // password is incorrect
