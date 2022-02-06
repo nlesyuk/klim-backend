@@ -18,6 +18,7 @@ const photosRoutes = require('./routes/photos.route')
 const sliderRoutes = require('./routes/slider.route')
 const photoCollectionsRoutes = require('./routes/photoCollections.route')
 const publicRoutes = require('./routes/public.route')
+const authRoutes = require('./routes/auth.route')
 
 const storageConfig = multer.diskStorage({
   destination: (req, file, callback) => {
@@ -79,6 +80,7 @@ app.use(apiStartEndpoint, photosRoutes)
 app.use(apiStartEndpoint, sliderRoutes)
 app.use(apiStartEndpoint, photoCollectionsRoutes)
 app.use(apiPublicEndpoint, publicRoutes)
+app.use(apiStartEndpoint, authRoutes)
 
 // routes error handler
 app.use((req, res, next) => {

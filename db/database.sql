@@ -68,7 +68,13 @@ create TABLE slides(
   photo_id INTEGER DEFAULT NULL
 );
 
-
+--
+create TABLE users (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(255),
+  password VARCHAR(255),
+  mark VARCHAR(255)
+);
 
 
 
