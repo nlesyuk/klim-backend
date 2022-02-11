@@ -3,12 +3,12 @@ const key = 'users'
 
 
 class User {
-  async findById(id) {
+  async findById(userId) {
     try {
-      if (!id) {
+      if (!userId) {
         throw new Error('user id is required')
       }
-
+      const id = parseInt(userId)
       const result = await db.query(`SELECT * FROM ${key} WHERE id = $1`, [id])
       return result?.rows[0]
     } catch (error) {
