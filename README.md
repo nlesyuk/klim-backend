@@ -1,5 +1,13 @@
 # klim-backend
 
+`> npm run start`
+
+```
+localhost:8090/
+localhost:8090/login
+localhost:8090/dashboard
+```
+
 ## Set up `env`
 All variables located in `env.example`
 ### Base
