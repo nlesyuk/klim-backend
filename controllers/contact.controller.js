@@ -43,7 +43,7 @@ class ContactController {
       }
 
       // 1 - prepare image
-      if (files) {
+      if (files?.length) {
         // prepare photos to db
         const mappedFiles = Array.from(files).map(file => {
           return {
