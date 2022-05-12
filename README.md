@@ -1,6 +1,6 @@
 # klim-backend
 
-`> npm run start`
+`> npm run dev`
 
 ```
 localhost:8090/
