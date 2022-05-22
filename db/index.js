@@ -9,12 +9,6 @@ const credentials = {
   database: parseInt(process.env.IS_PROD) ? process.env.DB_PROD_DBNAME : process.env.DB_LOCAL_DBNAME,
 }
 
-const pool = new Pool({
-  user: credentials.user,
-  password: credentials.password,
-  host: credentials.host,
-  port: credentials.port,
-  database: credentials.database
-})
+const pool = new Pool(credentials)
 
 module.exports = pool

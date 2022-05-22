@@ -7,7 +7,7 @@ const multer = require("multer");
 require('dotenv').config({ path: __dirname + '/.env' })
 const { renameIncomeImagePattern } = require('./global/helper')
 
-const PORT = process.env.PORT || 8091;
+const PORT = process.env.PORT || 8090;
 
 const { getCategory } = require('./global/helper')
 const constants = require('./global/constants')
