@@ -69,7 +69,11 @@ create TABLE slides(
 );
 
 
-
+create TABLE users(
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(255),
+  password VARCHAR(255),
+);
 
 
 -- create TABLE person(

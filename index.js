@@ -18,6 +18,7 @@ const photosRoutes = require('./routes/photos.route')
 const sliderRoutes = require('./routes/slider.route')
 const photoCollectionsRoutes = require('./routes/photoCollections.route')
 const publicRoutes = require('./routes/public.route')
+const authRoutes = require('./routes/auth.route')
 
 const storageConfig = multer.diskStorage({
   destination: (req, file, callback) => {
@@ -70,15 +71,50 @@ app.use(multer({ storage: storageConfig }).any());
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ limit: '50mb' }));
 // routes:
-const apiStartEndpoint = `/api`; // add /api/v1
-const apiPublicEndpoint = `/public`;
-app.use(apiStartEndpoint, workRoutes)
-app.use(apiStartEndpoint, contactRoutes)
-app.use(apiStartEndpoint, shotsRoutes)
-app.use(apiStartEndpoint, photosRoutes)
-app.use(apiStartEndpoint, sliderRoutes)
-app.use(apiStartEndpoint, photoCollectionsRoutes)
-app.use(apiPublicEndpoint, publicRoutes)
+app.use(function (req, res, next) {
+  res.header(
+    "Access-Control-Allow-Headers",
+    "x-access-token, Origin, Content-Type, Accept"
+  );
+  next();
+});
+const routesName = {
+  public: {
+    name: '/public',
+    routes: [
+      publicRoutes
+    ]
+  },
+  api: {
+    name: '/api', // add /api/v1
+    routes: [
+      authRoutes,
+      workRoutes,
+      contactRoutes,
+      shotsRoutes,
+      photosRoutes,
+      sliderRoutes,
+      photoCollectionsRoutes
+    ]
+  }
+}
+// private
+for (const route of routesName.api.routes) {
+  app.use(routesName.api.name, route)
+}
+// public
+for (const route of routesName.public.routes) {
+  app.use(routesName.public.name, route)
+}
+// const apiStartEndpoint = `/api`; // add /api/v1
+// const apiPublicEndpoint = `/public`;
+// app.use(apiStartEndpoint, workRoutes)
+// app.use(apiStartEndpoint, contactRoutes)
+// app.use(apiStartEndpoint, shotsRoutes)
+// app.use(apiStartEndpoint, photosRoutes)
+// app.use(apiStartEndpoint, sliderRoutes)
+// app.use(apiStartEndpoint, photoCollectionsRoutes)
+// app.use(apiPublicEndpoint, publicRoutes)
 
 // routes error handler
 app.use((req, res, next) => {
