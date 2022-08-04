@@ -16,6 +16,7 @@ create TABLE work(
   description TEXT,
   category TEXT[],
   photos INTEGER[]
+  // user_id
 );
 
 -- ok
@@ -23,6 +24,7 @@ create TABLE shot(
   id SERIAL PRIMARY KEY,
   categories TEXT[],
   work_id INTEGER
+  // user_id
 );
 
 -- in progress
@@ -33,6 +35,7 @@ create TABLE photo(
   credits VARCHAR,
   photo_order INTEGER,
   categories TEXT[]
+  // user_id
 );
 
 -- ok
@@ -54,6 +57,7 @@ create TABLE photos(
 
   format VARCHAR(255),
   image VARCHAR(255)
+  // user_id
 );
 
 -- ok
@@ -66,15 +70,23 @@ create TABLE slides(
   videos VARCHAR(255) DEFAULT NULL,
   work_id INTEGER DEFAULT NULL,
   photo_id INTEGER DEFAULT NULL
+  // user_id
 );
 
-
+-- it schame allow only 1 session, for muliply sessions use separated table for JWT token
 create TABLE users(
   id SERIAL PRIMARY KEY,
   username VARCHAR(255),
   password VARCHAR(255),
+  refresh_token VARCHAR(255),
+  expiry_date VARCHAR(255)
 );
-
+-- JWT refresh token table
+-- create TABLE refreshToken(
+--   user_id Numeric,
+--   refresh_token VARCHAR(255),
+--   expiry_date VARCHAR(255)
+-- );
 
 -- create TABLE person(
 --   id SERIAL PRIMARY KEY,

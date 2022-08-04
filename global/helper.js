@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-
+const db = require('../db/index')
+const { v4: uuidv4 } = require("uuid");
 
 function getCategory(rawUrl, categories) {
   // /api/work
@@ -175,6 +176,37 @@ function prepareSlideDataForClient(slideDataRaw) {
   }
 }
 
+// JWT
+async function createRefreshToken(userId) {
+  if (typeof userId !== 'number') {
+    throw new Error(`userId should be number`)
+  }
+  const expiredAt = new Date();
+  expiredAt.setSeconds(expiredAt.getSeconds() + process.env.JWT_REFRESH_EXPIRATION);
+  const token = uuidv4();
+  console.log('refreshToken--before-->>>>>')
+  const updatedUser = await db.query(`
+    UPDATE
+      users
+    SET
+      refresh_token = $1,
+      expiry_date = $2
+    WHERE
+      id = $3
+    RETURNING *`,
+    [token, expiredAt.getTime(), userId]
+  )
+  const refreshToken = updatedUser.rows[0]?.refresh_token
+  console.log('refreshToken>>>>>', refreshToken)
+  return refreshToken;
+}
+
+function isRefreshTokenExpired(expiryDate) {
+  if (isNaN(Number(expiryDate))) {
+    throw new Error('expiryDate should be a number, got', typeof expiryDate)
+  }
+  return new Date(expiryDate).getTime() < new Date().getTime();
+};
 
 module.exports = {
   removeDomainFromImagePath,
@@ -189,4 +221,6 @@ module.exports = {
   getDomain,
   getHost,
   getCurrentDateTime,
+  createRefreshToken,
+  isRefreshTokenExpired
 }

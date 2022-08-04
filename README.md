@@ -34,3 +34,6 @@ DB_PROD_HOST=localhost
 DB_PROD_PORT=5432
 DB_PROD_DBNAME=
 ```
+
+ ## TODO:
+ 1. Add user_id column for each table

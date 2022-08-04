@@ -11,7 +11,6 @@ router.get('/uploads/:user/:category/:file', (req, res) => {
   const d = getCurrentDateTime()
   console.log('------------------------------------public-START', d)
 
-  console.log('params', req.params)
   const author = req.headers.author
   const user = req.params.user // interceptors auto inject user on the frontend
   const category = req.params.category
