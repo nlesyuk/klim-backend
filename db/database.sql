@@ -3,7 +3,7 @@ create TABLE general(
   id SERIAL PRIMARY KEY,
   author VARCHAR(255),
   name VARCHAR(255),
-  data TEXT,
+  data TEXT
 );
 
 -- ok
@@ -16,16 +16,18 @@ create TABLE work(
   description TEXT,
   category TEXT[],
   photos INTEGER[]
-  // user_id
+  // user_id INTEGER
 );
+-- ALTER TABLE work ADD COLUMN user_id INTEGER;
 
 -- ok
 create TABLE shot(
   id SERIAL PRIMARY KEY,
   categories TEXT[],
   work_id INTEGER
-  // user_id
+  // user_id INTEGER
 );
+-- ALTER TABLE slides ADD COLUMN user_id INTEGER;
 
 -- in progress
 create TABLE photo(
@@ -35,8 +37,9 @@ create TABLE photo(
   credits VARCHAR,
   photo_order INTEGER,
   categories TEXT[]
-  // user_id
+  // user_id INTEGER
 );
+-- ALTER TABLE photo ADD COLUMN user_id INTEGER;
 
 -- ok
 create TABLE photos(
@@ -57,8 +60,9 @@ create TABLE photos(
 
   format VARCHAR(255),
   image VARCHAR(255)
-  // user_id
+  // user_id INTEGER
 );
+-- ALTER TABLE photos ADD COLUMN user_id INTEGER;
 
 -- ok
 create TABLE slides(
@@ -70,10 +74,11 @@ create TABLE slides(
   videos VARCHAR(255) DEFAULT NULL,
   work_id INTEGER DEFAULT NULL,
   photo_id INTEGER DEFAULT NULL
-  // user_id
+  // user_id INTEGER
 );
+-- ALTER TABLE slides ADD COLUMN user_id INTEGER;
 
--- it schame allow only 1 session, for muliply sessions use separated table for JWT token
+-- it schame allow only 1 session for 1 user, for muliply sessions you shuold use separated table for JWT token
 create TABLE users(
   id SERIAL PRIMARY KEY,
   username VARCHAR(255),

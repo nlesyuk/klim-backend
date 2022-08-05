@@ -184,7 +184,7 @@ async function createRefreshToken(userId) {
   const expiredAt = new Date();
   expiredAt.setSeconds(expiredAt.getSeconds() + process.env.JWT_REFRESH_EXPIRATION);
   const token = uuidv4();
-  console.log('refreshToken--before-->>>>>')
+
   const updatedUser = await db.query(`
     UPDATE
       users
@@ -197,7 +197,7 @@ async function createRefreshToken(userId) {
     [token, expiredAt.getTime(), userId]
   )
   const refreshToken = updatedUser.rows[0]?.refresh_token
-  console.log('refreshToken>>>>>', refreshToken)
+
   return refreshToken;
 }
 
