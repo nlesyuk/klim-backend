@@ -25,7 +25,16 @@ class WorkController {
     console.log('------------------------------------createWork-START', d)
     const storage = {}
     try {
+      const userId = +req.headers?.userid // userId is checked in middleware
+      delete req.headers?.userid
+      if (isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`)
+      }
       const { title, description, credits, videos, photosInfo, order } = req.body
+      console.log(userId, title, description, credits, videos, photosInfo, order)
+      if (!title && !description && !credits && !videos && !photosInfo && !order) {
+        throw new Error('Required fields: title, description, credits, videos, photosInfo, order')
+      }
       const filesInfo = JSON.parse(photosInfo)
       const files = req.files
 
@@ -34,7 +43,7 @@ class WorkController {
 
       // 0 - check
       if (!files?.length) {
-        throw new Error('No files')
+        throw new Error('No file(s)')
       }
 
       // 1 - create work record
@@ -50,11 +59,11 @@ class WorkController {
       const work = await db.query(`
         INSERT INTO
           work
-          (title, videos, description, credits, work_order)
+          (title, videos, description, credits, work_order, user_id)
           values
-          ($1, $2, $3, $4, $5)
+          ($1, $2, $3, $4, $5, $6)
         RETURNING *`,
-        [title, videos, description, credits, order]
+        [title, videos, description, credits, order, userId]
       )
 
       console.log('DB WORK', work.rows)
@@ -74,7 +83,7 @@ class WorkController {
         const work_order = photo.order ?? null
         const format = photo.format ?? null
         const image = mappedFiles[i].path ?? null
-        queryArr.push(`(${workId}, ${isWorkPreview}, ${work_order}, '${format}', '${image}')`)
+        queryArr.push(`(${workId}, ${isWorkPreview}, ${work_order}, '${format}', '${image}', '${userId}')`)
       });
       const queryStr = queryArr.join(',')
       console.log('QueryArr', queryStr, queryArr)
@@ -83,7 +92,7 @@ class WorkController {
       const photos = await db.query(`
         INSERT INTO
           photos
-          (work_id, is_work_preview, work_order, format, image)
+          (work_id, is_work_preview, work_order, format, image, user_id)
           values
           ${queryStr}
         RETURNING *;`
@@ -130,11 +139,12 @@ class WorkController {
       removeUploadedFiles(files)
 
       // remove record from db
-      const resq = await db.query(`DELETE FROM work WHERE id=$1`, [storage.workId])
+      const resq = await db.query(`DELETE FROM work WHERE id = $1`, [storage.workId])
       console.log('storage', storage, resq.rows)
 
       // response
-      const anotherMessage = e?.message ? e.message : 'Unknow server error at createWork controller'
+      console.log(e)
+      const anotherMessage = e?.message ?? 'Unknow server error at ' + WorkController.name
       res.status(500).send({ message: anotherMessage })
       console.error('createWork Error', anotherMessage)
     }
@@ -148,19 +158,25 @@ class WorkController {
     const d = getCurrentDateTime()
     console.log('------------------------------------getWork-START', d)
     try {
+      const userId = +req.headers?.userid // userId is checked in middleware
+      delete req.headers?.userid
+      if (isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`)
+      }
       const { id } = req.params
 
-      const workDirty = await db.query(`SELECT * FROM work WHERE id = $1`, [id])
+      const workDirty = await db.query(`SELECT * FROM work WHERE id = $1 AND user_id = $2`, [id, userId])
       if (workDirty.rows.length === 0) {
         res.status(404);
-        res.send({ message: 'Work do not exist' });
+        res.send({ message: 'Work is not exist ' });
+        return
       }
 
       const work = workDirty.rows[0]
       work.order = work?.work_order ?? 0
       delete work.work_order
 
-      const photosDirty = await db.query(`SELECT * FROM photos WHERE work_id = $1`, [id])
+      const photosDirty = await db.query(`SELECT * FROM photos WHERE work_id = $1 AND user_id = $2`, [id, userId])
 
       // prepare photos for front-end
       if (photosDirty?.rows?.length) {
@@ -176,8 +192,8 @@ class WorkController {
 
       res.json(work)
     } catch (error) {
-      console.error('getWork Error', error)
-      res.status(500)
+      const anotherMessage = error?.message ?? 'Unknow server error at ' + WorkController.name
+      res.status(500).send({ message: anotherMessage })
     }
     console.log('------------------------------------getWork-END', d)
   }
@@ -196,8 +212,14 @@ class WorkController {
     const d = getCurrentDateTime()
     console.log('------------------------------------getWorks-START', d)
     try {
-      const dirtyWorks = await db.query(`SELECT * FROM work`)
-      const dirtyWorkPhotos = await db.query(`SELECT * FROM photos WHERE work_id IS NOT NULL`)
+      const userId = +req.headers?.userid
+      delete req.headers?.userid
+      if (isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`)
+      }
+
+      const dirtyWorks = await db.query(`SELECT * FROM work WHERE user_id = $1`, [userId])
+      const dirtyWorkPhotos = await db.query(`SELECT * FROM photos WHERE work_id IS NOT NULL AND user_id = $1`, [userId])
 
       // prepare photos for front-end
       const photos = dirtyWorkPhotos.rows.map(photo => ({
@@ -225,7 +247,8 @@ class WorkController {
       console.log(works)
       res.json(works)
     } catch (error) {
-      console.error('getWorks Error', error)
+      const anotherMessage = error?.message ?? 'Unknow server error at ' + WorkController.name
+      res.status(500).send({ message: anotherMessage })
     }
     console.log('------------------------------------getWorks-END', d)
   }
@@ -329,7 +352,7 @@ class WorkController {
           INSERT INTO photos(work_id, is_work_preview, work_order, format, image)
           VALUES ${queryArr.join(',')}
           RETURNING *;
-        `)
+      `)
 
         console.log("NEW-P photosFromDB", photosFromDB.rows)
         // interface IPhoto
@@ -364,16 +387,16 @@ class WorkController {
         const updatedPhotosFromDB = await db.query(`
           UPDATE photos AS p
           SET
-            image = row.image,
+          image = row.image,
             format = row.format,
             work_id = row.work_id,
             work_order = row.work_order,
             is_work_preview = row.is_work_preview
-          FROM (VALUES ${queryArr.join(',')})
-            AS row(id, work_id, is_work_preview, work_order, format, image)
-          WHERE row.id = p.id
+          FROM(VALUES ${queryArr.join(',')})
+                AS row(id, work_id, is_work_preview, work_order, format, image)
+              WHERE row.id = p.id
           RETURNING *;
-        `)
+      `)
 
         console.log("UP-P updatedPhotosFromDB", updatedPhotosFromDB.rows)
         // interface IPhoto
@@ -392,7 +415,7 @@ class WorkController {
       // ===DELETE PHOTOS
       if (deletedPhotos?.length) {
         const values = deletedPhotos.join(',')
-        const deletedPhotosRaw = await db.query(`DELETE FROM photos WHERE id IN (${values}) RETURNING *`)
+        const deletedPhotosRaw = await db.query(`DELETE FROM photos WHERE id IN(${values}) RETURNING * `)
         console.log('DEL-P deletedPhotos', deletedPhotosRaw.rows)
       }
 
@@ -406,8 +429,8 @@ class WorkController {
           videos = $4,
           photos = $5,
           work_order = $6
-        WHERE id = $7
-        RETURNING *`,
+          WHERE id = $7
+        RETURNING * `,
         [title, credits, description, videos, photos, order, id]
       )
       console.log('UP-WORK updatedWorkFromDB', updatedWorkFromDB.rows)
@@ -418,8 +441,8 @@ class WorkController {
       // remove uploaded files
       removeUploadedFiles(req.files)
 
-      res.status(500).json({ message: error.message })
-      console.error('updateWork ERROR:', error)
+      const anotherMessage = error?.message ?? 'Unknow server error at ' + WorkController.name
+      res.status(500).send({ message: anotherMessage })
     }
     console.log('------------------------------------updateWork-END', d)
   }
@@ -434,8 +457,8 @@ class WorkController {
       const { id } = req.params
       const status = { id, }
 
-      const removedWork = await db.query(`DELETE FROM work WHERE id = $1 RETURNING *`, [id])
-      const removedPhotos = await db.query(`DELETE FROM photos WHERE work_id = $1 AND photo_id IS NULL AND shot_id IS NULL RETURNING *`, [id])
+      const removedWork = await db.query(`DELETE FROM work WHERE id = $1 RETURNING * `, [id])
+      const removedPhotos = await db.query(`DELETE FROM photos WHERE work_id = $1 AND photo_id IS NULL AND shot_id IS NULL RETURNING * `, [id])
 
       // remove uploaded files
       if (removedPhotos?.rows?.length) {
@@ -460,7 +483,8 @@ class WorkController {
       res.json(status)
     } catch (error) {
       console.error('deleteWork Error', error)
-      res.status(500).json({ message: error.message })
+      const anotherMessage = error?.message ?? 'Unknow server error at ' + WorkController.name
+      res.status(500).send({ message: anotherMessage })
     }
     console.log('------------------------------------deleteWork-END', d)
     return;
