@@ -68,8 +68,8 @@ const corsConfig = {
 // plugins:
 app.use(cors(corsConfig))
 app.use(multer({ storage: storageConfig }).any());
-app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ limit: '50mb' }));
+app.use(express.json({ limit: '1mb' }));
 // routes:
 app.use((req, res, next) => {
   res.header(
@@ -81,13 +81,13 @@ app.use((req, res, next) => {
 
 const routeItems = [
   {
-    startPath: '/public',
+    path: '/public',
     routes: [
       publicRoutes
     ]
   },
   {
-    startPath: '/api', // add /api/v1
+    path: '/api', // add /api/v1
     routes: [
       authRoutes,
       workRoutes,
@@ -101,8 +101,9 @@ const routeItems = [
 ]
 
 for (const item of routeItems) {
-  for (const route of item.routes) {
-    app.use(item.startPath, route)
+  const { path, routes } = item
+  for (const route of routes) {
+    app.use(path, route)
   }
 }
 
@@ -111,4 +112,5 @@ app.use((req, res, next) => {
   res.status(404).send({ message: "Not Found" });
 });
 
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`))
+const server = app.listen(PORT, () => console.log('\x1b[32m%s\x1b[0m', `Server started on http://localhost:${PORT}/api/`))
+server.setTimeout(5000);
