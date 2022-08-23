@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const db = require('../db/index')
+const { sitesByUserId } = require('./constants')
 const { v4: uuidv4 } = require("uuid");
 
 function getCategory(rawUrl, categories) {
@@ -179,7 +180,7 @@ function prepareSlideDataForClient(slideDataRaw) {
 // JWT
 async function createRefreshToken(userId) {
   if (typeof userId !== 'number') {
-    throw new Error(`userId should be number`)
+    throw new Error(`userId should be a number`)
   }
   const expiredAt = new Date();
   expiredAt.setSeconds(expiredAt.getSeconds() + process.env.JWT_REFRESH_EXPIRATION);
@@ -208,6 +209,32 @@ function isRefreshTokenExpired(expiryDate) {
   return new Date(expiryDate).getTime() < new Date().getTime();
 };
 
+async function isUserExist(userId) {
+  if (typeof userId !== 'number' && !isNaN(Number(userId))) {
+    throw new Error(`userId doesn't exist or should be a number`)
+  }
+
+  const user = await db.query(`SELECT * FROM users WHERE id = $1`, [userId])
+
+  return !!user.rows?.length
+}
+
+function getUserIdByDomain(domain) {
+  if (!domain) {
+    throw new Error("Domain does't exist")
+  }
+
+  const userId = sitesByUserId[domain]
+
+  if (userId) {
+    return userId
+  }
+
+  throw new Error("Something went wrong while checking a domain")
+
+}
+
+
 module.exports = {
   removeDomainFromImagePath,
   renameIncomeImagePattern,
@@ -222,5 +249,7 @@ module.exports = {
   getHost,
   getCurrentDateTime,
   createRefreshToken,
-  isRefreshTokenExpired
+  isRefreshTokenExpired,
+  isUserExist,
+  getUserIdByDomain,
 }

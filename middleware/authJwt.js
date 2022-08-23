@@ -10,6 +10,7 @@ const catchError = (err, res) => {
 }
 
 const verifyToken = (req, res, next) => {
+  console.log('verifyToken')
   let token = req.headers["x-access-token"];
 
   if (!token) {
@@ -20,8 +21,8 @@ const verifyToken = (req, res, next) => {
     if (err) {
       return catchError(err, res);
     }
-    console.log('>>><<<', decoded.id)
     req.userId = decoded.id;
+
     next();
   });
 };
