@@ -6,6 +6,7 @@ const {
   getRightPathForImage,
   removeUploadedFiles,
   getCurrentDateTime,
+  getUserIdByDomain,
 } = require('../global/helper')
 
 class WorkController {
@@ -25,13 +26,12 @@ class WorkController {
     console.log('------------------------------------createWork-START', d)
     const storage = {}
     try {
-      const userId = +req.headers?.userid // userId is checked in middleware
-      delete req.headers?.userid
+      const userId = getUserIdByDomain(req.headers?.domain)
       if (isNaN(userId)) {
         throw new Error(`userId should be a number got ${userId}`)
       }
       const { title, description, credits, videos, photosInfo, order } = req.body
-      console.log(userId, title, description, credits, videos, photosInfo, order)
+
       if (!title && !description && !credits && !videos && !photosInfo && !order) {
         throw new Error('Required fields: title, description, credits, videos, photosInfo, order')
       }
@@ -158,8 +158,7 @@ class WorkController {
     const d = getCurrentDateTime()
     console.log('------------------------------------getWork-START', d)
     try {
-      const userId = +req.headers?.userid // userId is checked in middleware
-      delete req.headers?.userid
+      const userId = getUserIdByDomain(req.headers?.domain)
       if (isNaN(userId)) {
         throw new Error(`userId should be a number got ${userId}`)
       }
@@ -212,8 +211,7 @@ class WorkController {
     const d = getCurrentDateTime()
     console.log('------------------------------------getWorks-START', d)
     try {
-      const userId = +req.headers?.userid
-      delete req.headers?.userid
+      const userId = getUserIdByDomain(req.headers?.domain)
       if (isNaN(userId)) {
         throw new Error(`userId should be a number got ${userId}`)
       }
@@ -285,6 +283,10 @@ class WorkController {
     const d = getCurrentDateTime()
     console.log('------------------------------------updateWork-START', d)
     try {
+      const userId = getUserIdByDomain(req.headers?.domain)
+      if (isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`)
+      }
       const { id, title, credits, description, videos, photosInfo, order } = req.body
       let updatedPhotoStore = []
       // check
@@ -294,12 +296,6 @@ class WorkController {
       if (!title) {
         throw new Error('title is required')
       }
-      // if (!credits) {
-      //   throw new Error('credits are required')
-      // }
-      // if (!description) {
-      //   throw new Error('description is required')
-      // }
       if (!videos) {
         throw new Error('videos are required')
       }
@@ -309,6 +305,12 @@ class WorkController {
       if (!order) {
         throw new Error('order is required')
       }
+      // if (!credits) {
+      //   throw new Error('credits are required')
+      // }
+      // if (!description) {
+      //   throw new Error('description is required')
+      // }
       console.log(id)
 
       // prepare PHOTOS
@@ -341,7 +343,7 @@ class WorkController {
           const order = photo.order ?? null
           const format = photo.format ?? null
           const image = mappedFiles[i].path ?? null
-          const str = `(${workId}, ${isWorkPreview}, ${order}, '${format}', '${image}')`
+          const str = `(${workId}, ${isWorkPreview}, ${order}, '${format}', '${image}', '${userId}')`
           queryArr.push(str)
         });
 
@@ -349,7 +351,7 @@ class WorkController {
         console.log("NEW-P newPhotos", newPhotos)
         console.log("NEW-P queryStr", queryArr.join(','))
         const photosFromDB = await db.query(`
-          INSERT INTO photos(work_id, is_work_preview, work_order, format, image)
+          INSERT INTO photos(work_id, is_work_preview, work_order, format, image, user_id)
           VALUES ${queryArr.join(',')}
           RETURNING *;
       `)
@@ -379,7 +381,7 @@ class WorkController {
           const format = photo?.format ?? null
           const work_order = photo.order ?? null
           const isWorkPreview = photo.isPreview ?? false
-          queryArr.push(`(${id}, ${workId}, ${isWorkPreview}, ${work_order}, '${format}', '${image}')`)
+          queryArr.push(`(${id}, ${workId}, ${isWorkPreview}, ${work_order}, '${format}', '${image}', '${userId}')`)
         });
 
         console.log("UP-P queryStr", queryArr.join(','))
@@ -392,8 +394,9 @@ class WorkController {
             work_id = row.work_id,
             work_order = row.work_order,
             is_work_preview = row.is_work_preview
+            user_id = row.user_id
           FROM(VALUES ${queryArr.join(',')})
-                AS row(id, work_id, is_work_preview, work_order, format, image)
+                AS row(id, work_id, is_work_preview, work_order, format, image, user_id)
               WHERE row.id = p.id
           RETURNING *;
       `)
@@ -422,16 +425,19 @@ class WorkController {
       // ===UPDATE WORK INFO
       const photos = Array.from(updatedPhotoStore).map(v => v.id)
       const updatedWorkFromDB = await db.query(`
-        UPDATE work SET
+        UPDATE work
+        SET
           title = $1,
           credits = $2,
           description = $3,
           videos = $4,
           photos = $5,
           work_order = $6
-          WHERE id = $7
+        WHERE
+          id = $7 AND
+          user_id = $8
         RETURNING * `,
-        [title, credits, description, videos, photos, order, id]
+        [title, credits, description, videos, photos, order, id, userId]
       )
       console.log('UP-WORK updatedWorkFromDB', updatedWorkFromDB.rows)
 
@@ -454,11 +460,33 @@ class WorkController {
     const d = getCurrentDateTime()
     console.log('------------------------------------deleteWork-START', d)
     try {
+      const userId = getUserIdByDomain(req.headers?.domain)
+      if (isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`)
+      }
       const { id } = req.params
       const status = { id, }
 
-      const removedWork = await db.query(`DELETE FROM work WHERE id = $1 RETURNING * `, [id])
-      const removedPhotos = await db.query(`DELETE FROM photos WHERE work_id = $1 AND photo_id IS NULL AND shot_id IS NULL RETURNING * `, [id])
+      const removedWork = await db.query(`
+      DELETE FROM
+        work
+      WHERE
+        id = $1 AND
+        user_id = $2
+      RETURNING * `,
+        [id, userId]
+      )
+      const removedPhotos = await db.query(`
+      DELETE FROM
+        photos
+      WHERE
+        work_id = $1 AND
+        photo_id IS NULL AND
+        shot_id IS NULL AND
+        user_id = $2
+      RETURNING * `,
+        [id, userId]
+      )
 
       // remove uploaded files
       if (removedPhotos?.rows?.length) {
@@ -475,7 +503,16 @@ class WorkController {
         })
         status.message = `Removed ${count} photos`
       } else {
-        await db.query(`UPDATE photos SET work_id = null WHERE work_id = $1`, [id])
+        await db.query(`
+        UPDATE
+          photos
+        SET
+          work_id = null
+        WHERE
+          work_id = $1 AND
+          user_id = $2`,
+          [id, userId]
+        )
         status.message = "Photos was not removed - saved for other categories or dosn't exist"
       }
       status.status = 'success'

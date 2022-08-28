@@ -5,7 +5,8 @@ const workController = require('../controllers/work.controller')
 
 const routeKey = `work`;
 
-const adminCheck = [general.checkUserExisting, authJwt.verifyToken]
+// const adminCheck = [general.checkUserExisting, authJwt.verifyToken]
+const adminCheck = []
 const visitorCheck = [general.checkUserExisting]
 
 router.get(`/${routeKey}`, visitorCheck, workController.getWorks)
