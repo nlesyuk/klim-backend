@@ -1,6 +1,6 @@
 const fs = require('fs');
 const db = require('../db/index');
-const { getRightPathForImage, prepareImagePathForDB, removeUploadedFiles, getCurrentDateTime } = require('../global/helper')
+const { getRightPathForImage, prepareImagePathForDB, removeUploadedFiles, getCurrentDateTime, getUserIdByDomain } = require('../global/helper')
 
 const dbKey = 'shots';
 
@@ -9,8 +9,10 @@ class ShotsController {
     const d = getCurrentDateTime()
     console.log('------------------------------------createShot-START', d)
     try {
-      const d = getCurrentDateTime()
-      console.log('------------------------------------createShot-START', d)
+      const userId = getUserIdByDomain(req.headers?.domain)
+      if (isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`)
+      }
       const { shots } = req.body
       const shotsDirty = JSON.parse(shots)
       /*
@@ -59,7 +61,14 @@ class ShotsController {
         const categories = shot.categories ?? ['all']
         return { categories, workId, format }
       });
-      const shotsCreated = await db.query(`INSERT INTO shot(categories, work_id) VALUES ($1, $2) RETURNING *`, [shortsData[0].categories, shortsData[0].workId])
+      const shotsCreated = await db.query(`
+      INSERT INTO
+        shot(categories, work_id, user_id)
+      VALUES
+        ($1, $2, $3)
+      RETURNING *`,
+        [shortsData[0].categories, shortsData[0].workId, userId]
+      )
       let RESPONSE = Array.from(shotsCreated?.rows).map((v, i) => ({
         format: shortsData[i].format,
         ...v
@@ -89,7 +98,14 @@ class ShotsController {
         RESPONSE[i].path = image
         return { shot_id, image, format }
       });
-      const photoCreated = await db.query(`INSERT INTO photos(shot_id, image, format) values ($1, $2, $3) RETURNING *`, [photosData[0].shot_id, photosData[0].image, photosData[0].format])
+      const photoCreated = await db.query(`
+        INSERT INTO
+          photos(shot_id, image, format, user_id)
+        VALUES
+          ($1, $2, $3, $4)
+        RETURNING *`,
+        [photosData[0].shot_id, photosData[0].image, photosData[0].format, userId]
+      )
 
       // 3 prepare for frontEnd
       RESPONSE = Array.from(RESPONSE).map(v => ({
@@ -121,14 +137,15 @@ class ShotsController {
     const d = getCurrentDateTime()
     console.log('------------------------------------createShot-START', d)
     try {
-      const d = getCurrentDateTime()
-      console.log('------------------------------------createShot-START', d)
-
+      const userId = getUserIdByDomain(req.headers?.domain)
+      if (isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`)
+      }
       const dirtyShots = await db.query(`SELECT * FROM shot `);
       if (!dirtyShots.rows) {
         throw 'query to db is error'
       }
-      const dirtyShotsPhotos = await db.query(`SELECT * FROM photos WHERE shot_id IS NOT NULL`);
+      const dirtyShotsPhotos = await db.query(`SELECT * FROM photos WHERE shot_id IS NOT NULL AND user_id = $1`, [userId]);
       if (!dirtyShotsPhotos.rows) {
         throw 'query to db is error'
       }
@@ -162,6 +179,10 @@ class ShotsController {
       categories: Array
       format: String | null
     }]*/
+    const userId = getUserIdByDomain(req.headers?.domain)
+    if (isNaN(userId)) {
+      throw new Error(`userId should be a number got ${userId}`)
+    }
     const files = req.files
     const newImagePath = files?.[0]?.path
     const { id, src, workId, categories, format } = req.body
@@ -181,7 +202,7 @@ class ShotsController {
 
     // update categories, workid
     try {
-      const updatedDataRaw = await db.query(`UPDATE shot SET categories = $1, work_id = $2 WHERE id = $3 RETURNING *`, [shotCategories, shotWorkId, shotId]);
+      const updatedDataRaw = await db.query(`UPDATE shot SET categories = $1, work_id = $2 WHERE id = $3 AND user_id = $4 RETURNING *`, [shotCategories, shotWorkId, shotId, userId]);
       console.log('>>', updatedDataRaw.rows)
       const updatedData = updatedDataRaw?.rows[0]
       if (updatedData) {
@@ -197,7 +218,7 @@ class ShotsController {
     // get path of existing img from server
     try {
       if (!src && newImagePath) {
-        const existingImg = await db.query(`SELECT * FROM photos WHERE shot_id = $1`, [shotId])
+        const existingImg = await db.query(`SELECT * FROM photos WHERE shot_id = $1 AND user_id = $2`, [shotId, userId])
         const targetImagePath = existingImg?.rows[0]?.image
         console.log('targetImagePath', targetImagePath)
 
@@ -217,7 +238,7 @@ class ShotsController {
     try {
       if (newImagePath) {
         // update path of image in record
-        const updatedImageRaw = await db.query(`UPDATE photos SET image = $1, format = $2 WHERE shot_id = $3 RETURNING *`, [newImagePath, format, shotId]);
+        const updatedImageRaw = await db.query(`UPDATE photos SET image = $1, format = $2 WHERE shot_id = $3 AND user_id = $4 RETURNING *`, [newImagePath, format, shotId, userId]);
         const updatedImage = updatedImageRaw?.rows[0]
         if (updatedImage) {
           console.log('updatedImage', updatedImage.image)
@@ -232,7 +253,7 @@ class ShotsController {
           }
         }
       } else if (format) {
-        const updatedImageRaw = await db.query(`UPDATE photos SET format = $1 WHERE shot_id = $2 RETURNING *`, [format, shotId]);
+        const updatedImageRaw = await db.query(`UPDATE photos SET format = $1 WHERE shot_id = $2 AND user_id = $3 RETURNING *`, [format, shotId, userId]);
         const updatedImage = updatedImageRaw?.rows[0]
         if (updatedImage) {
           RESPONSE.format = updatedImage.format
@@ -263,19 +284,21 @@ class ShotsController {
     const d = getCurrentDateTime()
     console.log('------------------------------------deleteShot-START', d)
     try {
-      const d = getCurrentDateTime()
-      console.log('------------------------------------deleteShot-START', d)
+      const userId = getUserIdByDomain(req.headers?.domain)
+      if (isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`)
+      }
       /*
         id: Number
       */
       const { id } = req.params
       const status = { id: +id, }
 
-      const deletedShot = await db.query(`DELETE FROM shot WHERE id = $1`, [id])
+      const deletedShot = await db.query(`DELETE FROM shot WHERE id = $1 AND user_id = $2`, [id, userId])
       if (!deletedShot) {
         throw 'query to db is error'
       }
-      const deletedShotPhoto = await db.query(`DELETE FROM photos WHERE shot_id = $1 RETURNING *`, [id])
+      const deletedShotPhoto = await db.query(`DELETE FROM photos WHERE shot_id = $1 AND user_id = $2 RETURNING *`, [id, userId])
       if (!deletedShotPhoto) {
         throw 'query to db is error'
       }
@@ -295,7 +318,7 @@ class ShotsController {
         })
         status.message = `Removed ${count} photos`
       } else {
-        await db.query(`UPDATE photos SET shot_id = null WHERE shot_id = $1`, [id])
+        await db.query(`UPDATE photos SET shot_id = null WHERE shot_id = $1 AND user_id = $2`, [id, userId])
         status.message = "Photos was not removed"
       }
       status.status = 'success'
