@@ -476,6 +476,7 @@ class WorkController {
       RETURNING * `,
         [id, userId]
       )
+      console.log('--', removedWork.rows)
       const removedPhotos = await db.query(`
       DELETE FROM
         photos
@@ -487,7 +488,7 @@ class WorkController {
       RETURNING * `,
         [id, userId]
       )
-
+      console.log('--', removedPhotos.rows)
       // remove uploaded files
       if (removedPhotos?.rows?.length) {
         let count = 0

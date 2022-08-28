@@ -7,24 +7,29 @@ const {
   getRightPathForImage,
   prepareSlideDataForClient,
   removeFileByPath,
+  getUserIdByDomain,
 } = require('../global/helper')
 const dbKey = 'slides';
 
 class SliderController {
+  /*
+    type: String
+    title: String
+    order: Number
+    video: String
+    workId: Number
+    photoId: Number
+    photos[]: (binary)
+  */
   async create(req, res) {
-    /*
-      type: String
-      title: String
-      order: Number
-      video: String
-      workId: Number
-      photoId: Number
-      photos[]: (binary)
-    */
     const d = getCurrentDateTime()
     console.log('------------------------------------createSlider-START', d)
     const temp = {}
     try {
+      const userId = getUserIdByDomain(req.headers?.domain)
+      if (isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`)
+      }
       const { title, type, order, videos, workId, photoId, photosInfo } = req.body
       console.log('START', title, type, order, videos, workId, photoId, photosInfo)
 
@@ -73,12 +78,12 @@ class SliderController {
       // db
       const createdSlideRaw = await db.query(`
         INSERT INTO
-          slides(title, slide_order, work_id, photo_id, image, type, videos)
+          slides(title, slide_order, work_id, photo_id, image, type, videos, user_id)
         VALUES
-          ($1, $2, $3, $4, $5, $6, $7)
+          ($1, $2, $3, $4, $5, $6, $7, $8)
         RETURNING *;`,
         [slide.title, slide.slide_order, slide.workId,
-        slide.photoId, slide.image, slide.type, slide.videos]
+        slide.photoId, slide.image, slide.type, slide.videos, userId]
       )
 
       temp.createdId = createdSlideRaw?.rows?.[0]?.id
@@ -109,7 +114,7 @@ class SliderController {
 
       // remove record from db
       if (temp.createdId) {
-        const resq = await db.query(`DELETE FROM slides WHERE id = $1`, [temp.createdId])
+        const resq = await db.query(`DELETE FROM slides WHERE id = $1 AND user_id = $2`, [temp.createdId, userId])
         console.log('createSlider deleted record', resq.rows)
       }
 
@@ -129,8 +134,11 @@ class SliderController {
     console.log('------------------------------------getSlider-START', d)
 
     try {
-      const slides = await db.query(`SELECT * FROM slides`)
-
+      const userId = getUserIdByDomain(req.headers?.domain)
+      if (isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`)
+      }
+      const slides = await db.query(`SELECT * FROM slides WHERE user_id = $1`, [userId])
       const slidesRaw = slides?.rows
       if (slidesRaw?.length) {
         const slides = Array.from(slidesRaw).map(slide => {
@@ -168,12 +176,16 @@ class SliderController {
     console.log('------------------------------------getSliderById-START', d)
 
     try {
+      const userId = getUserIdByDomain(req.headers?.domain)
+      if (isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`)
+      }
       const id = req.params?.id ? +req.params?.id : null
       if (!id || !Number.isInteger(id)) {
         throw new Error('id is required or id is incorrect')
       }
 
-      const slides = await db.query(`SELECT * FROM slides WHERE id = $1`, [id])
+      const slides = await db.query(`SELECT * FROM slides WHERE id = $1 AND user_id = $2`, [id, userId])
 
       const slideRaw = slides?.rows?.[0]
       if (slideRaw) {
@@ -221,6 +233,10 @@ class SliderController {
     */
     const temp = {}
     try {
+      const userId = getUserIdByDomain(req.headers?.domain)
+      if (isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`)
+      }
       const { id, title, type, order, videos, workId, photoId } = req.body
       console.log('START', id, title, type, order, videos, workId, photoId)
 
@@ -270,7 +286,7 @@ class SliderController {
           })
 
           // get old image path
-          const oldImage = await db.query(`SELECT * FROM slides WHERE id = $1`, [id])
+          const oldImage = await db.query(`SELECT * FROM slides WHERE id = $1 AND user_id = $2`, [id, userId])
           const oldImagePath = oldImage?.rows?.[0]?.image ?? null
           // remove old image
           const isRemoved = removeFileByPath(oldImagePath)
@@ -286,7 +302,9 @@ class SliderController {
                 work_id = $5,
                 photo_id = $6,
                 image = $7
-              WHERE id = $1
+              WHERE
+                id = $1 AND
+                user_id = $8
               RETURNING *`,
               [
                 slide.id,
@@ -296,6 +314,7 @@ class SliderController {
                 slide.workId,
                 slide.photoId,
                 slide.image,
+                userId,
               ]
             );
             // result
@@ -314,7 +333,7 @@ class SliderController {
               slide_order = $4,
               work_id = $5,
               photo_id = $6
-            WHERE id = $1
+            WHERE id = $1 AND user_id = $7
             RETURNING *`,
             [
               slide.id,
@@ -323,6 +342,7 @@ class SliderController {
               slide.slide_order,
               slide.workId,
               slide.photoId,
+              userId
             ]
           );
           // result
@@ -348,7 +368,7 @@ class SliderController {
             work_id = $5,
             photo_id = $6,
             videos = $7
-          WHERE id = $1
+          WHERE id = $1 AND user_id = $8
           RETURNING *`,
           [
             slide.id,
@@ -358,6 +378,7 @@ class SliderController {
             slide.workId,
             slide.photoId,
             slide.videos,
+            userId,
           ]
         );
         // result
@@ -394,12 +415,16 @@ class SliderController {
     const d = getCurrentDateTime()
     console.log('------------------------------------deleteSlider-START', d)
     try {
+      const userId = getUserIdByDomain(req.headers?.domain)
+      if (isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`)
+      }
       const id = req.params?.id ? +req.params?.id : null
       if (!id || !Number.isInteger(id)) {
         throw new Error('id is required or id is incorrect')
       }
 
-      const slideDeletedRaw = await db.query(`DELETE FROM slides WHERE id = $1 RETURNING *`, [id])
+      const slideDeletedRaw = await db.query(`DELETE FROM slides WHERE id = $1 AND user_id = $2 RETURNING *`, [id, userId])
       const slideDeleted = slideDeletedRaw?.rows?.[0]
       console.log('slideDeleted', slideDeleted)
       if (slideDeleted?.type === 'image') {
