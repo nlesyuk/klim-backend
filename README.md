@@ -37,6 +37,9 @@ DB_PROD_DBNAME=
 
  ## TODO:
  1. Add user_id column for each table
+ 2. ESlint
+ 3. Prettier
+ 4. unit testin with Jest
 
 
 ## Swagger
