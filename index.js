@@ -11,14 +11,16 @@ const PORT = process.env.PORT || 8090;
 
 const { getCategory } = require('./global/helper')
 const constants = require('./global/constants')
-const workRoutes = require('./routes/work.route')
-const contactRoutes = require('./routes/contact.route')
-const shotsRoutes = require('./routes/shots.route')
-const photosRoutes = require('./routes/photos.route')
-const sliderRoutes = require('./routes/slider.route')
-const photoCollectionsRoutes = require('./routes/photoCollections.route')
-const publicRoutes = require('./routes/public.route')
-const authRoutes = require('./routes/auth.route')
+const {
+  auth,
+  public,
+  work,
+  contact,
+  shots,
+  photos,
+  slider,
+  photoCollections,
+} = require('./routes')
 
 const storageConfig = multer.diskStorage({
   destination: (req, file, callback) => {
@@ -68,8 +70,9 @@ const corsConfig = {
 // plugins:
 app.use(cors(corsConfig))
 app.use(multer({ storage: storageConfig }).any());
-app.use(express.urlencoded({ limit: '50mb' }));
 app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
 // routes:
 app.use((req, res, next) => {
   res.header(
@@ -83,19 +86,19 @@ const routeItems = [
   {
     path: '/public',
     routes: [
-      publicRoutes
+      public
     ]
   },
   {
     path: '/api', // add /api/v1
     routes: [
-      authRoutes,
-      workRoutes,
-      contactRoutes,
-      shotsRoutes,
-      photosRoutes,
-      sliderRoutes,
-      photoCollectionsRoutes
+      auth,
+      work,
+      contact,
+      shots,
+      photos,
+      slider,
+      photoCollections
     ]
   }
 ]
@@ -112,5 +115,6 @@ app.use((req, res, next) => {
   res.status(404).send({ message: "Not Found" });
 });
 
-const server = app.listen(PORT, () => console.log('\x1b[32m%s\x1b[0m', `Server started on http://localhost:${PORT}/api/`))
+// run server
+const server = app.listen(PORT, () => console.log('\x1b[33m%s\x1b[0m', `Server started on http://localhost:${PORT}/api/`))
 server.setTimeout(5000);
