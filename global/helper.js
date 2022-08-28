@@ -231,7 +231,6 @@ function getUserIdByDomain(domain) {
   }
 
   throw new Error("Something went wrong while checking a domain")
-
 }
 
 
