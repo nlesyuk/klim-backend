@@ -23,35 +23,35 @@ const {
 } = require('./routes')
 
 const storageConfig = multer.diskStorage({
-  destination: (req, file, callback) => {
-    const author = req.headers.author
+  destination(req, file, callback) {
+    try {
+      const domain = req.headers.domain // 🔴
 
-    if (author) {
-      const category = getCategory(req.originalUrl, constants.categories)
-
-      console.log("CATEGORY", category, `${__dirname}/public/uploads/${author}/${category}`)
-      if (category) {
-        const dest = path.resolve(`${__dirname}/public/uploads/${author}/${category}`)
-        // const dest = `./public/uploads/${author}/${category}`
-        console.log("DEST", dest)
-        fs.access(dest, (error) => {
-          if (error) {
-            console.error("Directory does not exist.");
-            return fs.mkdir(dest, (error) => callback(error, dest));
-          } else {
-            console.warn("Directory exists.");
-            return callback(null, dest);
-          }
-        });
-      } else {
-        // обробити помилку
-        console.log('FILE UPLOADING ERROR')
+      if (domain) {
+        const category = getCategory(req.originalUrl, constants.categories)
+        if (category) {
+          const dest = path.resolve(`${__dirname}/public/uploads/${domain}/${category}`)
+          fs.access(dest, (error) => {
+            if (error) {
+              console.error("Directory does not exist ✘ ⛔ ", dest);
+              return fs.mkdir(dest, (error) => callback(error, dest));
+            } else {
+              console.warn("Directory exists ✔ ✅");
+              return callback(null, dest);
+            }
+          });
+        } else {
+          // обробити помилку
+          console.error('FILE UPLOADING ERROR')
+        }
       }
+    } catch (e) {
+      console.error(e)
     }
     // how save path to image in DB
     // https://stackoverflow.com/questions/46975942/how-to-send-image-name-in-database-using-multer-and-express/47560629
   },
-  filename: (req, file, callback) => {
+  filename(req, file, callback) {
     console.log('FILE', file)
     let filename = `${file.originalname}`.replace(renameIncomeImagePattern, '') // remove special character from str
     if (!filename.length) {
