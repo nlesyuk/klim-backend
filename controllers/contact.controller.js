@@ -14,6 +14,10 @@ class ContactController {
     const d = getCurrentDateTime()
     console.log('------------------------------------createContact-START', d)
     try {
+      const userId = getUserIdByDomain(req.headers?.domain)
+      if (isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`)
+      }
       const { phone, email, facebook, instagram, telegram, vimeo, description } = req.body
       let image
       const files = req.files
@@ -60,11 +64,11 @@ class ContactController {
       const newContact = await db.query(`
         INSERT INTO
         general
-          (name, data)
+          (name, data, user_id)
         values
-          ($1, $2)
+          ($1, $2, $3)
         RETURNING *`,
-        [contactKey, contact]
+        [contactKey, contact, userId]
       )
 
       // 3 - finish
@@ -86,8 +90,12 @@ class ContactController {
     const d = getCurrentDateTime()
     console.log('------------------------------------getContact-START', d)
     try {
+      const userId = getUserIdByDomain(req.headers?.domain)
+      if (isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`)
+      }
       // 1 - get record
-      const contactRaw = await db.query(`SELECT * FROM general WHERE name = $1`, [contactKey])
+      const contactRaw = await db.query(`SELECT * FROM general WHERE name = $1 AND user_id = $2`, [contactKey, userId])
 
       // 2 - prepare data
       const contactData = contactRaw?.rows?.[0]?.data // data is a String
@@ -117,6 +125,10 @@ class ContactController {
     const d = getCurrentDateTime()
     console.log('------------------------------------updateContact-START', d)
     try {
+      const userId = getUserIdByDomain(req.headers?.domain)
+      if (isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`)
+      }
       const { phone, email, facebook, instagram, telegram, vimeo, description } = req.body
       let image
       const files = req.files
@@ -152,7 +164,7 @@ class ContactController {
         image = mappedFiles?.[0].path
         console.log('image1', image)
       } else {
-        const contactRaw = await db.query(`SELECT * FROM general WHERE name = $1`, [contactKey])
+        const contactRaw = await db.query(`SELECT * FROM general WHERE name = $1 AND user_id = $2`, [contactKey, userId])
         const contactData = contactRaw?.rows?.[0]?.data // data is a String
         if (contactData) {
           const contact = JSON.parse(contactData)
@@ -172,8 +184,10 @@ class ContactController {
         SET
           name = $1,
           data = $2
+        WHERE
+          user_id = $3
         RETURNING *`,
-        [contactKey, JSON.stringify(data)]
+        [contactKey, JSON.stringify(data), userId]
       )
 
       // 4 - prepare response

@@ -1,10 +1,11 @@
 -- ok
 create TABLE general(
   id SERIAL PRIMARY KEY,
-  author VARCHAR(255),
+  user_id VARCHAR(255),
   name VARCHAR(255),
   data TEXT
 );
+-- ALTER TABLE general ADD COLUMN user_id INTEGER;
 
 -- ok
 create TABLE work(
