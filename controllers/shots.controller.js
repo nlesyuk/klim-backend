@@ -1,6 +1,12 @@
 const fs = require('fs');
 const db = require('../db/index');
-const { getRightPathForImage, prepareImagePathForDB, removeUploadedFiles, getCurrentDateTime, getUserIdByDomain } = require('../global/helper')
+const {
+  getRightPathForImage,
+  prepareImagePathForDB,
+  removeUploadedFiles,
+  getCurrentDateTime,
+  getUserIdByDomain
+} = require('../global/helper')
 
 const dbKey = 'shots';
 
@@ -8,6 +14,7 @@ class ShotsController {
   async create(req, res) {
     const d = getCurrentDateTime()
     console.log('------------------------------------createShot-START', d)
+    let RESPONSE
     try {
       const userId = getUserIdByDomain(req.headers?.domain)
       if (isNaN(userId)) {
@@ -62,11 +69,11 @@ class ShotsController {
         return { categories, workId, format }
       });
       const shotsCreated = await db.query(`
-      INSERT INTO
-        shot(categories, work_id, user_id)
-      VALUES
-        ($1, $2, $3)
-      RETURNING *`,
+        INSERT INTO
+          shot(categories, work_id, user_id)
+        VALUES
+          ($1, $2, $3)
+        RETURNING *`,
         [shortsData[0].categories, shortsData[0].workId, userId]
       )
       let RESPONSE = Array.from(shotsCreated?.rows).map((v, i) => ({
@@ -124,11 +131,15 @@ class ShotsController {
       removeUploadedFiles(files)
 
       // remove record from db
-      const resq = await db.query(`DELETE FROM shot WHERE id=$1`, [RESPONSE[0].id])
+      const shotId = RESPONSE?.[0]?.id
+      console.log('---', shotId)
+      if (shotId) {
+        const resq = await db.query(`DELETE FROM shot WHERE id=$1`, [shotId])
+      }
 
-      console.error('ERROR', error, resq.rows)
-      res.status(500)
-      res.json({ error: 'error' })
+      const anotherMessage = error?.message ?? 'Unknow server error at ' + ShotsController.name
+      res.status(500).send({ message: anotherMessage })
+      console.log(error)
     }
     console.log('------------------------------------createShot-END', d)
   }

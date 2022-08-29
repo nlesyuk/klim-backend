@@ -6,138 +6,9 @@ const {
   getRightPathForImage,
   removeUploadedFiles,
   getCurrentDateTime,
+  getUserIdByDomain
 } = require('../global/helper')
 
-const mock = [
-  {
-    "id": 1,
-    "title": "title",
-    "credits": "credits",
-    "category": ["commerce"],
-    "photos": [
-      {
-        "id": 470,
-        "src": "//3.126.125.66/public/uploads/s/work/1637579577399_s_2021112213.10.17.jpg",
-        "isPreview": false,
-        "order": 0,
-        "format": "horizontal"
-      },
-      {
-        "id": 472,
-        "src": "//3.126.125.66/public/uploads/s/work/1637579577404_s_2021112213.07.22.jpg",
-        "isPreview": false,
-        "order": 4,
-        "format": "horizontal"
-      },
-      {
-        "id": 473,
-        "src": "//3.126.125.66/public/uploads/s/work/1637579577407_s_2021112213.09.00.jpg",
-        "isPreview": false,
-        "order": 2,
-        "format": "horizontal"
-      },
-      {
-        "id": 476,
-        "src": "//3.126.125.66/public/uploads/s/work/1637579577416_s_2021112213.05.36.jpg",
-        "isPreview": false,
-        "order": 6,
-        "format": "horizontal"
-      },
-      {
-        "id": 477,
-        "src": "//3.126.125.66/public/uploads/s/work/1637579577419_s_2021112212.50.08.jpg",
-        "isPreview": false,
-        "order": 7,
-        "format": "horizontal"
-      },
-      {
-        "id": 471,
-        "src": "//3.126.125.66/public/uploads/s/work/1637579577402_s_2021112213.09.18.jpg",
-        "isPreview": true,
-        "order": 4,
-        "format": "horizontal"
-      },
-      {
-        "id": 475,
-        "src": "//3.126.125.66/public/uploads/s/work/1637579577412_s_2021112213.06.27.jpg",
-        "isPreview": true,
-        "order": 0,
-        "format": "horizontal"
-      },
-      {
-        "id": 474,
-        "src": "//3.126.125.66/public/uploads/s/work/1637579577410_s_2021112213.07.44.jpg",
-        "isPreview": true,
-        "order": 1,
-        "format": "horizontal"
-      }
-    ]
-  },
-  {
-    "id": 2,
-    "title": "title2",
-    "credits": "credits2",
-    "category": ["commerce"],
-    "photos": [
-      {
-        "id": 470,
-        "src": "//3.126.125.66/public/uploads/s/work/1637579577399_s_2021112213.10.17.jpg",
-        "isPreview": false,
-        "order": 0,
-        "format": "horizontal"
-      },
-      {
-        "id": 472,
-        "src": "//3.126.125.66/public/uploads/s/work/1637579577404_s_2021112213.07.22.jpg",
-        "isPreview": false,
-        "order": 4,
-        "format": "horizontal"
-      },
-      {
-        "id": 473,
-        "src": "//3.126.125.66/public/uploads/s/work/1637579577407_s_2021112213.09.00.jpg",
-        "isPreview": false,
-        "order": 2,
-        "format": "horizontal"
-      },
-      {
-        "id": 476,
-        "src": "//3.126.125.66/public/uploads/s/work/1637579577416_s_2021112213.05.36.jpg",
-        "isPreview": false,
-        "order": 6,
-        "format": "horizontal"
-      },
-      {
-        "id": 477,
-        "src": "//3.126.125.66/public/uploads/s/work/1637579577419_s_2021112212.50.08.jpg",
-        "isPreview": false,
-        "order": 7,
-        "format": "horizontal"
-      },
-      {
-        "id": 471,
-        "src": "//3.126.125.66/public/uploads/s/work/1637579577402_s_2021112213.09.18.jpg",
-        "isPreview": true,
-        "order": 4,
-        "format": "horizontal"
-      },
-      {
-        "id": 475,
-        "src": "//3.126.125.66/public/uploads/s/work/1637579577412_s_2021112213.06.27.jpg",
-        "isPreview": true,
-        "order": 0,
-        "format": "horizontal"
-      },
-      {
-        "id": 474,
-        "src": "//3.126.125.66/public/uploads/s/work/1637579577410_s_2021112213.07.44.jpg",
-        "isPreview": true,
-        "order": 1,
-        "format": "horizontal"
-      }
-    ]
-  },
-]
 
 class PhotoCollectionsController {
   /**
@@ -183,11 +54,11 @@ class PhotoCollectionsController {
 
       const record = await db.query(`
         INSERT INTO photo
-          (title, description, credits, photo_orderuser_id, user_id)
+          (title, description, credits, photo_order, user_id)
         VALUES
-          ($1, $2, $3, $4, $5, $6)
+          ($1, $2, $3, $4, $5)
         RETURNING *`,
-        [title, description, credits, order, userId, userId]
+        [title, description, credits, order, userId]
       )
       console.log('DB RECORD', record.rows)
       if (record.rows?.[0]?.id) {

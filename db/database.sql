@@ -5,7 +5,7 @@ create TABLE general(
   name VARCHAR(255),
   data TEXT
 );
--- ALTER TABLE general ADD COLUMN user_id INTEGER;
+
 
 -- ok
 create TABLE work(
@@ -19,18 +19,18 @@ create TABLE work(
   photos INTEGER[]
   user_id INTEGER
 );
--- ALTER TABLE work ADD COLUMN user_id INTEGER;
+
 
 -- ok
 create TABLE shot(
   id SERIAL PRIMARY KEY,
   categories TEXT[],
-  work_id INTEGER
+  work_id INTEGER,
   user_id INTEGER
 );
--- ALTER TABLE slides ADD COLUMN user_id INTEGER;
 
--- in progress
+
+-- ok
 create TABLE photo(
   id SERIAL PRIMARY KEY,
   title VARCHAR(255),
@@ -40,7 +40,7 @@ create TABLE photo(
   categories TEXT[]
   user_id INTEGER
 );
--- ALTER TABLE photo ADD COLUMN user_id INTEGER;
+
 
 -- ok
 create TABLE photos(
@@ -63,7 +63,7 @@ create TABLE photos(
   image VARCHAR(255)
   user_id INTEGER
 );
--- ALTER TABLE photos ADD COLUMN user_id INTEGER;
+
 
 -- ok
 create TABLE slides(
@@ -77,7 +77,7 @@ create TABLE slides(
   photo_id INTEGER DEFAULT NULL
   user_id INTEGER
 );
--- ALTER TABLE slides ADD COLUMN user_id INTEGER;
+
 
 -- it schame allow only 1 session for 1 user, for muliply sessions you shuold use separated table for JWT token
 create TABLE users(
@@ -87,6 +87,8 @@ create TABLE users(
   refresh_token VARCHAR(255),
   expiry_date VARCHAR(255)
 );
+
+
 -- JWT refresh token table
 -- create TABLE refreshToken(
 --   user_id Numeric,
@@ -107,3 +109,7 @@ create TABLE users(
 --   user_id INTEGER,
 --   FOREIGN KEY (user_id) REFERENCES person (id)
 -- );
+
+
+
+-- ALTER TABLE photos ADD COLUMN user_id INTEGER;

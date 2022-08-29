@@ -1,10 +1,10 @@
 const db = require('../db/index')
 const {
-  removeDomainFromImagePath,
   prepareImagePathForDB,
   getRightPathForImage,
   removeUploadedFiles,
   getCurrentDateTime,
+  getUserIdByDomain,
 } = require('../global/helper')
 
 const contactKey = 'contact';
