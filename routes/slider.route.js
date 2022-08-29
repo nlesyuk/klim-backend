@@ -1,14 +1,14 @@
 const Express = require('express')
 const router = new Express()
-const { authJwt } = require('../middleware')
+const { visitorCheck, adminCheck } = require('../middleware')
 const SliderController = require('../controllers/slider.controller')
 
-const routeKey = '/slider';
+const routeKey = `slider`;
 
-router.post(`${routeKey}`, [authJwt.verifyToken], SliderController.create)
-router.get(`${routeKey}`, SliderController.get)
-router.get(`${routeKey}/:id`, SliderController.getById)
-router.put(`${routeKey}`, [authJwt.verifyToken], SliderController.update)
-router.delete(`${routeKey}/:id`, [authJwt.verifyToken], SliderController.delete)
+router.get(`/${routeKey}`, visitorCheck, SliderController.get)
+router.get(`/${routeKey}/:id`, visitorCheck, SliderController.getById)
+router.put(`/${routeKey}`, adminCheck, SliderController.update)
+router.post(`/${routeKey}`, adminCheck, SliderController.create)
+router.delete(`/${routeKey}/:id`, adminCheck, SliderController.delete)
 
 module.exports = router

@@ -1,12 +1,12 @@
 const Express = require('express')
 const router = new Express()
-const { authJwt } = require('../middleware')
+const { visitorCheck, adminCheck } = require('../middleware')
 const ContactController = require('../controllers/contact.controller')
 
 const key = 'contact';
 
-router.post(`/${key}`, [authJwt.verifyToken], ContactController.createContact)
-router.get(`/${key}`, ContactController.getContact)
-router.put(`/${key}`, [authJwt.verifyToken], ContactController.updateContact)
+router.get(`/${key}`, visitorCheck, ContactController.getContact)
+router.put(`/${key}`, adminCheck, ContactController.updateContact)
+router.post(`/${key}`, adminCheck, ContactController.createContact)
 
 module.exports = router

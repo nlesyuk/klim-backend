@@ -1,13 +1,9 @@
 const Router = require('express')
 const router = new Router()
-const { authJwt, general } = require('../middleware')
+const { visitorCheck, adminCheck } = require('../middleware')
 const workController = require('../controllers/work.controller')
 
 const routeKey = `work`;
-
-// const adminCheck = [general.checkUserExisting, authJwt.verifyToken]
-const adminCheck = []
-const visitorCheck = [general.checkUserExisting]
 
 router.get(`/${routeKey}`, visitorCheck, workController.getWorks)
 router.get(`/${routeKey}/:id`, visitorCheck, workController.getWork)
