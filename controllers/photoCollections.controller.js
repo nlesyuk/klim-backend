@@ -155,7 +155,10 @@ class PhotoCollectionsController {
     console.log('------------------------------------createPhotoCollection-START', d)
     const storage = {}
     try {
-      // res.json({ message: 'ok' })
+      const userId = getUserIdByDomain(req.headers?.domain)
+      if (isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`)
+      }
       const { title, description, credits, photosInfo, order } = req.body
       const filesInfo = JSON.parse(photosInfo)
       const files = req.files
@@ -180,11 +183,11 @@ class PhotoCollectionsController {
 
       const record = await db.query(`
         INSERT INTO photo
-          (title, description, credits, photo_order)
+          (title, description, credits, photo_orderuser_id, user_id)
         VALUES
-          ($1, $2, $3, $4)
+          ($1, $2, $3, $4, $5, $6)
         RETURNING *`,
-        [title, description, credits, order]
+        [title, description, credits, order, userId, userId]
       )
       console.log('DB RECORD', record.rows)
       if (record.rows?.[0]?.id) {
@@ -201,7 +204,7 @@ class PhotoCollectionsController {
         const photoOrder = photo.order ?? null
         const format = photo.format ?? null
         const image = mappedFiles[i].path ?? null
-        queryArr.push(`(${storage.id}, ${isWorkPreview}, ${photoOrder}, '${format}', '${image}')`)
+        queryArr.push(`(${storage.id}, ${isWorkPreview}, ${photoOrder}, '${format}', '${image}', '${userId}')`)
       });
       const queryStr = queryArr.join(',')
       console.log('QueryArr', queryStr, queryArr)
@@ -209,7 +212,7 @@ class PhotoCollectionsController {
       // 1 - set photos in table
       const photos = await db.query(`
         INSERT INTO photos
-          (photo_id, is_photo_preview, photo_order, format, image)
+          (photo_id, is_photo_preview, photo_order, format, image, user_id)
         VALUES
           ${queryStr}
         RETURNING *;`
@@ -263,8 +266,12 @@ class PhotoCollectionsController {
     const d = getCurrentDateTime()
     console.log('------------------------------------getPhotoCollection-START', d)
     try {
-      const photoRecords = await db.query(`SELECT * FROM photo`)
-      const dirtyPhotos = await db.query(`SELECT * FROM photos WHERE photo_id IS NOT NULL`)
+      const userId = getUserIdByDomain(req.headers?.domain)
+      if (isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`)
+      }
+      const photoRecords = await db.query(`SELECT * FROM photo WHERE user_id = $1`, [userId])
+      const dirtyPhotos = await db.query(`SELECT * FROM photos WHERE photo_id IS NOT NULL AND user_id = $1`, [userId])
 
       // prepare photos for front-end
       const photos = dirtyPhotos.rows.map(photo => ({
@@ -305,9 +312,12 @@ class PhotoCollectionsController {
     const d = getCurrentDateTime()
     console.log('------------------------------------getByIDPhotoCollection-START', d)
     try {
+      const userId = getUserIdByDomain(req.headers?.domain)
+      if (isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`)
+      }
       const { id } = req.params
-
-      const record = await db.query(`SELECT * FROM photo WHERE id = $1`, [id])
+      const record = await db.query(`SELECT * FROM photo WHERE id = $1 AND user_id = $2`, [id, userId])
       if (record.rows.length === 0) {
         res.status(404);
         res.send({ message: "Photo collection doesn't exist" });
@@ -317,7 +327,7 @@ class PhotoCollectionsController {
       photo.order = photo?.photo_order ?? 0
       delete photo.photo_order
 
-      const photosDirty = await db.query(`SELECT * FROM photos WHERE photo_id = $1`, [id])
+      const photosDirty = await db.query(`SELECT * FROM photos WHERE photo_id = $1 AND user_id = $2`, [id, userId])
 
       // prepare photos for front-end
       if (photosDirty?.rows?.length) {
@@ -342,6 +352,10 @@ class PhotoCollectionsController {
     const d = getCurrentDateTime()
     console.log('------------------------------------updatePhotoCollection-START', d)
     try {
+      const userId = getUserIdByDomain(req.headers?.domain)
+      if (isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`)
+      }
       const { id, title, credits, description, photosInfo, order } = req.body
       let updatedPhotoStore = []
 
@@ -398,7 +412,7 @@ class PhotoCollectionsController {
           const order = photo.order ?? null
           const format = photo.format ?? null
           const image = mappedFiles[i].path ?? null
-          const str = `(${recordId}, ${isPreview}, ${order}, '${format}', '${image}')`
+          const str = `(${recordId}, ${isPreview}, ${order}, '${format}', '${image}', '${userId}')`
           queryArr.push(str)
         });
 
@@ -408,7 +422,7 @@ class PhotoCollectionsController {
         const photosFromDB = await db.query(`
           INSERT INTO
             photos
-            (photo_id, is_photo_preview, photo_order, format, image)
+            (photo_id, is_photo_preview, photo_order, format, image, user_id)
           VALUES
             ${queryArr.join(',')}
           RETURNING *;
@@ -439,7 +453,7 @@ class PhotoCollectionsController {
           const format = photo?.format ?? null
           const order = photo.order ?? null
           const isPreview = photo.isPreview ?? false
-          queryArr.push(`(${id}, ${recordId}, ${isPreview}, ${order}, '${format}', '${image}')`)
+          queryArr.push(`(${id}, ${recordId}, ${isPreview}, ${order}, '${format}', '${image}', '${userId}')`)
         });
 
         console.log("UP-P queryStr", queryArr.join(','))
@@ -452,11 +466,12 @@ class PhotoCollectionsController {
             photo_id = row.photo_id,
             photo_order = row.photo_order,
             is_photo_preview = row.is_photo_preview
-          FROM (VALUES ${queryArr.join(',')})
-            AS row(id, photo_id, is_photo_preview, photo_order, format, image)
-          WHERE row.id = p.id
+          FROM
+            (VALUES ${queryArr.join(',')})
+            AS row(id, photo_id, is_photo_preview, photo_order, format, image, user_id)
+          WHERE row.id = p.id AND row.user_id = p.user_id
           RETURNING *;
-        `)
+        `) // 🔴
 
         console.log("UP-P updatedPhotosFromDB", updatedPhotosFromDB.rows)
         // interface IPhoto
@@ -496,9 +511,9 @@ class PhotoCollectionsController {
           description = $3,
           photo_order = $4
         WHERE
-          id = $5
+          id = $5 AND user_id = $6
         RETURNING *`,
-        [title, credits, description, order, id]
+        [title, credits, description, order, id, userId]
       )
       console.log('UP-WORK updatedWorkFromDB', updatedWorkFromDB.rows)
 
@@ -517,6 +532,10 @@ class PhotoCollectionsController {
     const d = getCurrentDateTime()
     console.log('------------------------------------deletePhotoCollection-START', d)
     try {
+      const userId = getUserIdByDomain(req.headers?.domain)
+      if (isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`)
+      }
       const { id } = req.params
       const status = { id, }
 
@@ -524,9 +543,9 @@ class PhotoCollectionsController {
         DELETE FROM
           photo
         WHERE
-          id = $1
+          id = $1 AND user_id = $2
         RETURNING *`,
-        [id]
+        [id, userId]
       )
       const removedPhotos = await db.query(`
         DELETE FROM
