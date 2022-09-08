@@ -1,8 +1,7 @@
 const authJwt = require("./authJwt");
 const general = require("./general");
 
-// const adminCheck = [general.checkUserExisting, authJwt.verifyToken]
-const adminCheck = [general.checkUserExisting]
+const adminCheck = [general.checkUserExisting, authJwt.verifyToken]
 const visitorCheck = [general.checkUserExisting]
 
 module.exports = {

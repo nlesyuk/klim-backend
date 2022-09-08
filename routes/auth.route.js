@@ -6,6 +6,7 @@ const key = 'auth';
 
 router.post(`/${key}/signup`, AuthController.signup)
 router.post(`/${key}/signin`, AuthController.signin)
+router.post(`/${key}/logout`, AuthController.logout)
 router.post(`/${key}/refreshtoken`, AuthController.refreshToken)
 
 module.exports = router

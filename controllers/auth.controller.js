@@ -94,8 +94,8 @@ class AuthController {
       res.json(userData)
     } catch (e) {
       const anotherMessage = e?.message ?? 'Unknow server error at signin controller'
-      res.status(500).send({ message: anotherMessage })
       console.error(anotherMessage)
+      res.status(500).send({ message: anotherMessage })
     }
     console.log('------------------------------------signin-END', d)
   }
@@ -158,6 +158,25 @@ class AuthController {
       console.error(anotherMessage)
     }
     console.log('------------------------------------refreshToken-END', d)
+  }
+
+  async logout(req, res) {
+    const d = getCurrentDateTime()
+    console.log('------------------------------------logout-START', d)
+    try {
+      const { userId } = req.body
+      // remove refresh_token and expiry_date
+      console.log('logout', userId)
+      res.json({
+        message: "done",
+      });
+      return;
+    } catch (e) {
+      const anotherMessage = e?.message ?? `Unknow server error at ${AuthController.name} - logout`
+      res.status(500).send({ message: anotherMessage })
+      console.error(anotherMessage)
+    }
+    console.log('------------------------------------logout-END', d)
   }
 
 }
