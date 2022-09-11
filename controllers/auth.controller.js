@@ -71,7 +71,7 @@ class AuthController {
       if (!isPasswordValid) {
         res.status(401).json({
           accessToken: null,
-          message: "Invalid Password!"
+          message: "Invalid Password or Username!"
         });
         return
       }
@@ -79,9 +79,9 @@ class AuthController {
       const token = jwt.sign(
         { id: user.id },
         process.env.SECRET,
-        { expiresIn: process.env.JWT_EXPIRATION }
+        { expiresIn: Number(process.env.JWT_EXPIRATION) }
       );
-
+      console.log('>>><<<', token)
       const refreshToken = await createRefreshToken(user.id);
 
       const userData = {
