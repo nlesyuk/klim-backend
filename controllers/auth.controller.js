@@ -81,7 +81,6 @@ class AuthController {
         process.env.SECRET,
         { expiresIn: Number(process.env.JWT_EXPIRATION) }
       );
-      console.log('>>><<<', token)
       const refreshToken = await createRefreshToken(user.id);
 
       const userData = {
@@ -145,7 +144,7 @@ class AuthController {
       const newAccessToken = jwt.sign(
         { id: user.id },
         process.env.SECRET,
-        { expiresIn: process.env.JWT_EXPIRATION, }
+        { expiresIn: Number(process.env.JWT_EXPIRATION), }
       );
 
       return res.status(200).json({

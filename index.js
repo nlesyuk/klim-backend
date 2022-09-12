@@ -52,12 +52,14 @@ const storageConfig = multer.diskStorage({
     // https://stackoverflow.com/questions/46975942/how-to-send-image-name-in-database-using-multer-and-express/47560629
   },
   filename(req, file, callback) {
-    console.log('FILE', file)
+    const domain = req.headers.domain // 🔴
     let filename = `${file.originalname}`.replace(renameIncomeImagePattern, '') // remove special character from str
+
+    console.log('FILE', file)
     if (!filename.length) {
       filename = `image_${Date.now()}`;
     }
-    filename = `${Date.now()}_${req.headers.author}_${filename}`
+    filename = `${Date.now()}_${domain}_${filename}`
     callback(null, filename);
   }
 });

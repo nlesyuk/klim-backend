@@ -1,16 +1,21 @@
 const jwt = require("jsonwebtoken");
 const { TokenExpiredError } = jwt;
-
+const { removeUploadedFiles } = require('../global/helper')
 
 const catchError = (err, res) => {
-  if (err instanceof TokenExpiredError) {
-    return res.status(401).send({ message: "Unauthorized! Access Token was expired!" });
+  let message = "Unauthorized!"
+  const files = res?.req?.files
+  // console.log('F', files)
+  if (files) {
+    removeUploadedFiles(files)
   }
-  return res.sendStatus(401).send({ message: "Unauthorized!" });
+  if (err instanceof TokenExpiredError) {
+    message = "Unauthorized! Access Token was expired!"
+  }
+  return res.sendStatus(401).send({ message });
 }
 
 const verifyToken = (req, res, next) => {
-  console.log('verifyToken')
   let token = req.headers["x-access-token"];
 
   if (!token) {
