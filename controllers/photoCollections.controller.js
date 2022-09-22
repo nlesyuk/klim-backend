@@ -30,11 +30,11 @@ class PhotoCollectionsController {
       if (isNaN(userId)) {
         throw new Error(`userId should be a number got ${userId}`)
       }
-      const { title, description, credits, photosInfo, order } = req.body
+      const { title, description, credits, photosInfo, order, category } = req.body
       const filesInfo = JSON.parse(photosInfo)
       const files = req.files
 
-      console.log('FIELDS', title, description, credits, filesInfo, order)
+      console.log('FIELDS', title, description, credits, filesInfo, category, order)
       console.log('FILES', files)
 
       // 0 - check
@@ -162,6 +162,7 @@ class PhotoCollectionsController {
         return {
           ...item,
           order,
+          lol: 123,
           description,
           photos: photos.filter(photo => {
             if (photo?.photo_id === item.id) {

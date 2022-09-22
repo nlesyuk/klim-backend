@@ -19,7 +19,6 @@ const {
   shots,
   photos,
   slider,
-  photoCollections,
 } = require('./routes')
 
 const storageConfig = multer.diskStorage({
@@ -92,7 +91,7 @@ const routeItems = [
     ]
   },
   {
-    path: '/api', // add /api/v1
+    path: '/api/v1',
     routes: [
       auth,
       work,
@@ -100,7 +99,6 @@ const routeItems = [
       shots,
       photos,
       slider,
-      photoCollections
     ]
   }
 ]

@@ -5,7 +5,6 @@ const contact = require('./contact.route')
 const shots = require('./shots.route')
 const photos = require('./photos.route')
 const slider = require('./slider.route')
-const photoCollections = require('./photoCollections.route')
 
 
 module.exports = {
@@ -16,5 +15,4 @@ module.exports = {
   shots,
   photos,
   slider,
-  photoCollections,
 }

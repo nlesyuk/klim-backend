@@ -33,6 +33,7 @@ async function checkUserExisting(req, res, next) {
       return
     }
   } catch (error) {
+    console.log('checkUserExisting Error', error.message)
     res.status(500).send({ message: error.message })
   }
 };
