@@ -30,12 +30,12 @@ class PhotoCollectionsController {
       if (isNaN(userId)) {
         throw new Error(`userId should be a number got ${userId}`)
       }
-      const { title, description, credits, photosInfo, order, category } = req.body
+      const { title, description, credits, photosInfo, order, categories } = req.body
       const filesInfo = JSON.parse(photosInfo)
       const files = req.files
 
-      console.log('FIELDS', title, description, credits, filesInfo, category, order)
-      console.log('FILES', files)
+      console.log('FIELDS', title, description, credits, filesInfo, categories, order)
+      // console.log('FILES', files)
 
       // 0 - check
       if (!files?.length) {
@@ -50,15 +50,15 @@ class PhotoCollectionsController {
           filename: file.filename
         }
       }) // get path of photo in current project backend/public/uploads/s/category
-      console.log('FILES-INFO', mappedFiles)
+      // console.log('FILES-INFO', mappedFiles)
 
       const record = await db.query(`
         INSERT INTO photo
-          (title, description, credits, photo_order, user_id)
+          (title, description, credits, categories, photo_order, user_id)
         VALUES
-          ($1, $2, $3, $4, $5)
+          ($1, $2, $3, $4, $5, $6)
         RETURNING *`,
-        [title, description, credits, order, userId]
+        [title, description, credits, JSON.parse(categories), order, userId]
       )
       console.log('DB RECORD', record.rows)
       if (record.rows?.[0]?.id) {
@@ -133,6 +133,7 @@ class PhotoCollectionsController {
     }
     console.log('------------------------------------createPhotoCollection-END', d)
   }
+
   async get(req, res) {
     const d = getCurrentDateTime()
     console.log('------------------------------------getPhotoCollection-START', d)
@@ -154,6 +155,7 @@ class PhotoCollectionsController {
         format: photo.format ?? null,
       }))
 
+      console.log('photoRecords', photoRecords.rows)
       const works = photoRecords.rows.map((item) => {
         const order = item.photo_order ?? 0
         const description = item.description ?? ''
@@ -173,6 +175,7 @@ class PhotoCollectionsController {
           })
         }
       })
+      // console.log('works', works)
 
       res.json(works)
     } catch (error) {
@@ -180,6 +183,7 @@ class PhotoCollectionsController {
     }
     console.log('------------------------------------getPhotoCollection-END', d)
   }
+
   async getById(req, res) {
     const d = getCurrentDateTime()
     console.log('------------------------------------getByIDPhotoCollection-START', d)
@@ -220,7 +224,9 @@ class PhotoCollectionsController {
     }
     console.log('------------------------------------getByIDPhotoCollection-END', d)
   }
+
   async update(req, res) {
+    // TODO: need handle update "categories" field from FE (see in create method)
     const d = getCurrentDateTime()
     console.log('------------------------------------updatePhotoCollection-START', d)
     try {
@@ -400,6 +406,7 @@ class PhotoCollectionsController {
     }
     console.log('------------------------------------updatePhotoCollection-END', d)
   }
+
   async delete(req, res) {
     const d = getCurrentDateTime()
     console.log('------------------------------------deletePhotoCollection-START', d)

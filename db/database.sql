@@ -37,7 +37,7 @@ create TABLE photo(
   description VARCHAR,
   credits VARCHAR,
   photo_order INTEGER,
-  categories TEXT[]
+  categories TEXT[],
   user_id INTEGER
 );
 

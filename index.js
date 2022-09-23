@@ -116,5 +116,5 @@ app.use((req, res, next) => {
 });
 
 // run server
-const server = app.listen(PORT, () => console.log('\x1b[33m%s\x1b[0m', `Server started on http://localhost:${PORT}/api/`))
+const server = app.listen(PORT, () => console.log('\x1b[33m%s\x1b[0m', `Server started on http://localhost:${PORT}${routeItems[1].path}`))
 server.setTimeout(5000);
