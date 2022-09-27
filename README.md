@@ -45,3 +45,13 @@ DB_PROD_DBNAME=
 
 ## Swagger
 doc for api
+
+
+### how to deploy in EC2 instance
+
+> sudo apt-get aptede
+# install n
+> curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o n
+> bash n lts
+> npm install -g n
+
