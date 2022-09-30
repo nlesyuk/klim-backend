@@ -48,10 +48,27 @@ doc for api
 
 
 ### how to deploy in EC2 instance
+> sudo apt-get update
 
-> sudo apt-get aptede
-# install n
+// install n
 > curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o n
 > bash n lts
 > npm install -g n
+
+// install https://pm2.keymetrics.io/docs/usage/pm2-doc-single-page/
+> npm install pm2@latest -g
+
+// nginx config - see Cribs.md
+> sudo apt install nginx
+
+// Firewall Setup https://itnext.io/deploy-a-nodejs-and-expressjs-app-on-digital-ocean-with-nginx-and-free-ssl-edd88a5580fa
+> sudo ufw enable
+> sudo ufw allow http
+> sudo ufw allow https
+> sudo ufw allow ssh
+
+// install postgresql
+
+// pull git repo
+
 
