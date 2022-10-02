@@ -67,7 +67,21 @@ doc for api
 > sudo ufw allow https
 > sudo ufw allow ssh
 
-// install postgresql
+// install postgres
+> sudo apt install postgresql -y
+> sudo su - postgres
+> psql
+postgres=# CREATE ROLE ubuntu;
+postgres=# ALTER ROLE ubuntu WITH LOGIN;
+postgres=# ALTER USER ubuntu CREATEDB SUPERUSER;
+postgres=# ALTER USER ubuntu WITH PASSWORD 'password';
+postgres=# \du
+postgres=# CREATE DATABASE klim;
+postgres=# \l
+postgres=# \c klim
+postgres=# HERE_YOU_SHOULD_INSERT_TABEL_SCHEME `create TABLE users(...)`
+postgres=# \d
+
 
 // pull git repo
 

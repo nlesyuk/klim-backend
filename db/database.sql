@@ -16,7 +16,7 @@ create TABLE work(
   work_order INTEGER,
   description TEXT,
   category TEXT[],
-  photos INTEGER[]
+  photos INTEGER[],
   user_id INTEGER
 );
 
@@ -60,7 +60,7 @@ create TABLE photos(
   shot_order INTEGER,
 
   format VARCHAR(255),
-  image VARCHAR(255)
+  image VARCHAR(255),
   user_id INTEGER
 );
 
@@ -74,7 +74,7 @@ create TABLE slides(
   image VARCHAR(255) DEFAULT NULL,
   videos VARCHAR(255) DEFAULT NULL,
   work_id INTEGER DEFAULT NULL,
-  photo_id INTEGER DEFAULT NULL
+  photo_id INTEGER DEFAULT NULL,
   user_id INTEGER
 );
 
