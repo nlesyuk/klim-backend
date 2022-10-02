@@ -102,7 +102,7 @@ class PhotoCollectionsController {
             order: v.photo_order,
             format: v.format,
             isPreview: v.is_photo_preview,
-            src: getRightPathForImage(v.image)
+            src: getRightPathForImage(v.image, userId)
           }
         })
       }
@@ -149,7 +149,7 @@ class PhotoCollectionsController {
       const photos = dirtyPhotos.rows.map(photo => ({
         id: photo.id,
         photo_id: photo.photo_id,
-        src: getRightPathForImage(photo.image),
+        src: getRightPathForImage(photo.image, userId),
         isPreview: photo.is_photo_preview,
         order: photo.photo_order,
         format: photo.format ?? null,
@@ -210,7 +210,7 @@ class PhotoCollectionsController {
         photo.photos = photosDirty.rows.map(photo => ({
           id: photo.id,
           // photo_id: photo.photo_id,
-          src: getRightPathForImage(photo.image),
+          src: getRightPathForImage(photo.image, userId),
           isPreview: photo.is_photo_preview,
           order: photo.photo_order,
           format: photo.format ?? null,
@@ -310,7 +310,7 @@ class PhotoCollectionsController {
         // interface IPhoto
         const mappedNewPhotosFromDB = Array.from(photosFromDB.rows).map(v => ({
           id: v.id,
-          src: getRightPathForImage(v.image),
+          src: getRightPathForImage(v.image, userId),
           isPreview: v.is_photo_preview,
           order: v.photo_order,
           format: v.format
@@ -355,7 +355,7 @@ class PhotoCollectionsController {
         // interface IPhoto
         const arrUpdatedPhotosFromDB = Array.from(updatedPhotosFromDB.rows).map(v => ({
           id: v.id,
-          src: getRightPathForImage(v.image),
+          src: getRightPathForImage(v.image, userId),
           isPreview: v.is_work_preview,
           order: v.work_order,
           format: v.format

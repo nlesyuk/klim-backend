@@ -5,7 +5,19 @@ const sitesByUserId = {
   'derzhanovska.com': 2,
 }
 
+const users = [
+  {
+    id: 1,
+    domain: 'klimstepan.com',
+  },
+  {
+    id: 2,
+    domain: 'derzhanovska.com',
+  }
+]
+
 module.exports = {
   categories,
-  sitesByUserId
+  sitesByUserId,
+  users
 }

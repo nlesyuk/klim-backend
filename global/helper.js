@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const db = require('../db/index')
-const { sitesByUserId } = require('./constants')
+const { sitesByUserId, users } = require('./constants')
 const { v4: uuidv4 } = require("uuid");
 
 function getCategory(rawUrl, categories) {
@@ -29,7 +29,11 @@ function getDomain() {
 }
 
 
-function getRightPathForImage(image) {
+function getRightPathForImage(image, userId) {
+  if (userId) {
+    const { domain } = users.find(user => user.id === userId)
+    return `${domain}/${image}`
+  }
   return `${getDomain()}/${image}`
 }
 

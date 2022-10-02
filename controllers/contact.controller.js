@@ -102,7 +102,7 @@ class ContactController {
       if (contactData) {
         const contact = JSON.parse(contactData)
         if (contact?.image) {
-          contact.image = getRightPathForImage(contact.image)
+          contact.image = getRightPathForImage(contact.image, userId)
         }
         const response = contact ? contact : null;
 
@@ -195,7 +195,7 @@ class ContactController {
       if (contactData) {
         const contact = JSON.parse(contactData)
         if (contact?.image) {
-          contact.image = getRightPathForImage(contact.image)
+          contact.image = getRightPathForImage(contact.image, userId)
         }
         const response = contact ? contact : null;
 

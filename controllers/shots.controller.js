@@ -120,7 +120,7 @@ class ShotsController {
         format: v.format,
         workId: v.work_id,
         categories: v.categories,
-        src: getRightPathForImage(v.path),
+        src: getRightPathForImage(v.path, userId),
       }))
 
       console.log("RESPONSE", RESPONSE)
@@ -165,7 +165,7 @@ class ShotsController {
       const photos = dirtyShotsPhotos.rows.map(photo => ({
         id: photo.shot_id,
         format: photo.format,
-        src: getRightPathForImage(photo.image),
+        src: getRightPathForImage(photo.image, userId),
         workId: dirtyShots.rows.filter(v => v.id === photo.shot_id)?.[0]?.work_id,
         categories: dirtyShots.rows.filter(v => v.id === photo.shot_id)?.[0]?.categories,
       }))
