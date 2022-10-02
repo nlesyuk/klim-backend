@@ -32,7 +32,7 @@ function getDomain() {
 function getRightPathForImage(image, userId) {
   if (userId) {
     const { domain } = users.find(user => user.id === userId)
-    return `${domain}/${image}`
+    return `//${domain}/${image}`
   }
   return `${getDomain()}/${image}`
 }
