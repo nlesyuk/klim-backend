@@ -7,13 +7,14 @@ async function checkUserExisting(req, res, next) {
   console.log('checkUserExisting')
   try {
     const headerDomain = req?.headers?.domain
-    if (JSON.parse(process.env.IS_PROD)) {
-      const reqDomain = req.get('host')
-      console.log('>>', reqDomain, headerDomain)
-      if (reqDomain != headerDomain) {
-        throw new Error(`Something wrong with domain access`)
-      }
-    }
+    //  it didn't work with nginx
+    // if (JSON.parse(process.env.IS_PROD)) {
+    //   const reqDomain = req.get('host')
+    //   console.log('>>', reqDomain, headerDomain)
+    //   if (reqDomain != headerDomain) {
+    //     throw new Error(`Something wrong with domain access`)
+    //   }
+    // }
     const userId = getUserIdByDomain(headerDomain)
 
     if (isNaN(Number(userId))) {
