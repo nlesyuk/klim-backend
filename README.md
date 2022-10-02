@@ -81,7 +81,15 @@ postgres=# \l
 postgres=# \c klim
 postgres=# HERE_YOU_SHOULD_INSERT_TABEL_SCHEME `create TABLE users(...)`
 postgres=# \d
+postgres=# ALTER USER "user" with superuser;
+psql=# grant all privileges on database <dbname> to <username> ;
+psql=# alter user <username> with encrypted password '<password>';
+psql=# grant all privileges on database <dbname> to <username> ;
 
+// create folders
+/public/uploads/klimstepan.com...
+
+// set up .env
 
 // pull git repo
 
