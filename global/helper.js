@@ -22,19 +22,26 @@ function getHost(rawUrl) {
 }
 
 
-function getDomain() {
-  return parseInt(process.env.IS_PROD)
-    ? `//${process.env.PUBLIC_DOMAIN_PROD}`
-    : `//${process.env.PUBLIC_DOMAIN_LOCAL}:${process.env.PORT}`
+function getDomain(userId) {
+  let domain = `//${process.env.PUBLIC_DOMAIN_LOCAL}:${process.env.PORT}`
+  let isProd
+  try {
+    isProd = JSON.parse(process.env.IS_PROD)
+  } catch (error) {
+    isProd = false
+  }
+
+  if (userId && isProd) {
+    const { domain } = users.find(user => user.id === userId)
+    domain = `//${domain}/${image}`
+  }
+
+  return domain
 }
 
 
 function getRightPathForImage(image, userId) {
-  if (userId) {
-    const { domain } = users.find(user => user.id === userId)
-    return `//${domain}/${image}`
-  }
-  return `${getDomain()}/${image}`
+  return `${getDomain(userId)}/${image}`
 }
 
 

@@ -5,6 +5,7 @@ const sitesByUserId = {
   'derzhanovska.com': 2,
 }
 
+// users in DB
 const users = [
   {
     id: 1,
