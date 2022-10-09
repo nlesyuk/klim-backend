@@ -331,10 +331,10 @@ class PhotoCollectionsController {
           const format = photo?.format ?? null
           const order = photo.order ?? null
           const isPreview = photo.isPreview ?? false
-          queryArr.push(`(${id}, ${recordId}, ${isPreview}, ${order}, '${format}', '${image}', '${userId}')`)
+          queryArr.push(`(${id}, ${recordId}, ${isPreview}, ${order}, '${format}', '${image}', ${userId})`)
         });
 
-        console.log("UP-P queryStr", queryArr.join(','))
+        console.log("UP-P queryStr", queryArr, queryArr.join(',')) // ERROR
         // req to db - https://stackoverflow.com/questions/18797608/update-multiple-rows-in-same-query-using-postgresql
         const updatedPhotosFromDB = await db.query(`
           UPDATE photos AS p
@@ -347,7 +347,8 @@ class PhotoCollectionsController {
           FROM
             (VALUES ${queryArr.join(',')})
             AS row(id, photo_id, is_photo_preview, photo_order, format, image, user_id)
-          WHERE row.id = p.id AND row.user_id = p.user_id
+          WHERE
+            row.id = p.id AND row.user_id = p.user_id
           RETURNING *;
         `) // 🔴
 
