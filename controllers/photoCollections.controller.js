@@ -146,10 +146,10 @@ class PhotoCollectionsController {
       const dirtyPhotos = await db.query(`SELECT * FROM photos WHERE photo_id IS NOT NULL AND user_id = $1`, [userId])
 
       // prepare photos for front-end
-      const photos = dirtyPhotos.rows.map(photo => ({
+      const photos = dirtyPhotos?.rows?.map(photo => ({
         id: photo.id,
         photo_id: photo.photo_id,
-        src: getRightPathForImage(photo.image, userId),
+        src: getRightPathForImage(photo?.image, userId),
         isPreview: photo.is_photo_preview,
         order: photo.photo_order,
         format: photo.format ?? null,

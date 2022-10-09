@@ -143,6 +143,7 @@ class SliderController {
       if (slidesRaw?.length) {
         const slides = Array.from(slidesRaw).map(slide => {
           const { id, type, title, image, slide_order, videos, work_id, photo_id } = slide
+          console.log('GET_SLIDE', { id, type, title, image, slide_order, videos, work_id, photo_id })
           return {
             id,
             type,
