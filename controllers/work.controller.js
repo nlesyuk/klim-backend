@@ -1,5 +1,5 @@
 const fs = require('fs');
-const db = require('../db/')
+const db = require('../db');
 const {
   removeDomainFromImagePath,
   prepareImagePathForDB,
@@ -7,7 +7,7 @@ const {
   removeUploadedFiles,
   getCurrentDateTime,
   getUserIdByDomain,
-} = require('../global/helper')
+} = require('../global/helper');
 
 class WorkController {
   /**
@@ -22,71 +22,72 @@ class WorkController {
     }
   */
   async create(req, res) {
-    const d = getCurrentDateTime()
-    console.log('------------------------------------createWork-START', d)
-    const storage = {}
+    const d = getCurrentDateTime();
+    console.log('------------------------------------createWork-START', d);
+    const storage = {};
     try {
-      const userId = getUserIdByDomain(req.headers?.domain)
-      if (isNaN(userId)) {
-        throw new Error(`userId should be a number got ${userId}`)
+      const userId = getUserIdByDomain(req.headers?.domain);
+      if (Number.isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`);
       }
-      const { title, description, credits, videos, photosInfo, order } = req.body
+      const {
+        title, description, credits, videos, photosInfo, order,
+      } = req.body;
 
       if (!title && !description && !credits && !videos && !photosInfo && !order) {
-        throw new Error('Required fields: title, description, credits, videos, photosInfo, order')
+        throw new Error('Required fields: title, description, credits, videos, photosInfo, order');
       }
-      const filesInfo = JSON.parse(photosInfo)
-      const files = req.files
+      const filesInfo = JSON.parse(photosInfo);
+      const { files } = req;
 
-      console.log('FIELDS', title, description, credits, filesInfo)
-      console.log('FILES', files)
+      console.log('FIELDS', title, description, credits, filesInfo);
+      console.log('FILES', files);
 
       // 0 - check
       if (!files?.length) {
-        throw new Error('No file(s)')
+        throw new Error('No file(s)');
       }
 
       // 1 - create work record
       // prepare photos to db
-      const mappedFiles = Array.from(files).map(file => {
-        return {
-          path: prepareImagePathForDB(file),
-          filename: file.filename
-        }
-      }) // get path of photo in current project backend/public/uploads/s/category
-      console.log('FILES-INFO', mappedFiles)
+      const mappedFiles = Array.from(files).map((file) => ({
+        path: prepareImagePathForDB(file),
+        filename: file.filename,
+      })); // get path of photo in current project backend/public/uploads/s/category
+      console.log('FILES-INFO', mappedFiles);
 
-      const work = await db.query(`
+      const work = await db.query(
+        `
         INSERT INTO
           work
           (title, videos, description, credits, work_order, user_id)
           values
           ($1, $2, $3, $4, $5, $6)
         RETURNING *`,
-        [title, videos, description, credits, order, userId]
-      )
+        [title, videos, description, credits, order, userId],
+      );
 
-      console.log('DB WORK', work.rows)
-      let workId = ''
+      console.log('DB WORK', work.rows);
+      let workId = '';
       if (work.rows?.[0]?.id) {
-        workId = work.rows[0].id
-        storage.workId = work.rows[0].id
+        workId = work.rows[0].id;
+        storage.workId = work.rows[0].id;
       } else {
-        throw new Error('work id is not setted')
+        throw new Error('work id is not setted');
       }
 
       // 2 - create photos record
-      const queryArr = []
+      const queryArr = [];
 
       Array.from(filesInfo).forEach((photo, i) => {
-        const isWorkPreview = photo.isPreview ?? false
-        const work_order = photo.order ?? null
-        const format = photo.format ?? null
-        const image = mappedFiles[i].path ?? null
-        queryArr.push(`(${workId}, ${isWorkPreview}, ${work_order}, '${format}', '${image}', '${userId}')`)
+        const isWorkPreview = photo.isPreview ?? false;
+        const work_order = photo.order ?? null;
+        const format = photo.format ?? null;
+        const image = mappedFiles[i].path ?? null;
+        queryArr.push(`(${workId}, ${isWorkPreview}, ${work_order}, '${format}', '${image}', '${userId}')`);
       });
-      const queryStr = queryArr.join(',')
-      console.log('QueryArr', queryStr, queryArr)
+      const queryStr = queryArr.join(',');
+      console.log('QueryArr', queryStr, queryArr);
 
       // 1 - set photos in table
       const photos = await db.query(`
@@ -95,20 +96,20 @@ class WorkController {
           (work_id, is_work_preview, work_order, format, image, user_id)
           values
           ${queryStr}
-        RETURNING *;`
-      )
-      console.log('DB PHOTOS', photos.rows)
+        RETURNING *;`);
+      console.log('DB PHOTOS', photos.rows);
 
-      let photoIds = ''
+      let photoIds = '';
       if (photos?.rows?.length) {
-        photoIds = Array.from(photos.rows).map(v => v.id)
+        photoIds = Array.from(photos.rows).map((v) => v.id);
       } else {
-        throw new Error('photos are not setted')
+        throw new Error('photos are not setted');
       }
-      console.log('photoIds', photoIds)
+      console.log('photoIds', photoIds);
 
       // 3 - set photos id in work record
-      const updatedWork = await db.query(`
+      const updatedWork = await db.query(
+        `
         UPDATE
           work
         SET
@@ -116,85 +117,84 @@ class WorkController {
         WHERE
           id = $2
         RETURNING *`,
-        [photoIds, workId]
-      )
-      console.log('updatedWork', updatedWork.rows)
-      const workPraperedForFrontEnd = updatedWork.rows?.map(v => {
+        [photoIds, workId],
+      );
+      console.log('updatedWork', updatedWork.rows);
+      const workPraperedForFrontEnd = updatedWork.rows?.map((v) => {
         v.order = v.work_order ?? 0;
-        delete v.work_order
+        delete v.work_order;
         return {
-          ...v
-        }
-      })
-      res.json(workPraperedForFrontEnd[0])
-
+          ...v,
+        };
+      });
+      res.json(workPraperedForFrontEnd[0]);
     } catch (e) {
       if (e.message === 'No files') {
-        console.error('createWork Error', e.message)
-        res.status(400).send({ message: 'No files' })
+        console.error('createWork Error', e.message);
+        res.status(400).send({ message: 'No files' });
       }
 
       // remove uploaded files
-      const files = req.files
-      removeUploadedFiles(files)
+      const { files } = req;
+      removeUploadedFiles(files);
 
       // remove record from db
-      const resq = await db.query(`DELETE FROM work WHERE id = $1`, [storage.workId])
-      console.log('storage', storage, resq.rows)
+      const resq = await db.query('DELETE FROM work WHERE id = $1', [storage.workId]);
+      console.log('storage', storage, resq.rows);
 
       // response
-      console.log(e)
-      const anotherMessage = e?.message ?? 'Unknow server error at ' + WorkController.name
-      res.status(500).send({ message: anotherMessage })
-      console.error('createWork Error', anotherMessage)
+      console.log(e);
+      const anotherMessage = e?.message ?? `Unknow server error at ${WorkController.name}`;
+      res.status(500).send({ message: anotherMessage });
+      console.error('createWork Error', anotherMessage);
     }
-    console.log('------------------------------------createWork-END', d)
+    console.log('------------------------------------createWork-END', d);
   }
 
   /*
     id: Number
   */
   async getWork(req, res) {
-    const d = getCurrentDateTime()
-    console.log('------------------------------------getWork-START', d)
+    const d = getCurrentDateTime();
+    console.log('------------------------------------getWork-START', d);
     try {
-      const userId = getUserIdByDomain(req.headers?.domain)
-      if (isNaN(userId)) {
-        throw new Error(`userId should be a number got ${userId}`)
+      const userId = getUserIdByDomain(req.headers?.domain);
+      if (Number.isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`);
       }
-      const { id } = req.params
+      const { id } = req.params;
 
-      const workDirty = await db.query(`SELECT * FROM work WHERE id = $1 AND user_id = $2`, [id, userId])
+      const workDirty = await db.query('SELECT * FROM work WHERE id = $1 AND user_id = $2', [id, userId]);
       if (workDirty.rows.length === 0) {
         res.status(404);
         res.send({ message: 'Work is not exist ' });
-        return
+        return;
       }
 
-      const work = workDirty.rows[0]
-      work.order = work?.work_order ?? 0
-      delete work.work_order
+      const work = workDirty.rows[0];
+      work.order = work?.work_order ?? 0;
+      delete work.work_order;
 
-      const photosDirty = await db.query(`SELECT * FROM photos WHERE work_id = $1 AND user_id = $2`, [id, userId])
+      const photosDirty = await db.query('SELECT * FROM photos WHERE work_id = $1 AND user_id = $2', [id, userId]);
 
       // prepare photos for front-end
       if (photosDirty?.rows?.length) {
-        work.photos = photosDirty.rows.map(item => ({
+        work.photos = photosDirty.rows.map((item) => ({
           id: item.id,
           work_id: item.work_id,
           src: getRightPathForImage(item.image, userId),
           isPreview: item.is_work_preview,
           order: item.work_order,
           format: item.format ?? null,
-        }))
+        }));
       }
 
-      res.json(work)
+      res.json(work);
     } catch (error) {
-      const anotherMessage = error?.message ?? 'Unknow server error at ' + WorkController.name
-      res.status(500).send({ message: anotherMessage })
+      const anotherMessage = error?.message ?? `Unknow server error at ${WorkController.name}`;
+      res.status(500).send({ message: anotherMessage });
     }
-    console.log('------------------------------------getWork-END', d)
+    console.log('------------------------------------getWork-END', d);
   }
 
   /**
@@ -208,47 +208,47 @@ class WorkController {
     }
   */
   async getWorks(req, res) {
-    const d = getCurrentDateTime()
-    console.log('------------------------------------getWorks-START', d)
+    const d = getCurrentDateTime();
+    console.log('------------------------------------getWorks-START', d);
     try {
-      const userId = getUserIdByDomain(req.headers?.domain)
-      if (isNaN(userId)) {
-        throw new Error(`userId should be a number got ${userId}`)
+      const userId = getUserIdByDomain(req.headers?.domain);
+      if (Number.isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`);
       }
 
-      const dirtyWorks = await db.query(`SELECT * FROM work WHERE user_id = $1`, [userId])
-      const dirtyWorkPhotos = await db.query(`SELECT * FROM photos WHERE work_id IS NOT NULL AND user_id = $1`, [userId])
+      const dirtyWorks = await db.query('SELECT * FROM work WHERE user_id = $1', [userId]);
+      const dirtyWorkPhotos = await db.query('SELECT * FROM photos WHERE work_id IS NOT NULL AND user_id = $1', [userId]);
 
       // prepare photos for front-end
-      const photos = dirtyWorkPhotos.rows.map(photo => ({
+      const photos = dirtyWorkPhotos.rows.map((photo) => ({
         id: photo.id,
         work_id: photo.work_id,
         src: getRightPathForImage(photo.image, userId),
         isPreview: photo.is_work_preview,
         order: photo.work_order,
         format: photo.format ?? null,
-      }))
+      }));
 
       const works = dirtyWorks.rows.map((work) => {
-        work.order = work?.work_order ?? 0
-        delete work.work_order
-        work.photos = photos.filter(photo => {
+        work.order = work?.work_order ?? 0;
+        delete work.work_order;
+        work.photos = photos.filter((photo) => {
           if (photo.work_id && photo.work_id === work.id) {
-            delete photo.work_id
-            return true
+            delete photo.work_id;
+            return true;
           }
-          return false
-        })
-        return work
-      })
+          return false;
+        });
+        return work;
+      });
 
-      console.log(works)
-      res.json(works)
+      console.log(works);
+      res.json(works);
     } catch (error) {
-      const anotherMessage = error?.message ?? 'Unknow server error at ' + WorkController.name
-      res.status(500).send({ message: anotherMessage })
+      const anotherMessage = error?.message ?? `Unknow server error at ${WorkController.name}`;
+      res.status(500).send({ message: anotherMessage });
     }
-    console.log('------------------------------------getWorks-END', d)
+    console.log('------------------------------------getWorks-END', d);
   }
 
   /**
@@ -280,30 +280,32 @@ class WorkController {
     }
   */
   async update(req, res) {
-    const d = getCurrentDateTime()
-    console.log('------------------------------------updateWork-START', d)
+    const d = getCurrentDateTime();
+    console.log('------------------------------------updateWork-START', d);
     try {
-      const userId = getUserIdByDomain(req.headers?.domain)
-      if (isNaN(userId)) {
-        throw new Error(`userId should be a number got ${userId}`)
+      const userId = getUserIdByDomain(req.headers?.domain);
+      if (Number.isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`);
       }
-      const { id, title, credits, description, videos, photosInfo, order } = req.body
-      let updatedPhotoStore = []
+      const {
+        id, title, credits, description, videos, photosInfo, order,
+      } = req.body;
+      let updatedPhotoStore = [];
       // check
       if (!id) {
-        throw new Error('id is required')
+        throw new Error('id is required');
       }
       if (!title) {
-        throw new Error('title is required')
+        throw new Error('title is required');
       }
       if (!videos) {
-        throw new Error('videos are required')
+        throw new Error('videos are required');
       }
       if (!photosInfo) {
-        throw new Error('photosInfo is required')
+        throw new Error('photosInfo is required');
       }
       if (!order) {
-        throw new Error('order is required')
+        throw new Error('order is required');
       }
       // if (!credits) {
       //   throw new Error('credits are required')
@@ -311,80 +313,76 @@ class WorkController {
       // if (!description) {
       //   throw new Error('description is required')
       // }
-      console.log(id)
+      console.log(id);
 
       // prepare PHOTOS
-      const parsedPhotosInfo = JSON.parse(photosInfo)
+      const parsedPhotosInfo = JSON.parse(photosInfo);
       // const existingPhotos = parsedPhotosInfo.existing
-      const deletedPhotos = parsedPhotosInfo.deleted
-      const updatedPhotos = parsedPhotosInfo.updated
-      const newPhotos = parsedPhotosInfo.new
-      const workId = id
+      const deletedPhotos = parsedPhotosInfo.deleted;
+      const updatedPhotos = parsedPhotosInfo.updated;
+      const newPhotos = parsedPhotosInfo.new;
+      const workId = id;
       // console.log('parsedPhotos', parsedPhotosInfo)
-
 
       // ===CREATE NEW PHOTOS
       if (newPhotos?.length) {
-        const queryArr = []
-        const files = req.files
+        const queryArr = [];
+        const { files } = req;
 
         // prepare photos to db
-        const mappedFiles = Array.from(files).map(file => {
-          return {
-            path: prepareImagePathForDB(file),
-            filename: file.filename
-          }
-        }) // get path of photo in current project backend/public/uploads/s/category
-
+        const mappedFiles = Array.from(files).map((file) => ({
+          path: prepareImagePathForDB(file),
+          filename: file.filename,
+        })); // get path of photo in current project backend/public/uploads/s/category
 
         // prepare data
         Array.from(newPhotos).forEach((photo, i) => {
-          const isWorkPreview = photo.isPreview ?? false
-          const order = photo.order ?? null
-          const format = photo.format ?? null
-          const image = mappedFiles[i].path ?? null
-          const str = `(${workId}, ${isWorkPreview}, ${order}, '${format}', '${image}', '${userId}')`
-          queryArr.push(str)
+          const isWorkPreview = photo.isPreview ?? false;
+          const order = photo.order ?? null;
+          const format = photo.format ?? null;
+          const image = mappedFiles[i].path ?? null;
+          const str = `(${workId}, ${isWorkPreview}, ${order}, '${format}', '${image}', '${userId}')`;
+          queryArr.push(str);
         });
 
-        console.log("NEW-P mappedFiles", mappedFiles)
-        console.log("NEW-P newPhotos", newPhotos)
-        console.log("NEW-P queryStr", queryArr.join(','))
+        console.log('NEW-P mappedFiles', mappedFiles);
+        console.log('NEW-P newPhotos', newPhotos);
+        console.log('NEW-P queryStr', queryArr.join(','));
         const photosFromDB = await db.query(`
           INSERT INTO photos(work_id, is_work_preview, work_order, format, image, user_id)
           VALUES ${queryArr.join(',')}
           RETURNING *;
-      `)
+      `);
 
-        console.log("NEW-P photosFromDB", photosFromDB.rows)
+        console.log('NEW-P photosFromDB', photosFromDB.rows);
         // interface IPhoto
-        const mappedNewPhotosFromDB = Array.from(photosFromDB.rows).map(v => ({
+        const mappedNewPhotosFromDB = Array.from(photosFromDB.rows).map((v) => ({
           id: v.id,
           src: getRightPathForImage(v.image, userId),
           isPreview: v.is_work_preview,
           order: v.work_order,
-          format: v.format
-        }))
+          format: v.format,
+        }));
 
-        console.log("NEW-P mappedNewPhotosFromDB", mappedNewPhotosFromDB)
-        updatedPhotoStore = updatedPhotoStore.concat(mappedNewPhotosFromDB)
+        console.log('NEW-P mappedNewPhotosFromDB', mappedNewPhotosFromDB);
+        updatedPhotoStore = updatedPhotoStore.concat(mappedNewPhotosFromDB);
       }
 
       // ===UPDATE PHOTOS
       if (updatedPhotos?.length) {
-        const queryArr = []
+        const queryArr = [];
 
         // prepare data
-        Array.from(updatedPhotos).forEach(photo => {
-          let image = removeDomainFromImagePath(photo.src) ?? null
-          const id = photo.id ?? null
-          const format = photo?.format ?? null
-          const work_order = photo.order ?? null
-          const isWorkPreview = photo.isPreview ?? false
-          queryArr.push(`(${id}, ${workId}, ${isWorkPreview}, ${work_order}, '${format}', '${image}', '${userId}')`)
+        Array.from(updatedPhotos).forEach((photo) => {
+          const image = removeDomainFromImagePath(photo.src) ?? null;
+          const id = photo.id ?? null;
+          const format = photo?.format ?? null;
+          const work_order = photo.order ?? null;
+          const isWorkPreview = photo.isPreview ?? false;
+          queryArr.push(`(${id}, ${workId}, ${isWorkPreview}, ${work_order}, '${format}', '${image}', '${userId}')`);
         });
 
-        console.log("UP-P queryStr", queryArr.join(','))
+        console.log('UP-P queryStr', queryArr.join(','));
         // req to db - https://stackoverflow.com/questions/18797608/update-multiple-rows-in-same-query-using-postgresql
         const updatedPhotosFromDB = await db.query(`
           UPDATE photos AS p
@@ -399,32 +397,33 @@ class WorkController {
                 AS row(id, work_id, is_work_preview, work_order, format, image, user_id)
               WHERE row.id = p.id
           RETURNING *;
-      `)
+      `);
 
-        console.log("UP-P updatedPhotosFromDB", updatedPhotosFromDB.rows)
+        console.log('UP-P updatedPhotosFromDB', updatedPhotosFromDB.rows);
         // interface IPhoto
-        const arrUpdatedPhotosFromDB = Array.from(updatedPhotosFromDB.rows).map(v => ({
+        const arrUpdatedPhotosFromDB = Array.from(updatedPhotosFromDB.rows).map((v) => ({
           id: v.id,
           src: getRightPathForImage(v.image, userId),
           isPreview: v.is_work_preview,
           order: v.work_order,
-          format: v.format
-        }))
+          format: v.format,
+        }));
 
-        console.log("UP-P arrUpdatedPhotosFromDB", arrUpdatedPhotosFromDB)
-        updatedPhotoStore = updatedPhotoStore.concat(arrUpdatedPhotosFromDB)
+        console.log('UP-P arrUpdatedPhotosFromDB', arrUpdatedPhotosFromDB);
+        updatedPhotoStore = updatedPhotoStore.concat(arrUpdatedPhotosFromDB);
       }
 
       // ===DELETE PHOTOS
       if (deletedPhotos?.length) {
-        const values = deletedPhotos.join(',')
-        const deletedPhotosRaw = await db.query(`DELETE FROM photos WHERE id IN(${values}) RETURNING * `)
-        console.log('DEL-P deletedPhotos', deletedPhotosRaw.rows)
+        const values = deletedPhotos.join(',');
+        const deletedPhotosRaw = await db.query(`DELETE FROM photos WHERE id IN(${values}) RETURNING * `);
+        console.log('DEL-P deletedPhotos', deletedPhotosRaw.rows);
       }
 
       // ===UPDATE WORK INFO
-      const photos = Array.from(updatedPhotoStore).map(v => v.id)
-      const updatedWorkFromDB = await db.query(`
+      const photos = Array.from(updatedPhotoStore).map((v) => v.id);
+      const updatedWorkFromDB = await db.query(
+        `
         UPDATE work
         SET
           title = $1,
@@ -437,47 +436,49 @@ class WorkController {
           id = $7 AND
           user_id = $8
         RETURNING * `,
-        [title, credits, description, videos, photos, order, id, userId]
-      )
-      console.log('UP-WORK updatedWorkFromDB', updatedWorkFromDB.rows)
+        [title, credits, description, videos, photos, order, id, userId],
+      );
+      console.log('UP-WORK updatedWorkFromDB', updatedWorkFromDB.rows);
 
-      res.status(200).json({ message: 'Work is updated' })
+      res.status(200).json({ message: 'Work is updated' });
       return;
     } catch (error) {
       // remove uploaded files
-      removeUploadedFiles(req.files)
+      removeUploadedFiles(req.files);
 
-      const anotherMessage = error?.message ?? 'Unknow server error at ' + WorkController.name
-      res.status(500).send({ message: anotherMessage })
+      const anotherMessage = error?.message ?? `Unknow server error at ${WorkController.name}`;
+      res.status(500).send({ message: anotherMessage });
     }
-    console.log('------------------------------------updateWork-END', d)
+    console.log('------------------------------------updateWork-END', d);
   }
 
   /*
     id: Number
   */
   async delete(req, res) {
-    const d = getCurrentDateTime()
-    console.log('------------------------------------deleteWork-START', d)
+    const d = getCurrentDateTime();
+    console.log('------------------------------------deleteWork-START', d);
     try {
-      const userId = getUserIdByDomain(req.headers?.domain)
-      if (isNaN(userId)) {
-        throw new Error(`userId should be a number got ${userId}`)
+      const userId = getUserIdByDomain(req.headers?.domain);
+      if (Number.isNaN(userId)) {
+        throw new Error(`userId should be a number got ${userId}`);
       }
-      const { id } = req.params
-      const status = { id, }
+      const { id } = req.params;
+      const status = { id };
 
-      const removedWork = await db.query(`
+      const removedWork = await db.query(
+        `
       DELETE FROM
         work
       WHERE
         id = $1 AND
         user_id = $2
       RETURNING * `,
-        [id, userId]
-      )
-      console.log('--', removedWork.rows)
-      const removedPhotos = await db.query(`
+        [id, userId],
+      );
+      console.log('--', removedWork.rows);
+      const removedPhotos = await db.query(
+        `
       DELETE FROM
         photos
       WHERE
@@ -486,25 +487,26 @@ class WorkController {
         shot_id IS NULL AND
         user_id = $2
       RETURNING * `,
-        [id, userId]
-      )
-      console.log('--', removedPhotos.rows)
+        [id, userId],
+      );
+      console.log('--', removedPhotos.rows);
       // remove uploaded files
       if (removedPhotos?.rows?.length) {
-        let count = 0
-        Array.from(removedPhotos.rows).forEach(file => {
-          fs.unlink(file.image, function (err) { // remove file
+        let count = 0;
+        Array.from(removedPhotos.rows).forEach((file) => {
+          fs.unlink(file.image, (err) => { // remove file
             if (err) {
-              console.error("unlink can't delete file - ", file.image)
+              console.error("unlink can't delete file - ", file.image);
               throw err;
             }
             console.log('File deleted!');
-            count++
+            count++;
           });
-        })
-        status.message = `Removed ${count} photos`
+        });
+        status.message = `Removed ${count} photos`;
       } else {
-        await db.query(`
+        await db.query(
+          `
         UPDATE
           photos
         SET
@@ -512,21 +514,20 @@ class WorkController {
         WHERE
           work_id = $1 AND
           user_id = $2`,
-          [id, userId]
-        )
-        status.message = "Photos was not removed - saved for other categories or dosn't exist"
+          [id, userId],
+        );
+        status.message = "Photos was not removed - saved for other categories or dosn't exist";
       }
-      status.status = 'success'
+      status.status = 'success';
 
-      res.json(status)
+      res.json(status);
     } catch (error) {
-      console.error('deleteWork Error', error)
-      const anotherMessage = error?.message ?? 'Unknow server error at ' + WorkController.name
-      res.status(500).send({ message: anotherMessage })
+      console.error('deleteWork Error', error);
+      const anotherMessage = error?.message ?? `Unknow server error at ${WorkController.name}`;
+      res.status(500).send({ message: anotherMessage });
     }
-    console.log('------------------------------------deleteWork-END', d)
-    return;
+    console.log('------------------------------------deleteWork-END', d);
   }
 }
 
-module.exports = new WorkController()
+module.exports = new WorkController();
