@@ -23,7 +23,7 @@ function getHost(rawUrl) {
 
 
 function getDomain(userId) {
-  let domain = `//${process.env.PUBLIC_DOMAIN_LOCAL}:${process.env.PORT}`
+  let mainDomain = `//${process.env.PUBLIC_DOMAIN_LOCAL}:${process.env.PORT}`
   let isProd
   try {
     isProd = JSON.parse(process.env.IS_PROD)
@@ -33,15 +33,15 @@ function getDomain(userId) {
 
   if (userId && isProd) {
     const { domain } = users.find(user => user.id === userId)
-    domain = `//${domain}/${image}`
+    mainDomain = domain
   }
 
-  return domain
+  return mainDomain
 }
 
 
 function getRightPathForImage(image, userId) {
-  return `${getDomain(userId)}/${image}`
+  return `//${getDomain(userId)}/${image}`
 }
 
 

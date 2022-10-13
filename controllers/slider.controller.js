@@ -148,7 +148,7 @@ class SliderController {
             id,
             type,
             title,
-            image: image ? getRightPathForImage(image, userId) : null,
+            image: getRightPathForImage(image, userId) || null,
             order: slide_order,
             videos: videos ? JSON.parse(videos) : null,
             workId: work_id,
@@ -165,9 +165,9 @@ class SliderController {
       // response
       const anotherMessage = error?.message
         ? error.message
-        : 'Unknow server error at getSlider controller'
-      res.status(500).send({ message: anotherMessage })
+        : 'Unknow server error at getSlider controller';
       console.error('getSlider Error', anotherMessage)
+      res.status(500).send({ message: anotherMessage })
     }
     console.log('------------------------------------getSlider-END', d)
   }
