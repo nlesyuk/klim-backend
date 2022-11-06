@@ -379,23 +379,24 @@ class WorkController {
           const format = photo?.format ?? null;
           const work_order = photo.order ?? null;
           const isWorkPreview = photo.isPreview ?? false;
-          queryArr.push(`(${id}, ${workId}, ${isWorkPreview}, ${work_order}, '${format}', '${image}', '${userId}')`);
+          queryArr.push(`(${id}, ${workId}, ${isWorkPreview}, ${work_order}, '${format}', '${image}', ${userId})`);
         });
 
         console.log('UP-P queryStr', queryArr.join(','));
+
         // req to db - https://stackoverflow.com/questions/18797608/update-multiple-rows-in-same-query-using-postgresql
         const updatedPhotosFromDB = await db.query(`
           UPDATE photos AS p
           SET
-          image = row.image,
+            image = row.image,
             format = row.format,
             work_id = row.work_id,
             work_order = row.work_order,
-            is_work_preview = row.is_work_preview
+            is_work_preview = row.is_work_preview,
             user_id = row.user_id
           FROM(VALUES ${queryArr.join(',')})
-                AS row(id, work_id, is_work_preview, work_order, format, image, user_id)
-              WHERE row.id = p.id
+            AS row(id, work_id, is_work_preview, work_order, format, image, user_id)
+          WHERE row.id = p.id
           RETURNING *;
       `);
 
@@ -412,14 +413,12 @@ class WorkController {
         console.log('UP-P arrUpdatedPhotosFromDB', arrUpdatedPhotosFromDB);
         updatedPhotoStore = updatedPhotoStore.concat(arrUpdatedPhotosFromDB);
       }
-
       // ===DELETE PHOTOS
       if (deletedPhotos?.length) {
         const values = deletedPhotos.join(',');
         const deletedPhotosRaw = await db.query(`DELETE FROM photos WHERE id IN(${values}) RETURNING * `);
         console.log('DEL-P deletedPhotos', deletedPhotosRaw.rows);
       }
-
       // ===UPDATE WORK INFO
       const photos = Array.from(updatedPhotoStore).map((v) => v.id);
       const updatedWorkFromDB = await db.query(
@@ -443,6 +442,7 @@ class WorkController {
       res.status(200).json({ message: 'Work is updated' });
       return;
     } catch (error) {
+      console.error(error);
       // remove uploaded files
       removeUploadedFiles(req.files);
 
