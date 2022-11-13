@@ -133,7 +133,7 @@ class ContactController {
         throw new Error(`userId should be a number got ${userId}`);
       }
       const {
-        phone, email, facebook, instagram, telegram, vimeo, description,
+        phone, email, theme, facebook, instagram, telegram, vimeo, description,
       } = req.body;
       let image;
       const { files } = req;
@@ -180,14 +180,13 @@ class ContactController {
 
       // 2 - prepare data to db
       const data = {
-        phone, email, facebook, instagram, telegram, vimeo, description, image,
+        phone, email, theme, facebook, instagram, telegram, vimeo, description, image,
       };
       console.log('DATA', data);
 
       // 3 - make record to db
       const contactRaw = await db.query(
-        `
-        UPDATE
+        `UPDATE
           general
         SET
           name = $1,
