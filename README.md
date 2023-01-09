@@ -59,7 +59,10 @@ doc for api
 > npm install pm2@latest -g
 
 // nginx config - see Cribs.md
+configs placed in ./config folder
 > sudo apt install nginx
+> sudo nginx -t
+> sudo service nginx restart
 
 // Firewall Setup https://itnext.io/deploy-a-nodejs-and-expressjs-app-on-digital-ocean-with-nginx-and-free-ssl-edd88a5580fa
 > sudo ufw enable
