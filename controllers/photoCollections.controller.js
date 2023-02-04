@@ -221,7 +221,6 @@ class PhotoCollectionsController {
   }
 
   async update(req, res) {
-    // TODO: need handle update "categories" field from FE (see in create method)
     const d = getCurrentDateTime();
     console.log('------------------------------------updatePhotoCollection-START', d);
     try {
@@ -230,11 +229,11 @@ class PhotoCollectionsController {
         throw new Error(`userId should be a number got ${userId}`);
       }
       const {
-        id, title, credits, description, photosInfo, order,
+        id, title, credits, description, photosInfo, order, categories,
       } = req.body;
       let updatedPhotoStore = [];
 
-      console.log('UPDATE data', id, title, credits, description, JSON.parse(photosInfo), order);
+      console.log('UPDATE data', id, title, credits, description, JSON.parse(photosInfo), order, JSON.parse(categories));
 
       // check
       if (!id) {
@@ -258,7 +257,7 @@ class PhotoCollectionsController {
 
       // prepare PHOTOS
       const parsedPhotosInfo = JSON.parse(photosInfo);
-      const existingPhotos = parsedPhotosInfo.existing;
+      // const existingPhotos = parsedPhotosInfo.existing;
       const deletedPhotos = parsedPhotosInfo.deleted;
       const updatedPhotos = parsedPhotosInfo.updated;
       const newPhotos = parsedPhotosInfo.new;
@@ -323,6 +322,7 @@ class PhotoCollectionsController {
           const format = photo?.format ?? null;
           const order = photo.order ?? null;
           const isPreview = photo.isPreview ?? false;
+
           queryArr.push(`(${id}, ${recordId}, ${isPreview}, ${order}, '${format}', '${image}', ${userId})`);
         });
 
@@ -371,7 +371,7 @@ class PhotoCollectionsController {
         console.log('DEL-P deletedPhotos', deletedPhotosRaw.rows);
       }
 
-      // ===UPDATE WORK INFO
+      // ===UPDATE PHOTO-COLLECTION INFO
       const updatedWorkFromDB = await db.query(
         `
         UPDATE
@@ -380,11 +380,12 @@ class PhotoCollectionsController {
           title = $1,
           credits = $2,
           description = $3,
-          photo_order = $4
+          photo_order = $4,
+          categories = $5
         WHERE
-          id = $5 AND user_id = $6
+          id = $6 AND user_id = $7
         RETURNING *`,
-        [title, credits, description, order, id, userId],
+        [title, credits, description, order, JSON.parse(categories), id, userId],
       );
       console.log('UP-WORK updatedWorkFromDB', updatedWorkFromDB.rows);
 
