@@ -32,18 +32,18 @@ class ContactController {
       if (!email) {
         throw new Error('email is reqiured');
       }
-      if (!facebook) {
-        throw new Error('facebook is reqiured');
-      }
-      if (!instagram) {
-        throw new Error('instagram is reqiured');
-      }
-      if (!telegram) {
-        throw new Error('telegram is reqiured');
-      }
-      if (!vimeo) {
-        throw new Error('vimeo is reqiured');
-      }
+      // if (!facebook) {
+      //   throw new Error('facebook is reqiured');
+      // }
+      // if (!instagram) {
+      //   throw new Error('instagram is reqiured');
+      // }
+      // if (!telegram) {
+      //   throw new Error('telegram is reqiured');
+      // }
+      // if (!vimeo) {
+      //   throw new Error('vimeo is reqiured');
+      // }
       if (!files?.length) {
         // throw new Error('No files')
       }
@@ -146,18 +146,18 @@ class ContactController {
       if (!email) {
         throw new Error('email is reqiured');
       }
-      if (!facebook) {
-        throw new Error('facebook is reqiured');
-      }
-      if (!instagram) {
-        throw new Error('instagram is reqiured');
-      }
-      if (!telegram) {
-        throw new Error('telegram is reqiured');
-      }
-      if (!vimeo) {
-        throw new Error('vimeo is reqiured');
-      }
+      // if (!facebook) {
+      //   throw new Error('facebook is reqiured');
+      // }
+      // if (!instagram) {
+      //   throw new Error('instagram is reqiured');
+      // }
+      // if (!telegram) {
+      //   throw new Error('telegram is reqiured');
+      // }
+      // if (!vimeo) {
+      //   throw new Error('vimeo is reqiured');
+      // }
 
       // 1 - prepare image
       if (Array.isArray(files) && files?.length) {
@@ -167,7 +167,6 @@ class ContactController {
           filename: file.filename,
         }));
         image = mappedFiles?.[0].path;
-        console.log('image1', image);
       } else {
         const contactRaw = await db.query('SELECT * FROM general WHERE name = $1 AND user_id = $2', [contactKey, userId]);
         const contactData = contactRaw?.rows?.[0]?.data; // data is a String
@@ -175,7 +174,6 @@ class ContactController {
           const contact = JSON.parse(contactData);
           image = contact.image;
         }
-        console.log('image2', image);
       }
 
       // 2 - prepare data to db
