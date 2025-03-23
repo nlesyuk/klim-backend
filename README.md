@@ -8,6 +8,7 @@ localhost:8090/login
 localhost:8090/dashboard
 ```
 
+# How to deploy
 ## Set up `env`
 All variables located in `env.example`
 ### Base
@@ -35,19 +36,10 @@ DB_PROD_PORT=5432
 DB_PROD_DBNAME=
 ```
 
- ## TODO:
- 1. + Add user_id column for each table
- 2. swagger doc
- 3. ESlint
- 4. Prettier
- 5. unit testin with Jest
-
-
 ## Swagger
 doc for api
 
-
-### how to deploy in EC2 instance
+## Deploy on Ubuntu 
 > sudo apt-get update
 
 // install n
@@ -135,4 +127,16 @@ psql=# grant all privileges on database klim to ubuntu;
 
 // pull git repo
 
+## notions
+> nano klimsite/klim-backend/.env
+> pm2 start klimsite/klim-backend/index.js
+
+
+
+## TODO:
+1. + Add user_id column for each table
+2. swagger doc
+3. ESlint
+4. Prettier
+5. unit testin with Jest
 
