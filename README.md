@@ -1,7 +1,5 @@
 # klim-backend
-
 `> npm run dev`
-
 ```
 localhost:8090/
 localhost:8090/login
@@ -41,12 +39,12 @@ doc for api
 
 ## Deploy on Ubuntu 
 > sudo apt-get update
-
-// install n
+### install n
 > curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o n
 > bash n lts
 > npm install -g n
 
+### install pm2
 // install https://pm2.keymetrics.io/docs/usage/pm2-doc-single-page/
 > npm install pm2@latest -g
 > pm2 start index.js 
@@ -54,49 +52,190 @@ doc for api
 > pm2 stop 0 // id of process
 > pm2 start klimsite/klim-backend/index.js
 
+### Nginx config
 // nginx config - see Cribs.md
 configs placed in ./config folder
 > sudo apt install nginx
 > sudo nginx -t
 
+#### 1
 // link project with nginx
 > sudo nano /etc/nginx/sites-available/default
 
+> sudo nano /etc/nginx/nginx.conf
+```nginx
+http {
+
+}
+```
+
 need to change sole lint based on your cloud provider follow # CHANGE_HERE
 ```nginx
+# Redirect HTTP to HTTPS
 server {
     listen 80;
-    server_name klimstepan.com www.klimstepan.com; # CHANGE_HERE
+    server_name klimstepan.com www.klimstepan.com;
+    
+    # Redirect all HTTP requests to HTTPS
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
 
+server {
+    listen 80;
+    # server_name 139.59.212.85;
+    server_name klimstepan.com www.klimstepan.com;
+    
+    access_log /var/log/nginx/klimstepan.com.access.log;
+    error_log /var/log/nginx/klimstepan.com.error.log;
+
+    set $frontend_root /home/root/klimsite/klim-frontend/dist;
+    set $backend_proxy http://localhost:8090;
+
+    location / {
+        root $frontend_root;
+        try_files $uri /index.html;
+    }
     location /api {
         client_max_body_size 50m;
         proxy_redirect off;
-        proxy_pass http://localhost:8090; # CHANGE_HERE Backend
+        proxy_pass $backend_proxy;
         proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
         proxy_set_header Authorization $http_authorization;
     }
-    #fronend
+    location /public/uploads {
+        #root /home/root/klimsite/klim-backend/public/uploads;
+        proxy_pass $backend_proxy/public/uploads;
+    }
+}
+
+# need to create cert before put in config
+server {
+    listen 443 ssl;
+    http2 on;
+    server_name klimstepan.com www.klimstepan.com;
+    
+    # SSL configuration...
+    ssl_certificate /etc/letsencrypt/live/klimstepan.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/klimstepan.com/privkey.pem;
+    
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 1d;
+
+    set $frontend_root /home/root/klimsite/klim-frontend/dist;
+    set $backend_proxy http://localhost:8090;
+
+    # route handlers
     location / {
-        root /home/ubuntu/klim-frontend/dist; # CHANGE_HERE
+        root $frontend_root;
         try_files $uri /index.html;
     }
+    location /api {
+        client_max_body_size 50m;
+        proxy_redirect off;
+        proxy_pass $backend_proxy;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Host $http_host;
+        proxy_set_header Authorization $http_authorization;
+    }
     location /public/uploads {
-        #root /home/ubuntu/www/klim-backend/public/uploads;
-        proxy_pass http://localhost:8090/public/uploads;
+        proxy_pass $backend_proxy/public/uploads;
     }
 }
 ```
 check status
->sudo nginx -t 
->sudo service nginx restart
+> sudo nginx -t 
+> service nginx status
+<!-- > systemctl status nginx -->
+> sudo service nginx restart
 
-// Firewall Setup https://itnext.io/deploy-a-nodejs-and-expressjs-app-on-digital-ocean-with-nginx-and-free-ssl-edd88a5580fa
+##### 2
+```
+server {
+    listen 80;
+    # server_name 139.59.212.85;
+    server_name klimstepan.com www.klimstepan.com;
+
+    access_log /var/log/nginx/klimstepan.com.access.log;
+    error_log /var/log/nginx/klimstepan.com.error.log;
+
+    set $frontend_root /home/root/klimsite/klim-frontend/dist;
+    set $backend_proxy http://localhost:8090;
+
+    location / {
+        root $frontend_root;
+        try_files $uri /index.html;
+    }
+    location /api {
+        client_max_body_size 50m;
+        proxy_redirect off;
+        proxy_pass $backend_proxy;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_set_header Authorization $http_authorization;
+    }
+    location /public/uploads {
+        #root /home/root/klimsite/klim-backend/public/uploads;
+        proxy_pass $backend_proxy/public/uploads;
+    }
+}
+```
+##### 3
+> sudo nano /etc/nginx/sites-available/default
+```
+server {
+    listen 80;
+    # server_name 139.59.212.85;
+    server_name klimstepan.com www.klimstepan.com;
+
+    access_log /var/log/nginx/klimstepan.com.access.log;
+    error_log /var/log/nginx/klimstepan.com.error.log;
+
+    set $frontend_root /home/root/klimsite/klim-frontend/dist;
+    set $backend_proxy http://localhost:8090;
+
+    location / {
+        root $frontend_root;
+        index index.html;
+        try_files $uri $uri/ /index.html;
+    }
+    location /api {
+        client_max_body_size 50m;
+        proxy_redirect off;
+        proxy_pass $backend_proxy;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_set_header Authorization $http_authorization;
+    }
+    location /public/uploads {
+        #root /home/root/klimsite/klim-backend/public/uploads;
+        proxy_pass $backend_proxy/public/uploads;
+    }
+}
+```
+
+> sudo nginx -t && sudo systemctl restart nginx
+> sudo nginx -t 
+> sudo systemctl restart nginx
+> tail -f /var/log/nginx/klimstepan.com.error.log
+> tail -f /var/log/nginx/klimstepan.com.access.log
+
+### Firewall Setup https://itnext.io/deploy-a-nodejs-and-expressjs-app-on-digital-ocean-with-nginx-and-free-ssl-edd88a5580fa
 > sudo ufw enable
 > sudo ufw allow http
 > sudo ufw allow https
 > sudo ufw allow ssh
 
-// install postgres
+### install postgres
 > sudo apt install postgresql -y
 > sudo su - postgres
 > psql
@@ -127,9 +266,26 @@ psql=# grant all privileges on database klim to ubuntu;
 
 // pull git repo
 
-## notions
+
+### build
+when PC/Droplet/EC2/ComputerEngine has small memory
+> free -m
+> sudo fallocate -l 2G /swapfile
+> sudo chmod 600 /swapfile
+> sudo mkswap /swapfile
+> sudo swapon /swapfile
+> echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+> free -m
+> NODE_OPTIONS="--max-old-space-size=512" npm run build
+ Закрий зайві процеси
+> ps aux --sort=-%mem | head -10 
+
+### notions
 > nano klimsite/klim-backend/.env
 > pm2 start klimsite/klim-backend/index.js
+> sudo tail -f /var/log/nginx/klimstepan.com.error.log
+> sudo tail -f /var/log/nginx/klimstepan.com.access.log
+> nslookup klimstepan.com // check DNS IPs
 
 
 
