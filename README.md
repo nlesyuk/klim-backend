@@ -259,9 +259,8 @@ server {
 
     #fronend
     location / {
-        root /home/root/klimsite/klim-frontend/dist;
-        # try_files $uri /index.html;
-        try_files $uri $uri/ =404;
+        try_files $uri $uri/ /index.html;
+        root /root/klimsite/klim-frontend/dist;
     }
     location /public/uploads {
         proxy_pass http://localhost:8090/public/uploads;
@@ -272,7 +271,7 @@ server {
 ```
 #### nginx commands
 restart
-> sudo nginx -t && sudo systemctl restart nginx
+sudo nginx -t && sudo systemctl restart nginx
 > sudo nginx -t
 > sudo systemctl restart nginx
 
