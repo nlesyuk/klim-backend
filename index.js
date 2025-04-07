@@ -111,6 +111,11 @@ for (const item of routeItems) {
   }
 }
 
+// 404 handlers
+app.use((req, res, next) => {
+  console.log(`[REQUEST] ${req.method} ${req.originalUrl}`);
+  next();
+});
 // routes error handler
 app.use((req, res) => {
   res.status(404).send({ message: 'Not Found' });
