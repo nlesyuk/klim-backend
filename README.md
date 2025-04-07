@@ -246,13 +246,12 @@ server {
 
     server_name klimstepan.com www.klimstepan.com;
 
-    location /api/ {
-        proxy_pass http://localhost:8090/;
+    location /api {
+        proxy_pass http://localhost:8090;
         proxy_redirect off;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-
         proxy_set_header Authorization $http_authorization;
         client_max_body_size 50m;
     }
@@ -265,10 +264,35 @@ server {
     location /public/uploads {
         proxy_pass http://localhost:8090/public/uploads;
     }
+
+    # added automaticly from CertBot
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/klimstepan.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/klimstepan.com/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+
 }
 
+# added automaticly
+server {
+    if ($host = www.klimstepan.com) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+    if ($host = klimstepan.com) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+    listen 80;
+    server_name klimstepan.com www.klimstepan.com;
+    return 404; # managed by Certbot
+}
 
 ```
+
+
 #### nginx commands
 restart
 sudo nginx -t && sudo systemctl restart nginx
@@ -292,6 +316,7 @@ provide access to static front end file if www-data don't have access (see logs 
 > gpasswd -a www-data root
 > chmod g+x /root && chmod g+x /root/klimsite/klim-frontend/dist && chmod g+x /root/klimsite/klim-frontend/dist
 > nginx -s reload
+> curl -I https://klimstepan.com/api/v1/contact
 
 
 ### Firewall Setup
