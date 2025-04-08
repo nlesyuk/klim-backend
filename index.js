@@ -25,27 +25,43 @@ const {
 const storageConfig = multer.diskStorage({
   destination(req, file, callback) {
     try {
-      const { domain } = req.headers; // 🔴
+      const { domain } = req.headers;
 
       if (domain) {
         const category = getCategory(req.originalUrl, constants.categories);
+
         if (category) {
           const dest = path.resolve(`${__dirname}/public/uploads/${domain}/${category}`);
-          fs.access(dest, (err) => {
+
+          // fs.access(dest, (err) => {
+          //   if (err) {
+          //     console.error('Directory does not exist ✘ ⛔ ', dest);
+          //     return fs.mkdir(dest, { recursive: true }, (error2) => callback(error2, dest));
+          //   }
+          //   console.warn('Directory exists ✔ ✅');
+          //   return callback(null, dest);
+          // });
+
+          // 🔧: створюємо директорію з recursive: true — вона не зламається, якщо вже існує
+          fs.mkdir(dest, { recursive: true }, (err) => {
             if (err) {
-              console.error('Directory does not exist ✘ ⛔ ', dest);
-              return fs.mkdir(dest, (error2) => callback(error2, dest));
+              console.error('❌ mkdir error:', err);
+              return callback(err);
             }
-            console.warn('Directory exists ✔ ✅');
+            console.log('✅ Directory ready:', dest);
             return callback(null, dest);
           });
         } else {
-          // обробити помилку
-          console.error('FILE UPLOADING ERROR');
+          console.error('⚠️ FILE UPLOADING ERROR: no category');
+          return callback(new Error('Category not found'));
         }
+      } else {
+        console.error('⚠️ FILE UPLOADING ERROR: no domain');
+        return callback(new Error('Domain not provided'));
       }
     } catch (e) {
-      console.error(e);
+      console.error('❌ Unexpected error in multer destination:', e);
+      return callback(e);
     }
     // how save path to image in DB
     // https://stackoverflow.com/questions/46975942/how-to-send-image-name-in-database-using-multer-and-express/47560629
